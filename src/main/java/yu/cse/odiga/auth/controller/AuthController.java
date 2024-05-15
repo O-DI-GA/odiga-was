@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import yu.cse.odiga.auth.application.AuthService;
+import yu.cse.odiga.auth.dto.LoginDto;
 import yu.cse.odiga.auth.dto.SignUpDto;
 import yu.cse.odiga.global.util.DefaultResponse;
 
@@ -19,9 +20,13 @@ public class AuthController {
 
     @RequestMapping("/signup")
     public ResponseEntity<?> signUp(@RequestBody SignUpDto signUpDto) {
-
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new DefaultResponse<>(201, "Sign up success", authService.signUp(signUpDto)));
     }
 
+    @RequestMapping("/login")
+    private ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new DefaultResponse<>(200, "login success", authService.login(loginDto)));
+    }
 }
