@@ -1,4 +1,4 @@
-package yu.cse.odiga.user.domain;
+package yu.cse.odiga.auth.domain;
 
 
 import jakarta.persistence.Column;
@@ -8,6 +8,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,13 +20,14 @@ import yu.cse.odiga.global.type.Role;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "Users") // H2 database의 설정이랑 겹침
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(unique = true, updatable = false, nullable = false)
+    @Column(unique = true, nullable = false)
     private String email;
 
     @Column(nullable = false)
