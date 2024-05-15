@@ -51,7 +51,7 @@ public class JwtTokenProvider {
 
         String refreshToken = Jwts.builder()
                 .setSubject(email)
-                .claim("nickname", nickname)
+//                .claim("nickname", nickname)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .setExpiration(expireTime)
                 .compact();

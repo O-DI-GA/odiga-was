@@ -1,28 +1,37 @@
 package yu.cse.odiga.auth.application;
 
+import io.jsonwebtoken.Claims;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import yu.cse.odiga.auth.dao.RefreshTokenRepository;
 import yu.cse.odiga.auth.dao.UserRepository;
+import yu.cse.odiga.auth.domain.RefreshToken;
 import yu.cse.odiga.auth.domain.User;
 import yu.cse.odiga.auth.dto.LoginDto;
+import yu.cse.odiga.auth.dto.RefreshTokenDto;
 import yu.cse.odiga.auth.dto.SignUpDto;
 import yu.cse.odiga.auth.exception.AlreadyExistUserException;
+import yu.cse.odiga.auth.exception.TokenNotFoundException;
 import yu.cse.odiga.global.jwt.JwtTokenDto;
 import yu.cse.odiga.global.jwt.JwtTokenProvider;
 import yu.cse.odiga.global.type.Role;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class AuthService {
 
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenRepository refreshTokenRepository;
+
+    // TODO : DTO 잘못된 데이터 들어올 경우 에러처리
 
     public JwtTokenDto signUp(SignUpDto signUpDto) {
 
@@ -41,6 +50,13 @@ public class AuthService {
 
         JwtTokenDto jwtTokenDto = jwtTokenProvider.createToken(user.getEmail(), user.getNickname());
 
+        RefreshToken refreshToken = RefreshToken.builder()
+                .token(jwtTokenDto.getRefreshToken())
+                .userEmail(user.getEmail())
+                .build();
+
+        refreshTokenRepository.save(refreshToken);
+
         return jwtTokenDto;
     }
 
@@ -56,6 +72,49 @@ public class AuthService {
         }
 
         JwtTokenDto jwtTokenDto = jwtTokenProvider.createToken(user.getEmail(), user.getNickname());
+
+        Optional<RefreshToken> refreshTokenInDB = refreshTokenRepository.findByUserEmail(user.getEmail());
+
+        if (refreshTokenInDB.isPresent()) {
+            refreshTokenInDB.get().setToken(jwtTokenDto.getRefreshToken());
+            return jwtTokenDto;
+        }
+
+        RefreshToken refreshToken = RefreshToken.builder()
+                .token(jwtTokenDto.getRefreshToken())
+                .userEmail(user.getEmail())
+                .build();
+
+        refreshTokenRepository.save(refreshToken);
+
+        return jwtTokenDto;
+    }
+    
+    // TODO : Security Exception 순서에 따라 Exception 처리 변경
+
+    public JwtTokenDto reIssue(RefreshTokenDto refreshTokenDto) {
+
+        if (!jwtTokenProvider.validateToken(refreshTokenDto.getRefreshToken())) {
+            throw new IllegalArgumentException("올바르지 않은 token 입니다");
+        }
+
+        Claims claims = jwtTokenProvider.getClaims(refreshTokenDto.getRefreshToken());
+
+        String userEmail = claims.getSubject();
+
+        RefreshToken refreshToken = refreshTokenRepository.findByUserEmail(userEmail)
+                .orElseThrow(() -> new TokenNotFoundException("저장된 refresh token 을 찾을 수 없습니다. 다시 로그인 하세요"));
+
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 계정 입니다."));
+
+        if (!refreshToken.getToken().equals(refreshTokenDto.getRefreshToken())) {
+            throw new IllegalArgumentException("올바르지 않은 token 입니다");
+        }
+
+        JwtTokenDto jwtTokenDto = jwtTokenProvider.createToken(user.getEmail(), user.getNickname());
+
+        refreshToken.setToken(jwtTokenDto.getRefreshToken());
 
         return jwtTokenDto;
     }
