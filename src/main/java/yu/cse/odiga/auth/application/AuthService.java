@@ -48,7 +48,7 @@ public class AuthService {
 
         userRepository.save(user);
 
-        JwtTokenDto jwtTokenDto = jwtTokenProvider.createToken(user.getEmail(), user.getNickname());
+        JwtTokenDto jwtTokenDto = jwtTokenProvider.createToken(user.getEmail(), user.getNickname() ,user.getRole().name());
 
         RefreshToken refreshToken = RefreshToken.builder()
                 .token(jwtTokenDto.getRefreshToken())
@@ -71,7 +71,7 @@ public class AuthService {
             throw new BadCredentialsException("비밀번호가 일치 하지 않습니다.");
         }
 
-        JwtTokenDto jwtTokenDto = jwtTokenProvider.createToken(user.getEmail(), user.getNickname());
+        JwtTokenDto jwtTokenDto = jwtTokenProvider.createToken(user.getEmail(), user.getNickname() ,user.getRole().name());
 
         Optional<RefreshToken> refreshTokenInDB = refreshTokenRepository.findByUserEmail(user.getEmail());
 
@@ -112,7 +112,7 @@ public class AuthService {
             throw new IllegalArgumentException("올바르지 않은 token 입니다");
         }
 
-        JwtTokenDto jwtTokenDto = jwtTokenProvider.createToken(user.getEmail(), user.getNickname());
+        JwtTokenDto jwtTokenDto = jwtTokenProvider.createToken(user.getEmail(), user.getNickname() ,user.getRole().name());
 
         refreshToken.setToken(jwtTokenDto.getRefreshToken());
 

@@ -38,12 +38,13 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public JwtTokenDto createToken(String email, String nickname) {
+    public JwtTokenDto createToken(String email, String nickname, String role) {
         long now = (new Date()).getTime();
         Date expireTime = new Date(now + this.accessTokenExpireSeconds);
 
         String accessToken = Jwts.builder()
                 .setSubject(email)
+                .claim("auth", role)
                 .claim("nickname", nickname)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .setExpiration(expireTime)
@@ -63,10 +64,10 @@ public class JwtTokenProvider {
     }
 
     public Authentication getAuthentication(String token) {
-        String email = getClaims(token).getSubject();
+        Claims claims = getClaims(token);
+        String email = claims.getSubject();
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
-        User principal = new User(email, "", userDetails.getAuthorities());
-        return new UsernamePasswordAuthenticationToken(principal, "", userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
     }
 
     public Claims getClaims(String token) {
