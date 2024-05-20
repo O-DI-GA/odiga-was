@@ -4,9 +4,6 @@ import io.jsonwebtoken.Claims;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,13 +24,12 @@ import yu.cse.odiga.global.type.Role;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class AuthService {
+public class UserAuthService {
 
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     // TODO : DTO 잘못된 데이터 들어올 경우 에러처리
 

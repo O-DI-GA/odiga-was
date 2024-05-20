@@ -1,23 +1,24 @@
-package yu.cse.odiga.auth.application;
+package yu.cse.odiga.owner.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import yu.cse.odiga.auth.dao.UserRepository;
-import yu.cse.odiga.auth.domain.CustomUserDetails;
-import yu.cse.odiga.auth.domain.User;
+import yu.cse.odiga.owner.dao.OwnerRepository;
+import yu.cse.odiga.owner.domain.Owner;
+import yu.cse.odiga.owner.domain.OwnerUserDetails;
+
 
 @RequiredArgsConstructor
-public class CustomUserDetailsService implements UserDetailsService {
+public class OwnerUserDetailsService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final OwnerRepository ownerRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        System.out.println("user details service");
-        User user = userRepository.findByEmail(username)
+        System.out.println("owner service");
+        Owner owner = ownerRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("user not found"));
-        return new CustomUserDetails(user);
+        return new OwnerUserDetails(owner);
     }
 }

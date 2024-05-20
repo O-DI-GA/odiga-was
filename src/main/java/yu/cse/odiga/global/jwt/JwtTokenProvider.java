@@ -15,25 +15,23 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
+
 @Component
 public class JwtTokenProvider {
 
     private final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
     private final long accessTokenExpireSeconds;
     private final Key key;
-    private final UserDetailsService userDetailsService;
 
     public JwtTokenProvider(@Value("${jwt.secret}") String secretKey,
-                            @Value("${jwt.access-token-expire-seconds}") long accessTokenExpireSeconds,
-                            UserDetailsService userDetailsService) {
+                            @Value("${jwt.access-token-expire-seconds}") long accessTokenExpireSeconds) {
         this.accessTokenExpireSeconds = accessTokenExpireSeconds;
-        this.userDetailsService = userDetailsService;
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
@@ -60,14 +58,6 @@ public class JwtTokenProvider {
                 .build();
     }
 
-
-    // TODO : getAuthorities 말고 로직 변경 필요
-    public Authentication getAuthentication(String token) {
-        Claims claims = getClaims(token);
-        String email = claims.getSubject();
-        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-        return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
-    }
 
     public Claims getClaims(String token) {
         return Jwts
