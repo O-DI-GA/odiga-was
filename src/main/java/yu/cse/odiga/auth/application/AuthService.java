@@ -4,6 +4,9 @@ import io.jsonwebtoken.Claims;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,10 +33,11 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     // TODO : DTO 잘못된 데이터 들어올 경우 에러처리
 
-    public JwtTokenDto signUp(SignUpDto signUpDto) {
+    public User signUp(SignUpDto signUpDto) {
 
         if (userRepository.findByEmail(signUpDto.getEmail()).isPresent()) {
             throw new AlreadyExistUserException("이미 존재하는 이메일 입니다.");
@@ -48,20 +52,12 @@ public class AuthService {
 
         userRepository.save(user);
 
-        JwtTokenDto jwtTokenDto = jwtTokenProvider.createToken(user.getEmail(), user.getNickname() ,user.getRole().name());
-
-        RefreshToken refreshToken = RefreshToken.builder()
-                .token(jwtTokenDto.getRefreshToken())
-                .userEmail(user.getEmail())
-                .build();
-
-        refreshTokenRepository.save(refreshToken);
-
-        return jwtTokenDto;
+        return user;
     }
 
-    // TODO : refresh token 으로 access token 재발급 구현.
-
+    //
+//    // TODO : refresh token 으로 access token 재발급 구현.
+//
     public JwtTokenDto login(LoginDto loginDto) {
 
         User user = userRepository.findByEmail(loginDto.getEmail())
@@ -71,7 +67,7 @@ public class AuthService {
             throw new BadCredentialsException("비밀번호가 일치 하지 않습니다.");
         }
 
-        JwtTokenDto jwtTokenDto = jwtTokenProvider.createToken(user.getEmail(), user.getNickname() ,user.getRole().name());
+        JwtTokenDto jwtTokenDto = jwtTokenProvider.createToken(loginDto.getEmail());
 
         Optional<RefreshToken> refreshTokenInDB = refreshTokenRepository.findByUserEmail(user.getEmail());
 
@@ -89,9 +85,10 @@ public class AuthService {
 
         return jwtTokenDto;
     }
-    
-    // TODO : Security Exception 순서에 따라 Exception 처리 변경
 
+    //
+//    // TODO : Security Exception 순서에 따라 Exception 처리 변경
+//
     public JwtTokenDto reIssue(RefreshTokenDto refreshTokenDto) {
 
         if (!jwtTokenProvider.validateToken(refreshTokenDto.getRefreshToken())) {
@@ -112,7 +109,7 @@ public class AuthService {
             throw new IllegalArgumentException("올바르지 않은 token 입니다");
         }
 
-        JwtTokenDto jwtTokenDto = jwtTokenProvider.createToken(user.getEmail(), user.getNickname() ,user.getRole().name());
+        JwtTokenDto jwtTokenDto = jwtTokenProvider.createToken(user.getEmail());
 
         refreshToken.setToken(jwtTokenDto.getRefreshToken());
 

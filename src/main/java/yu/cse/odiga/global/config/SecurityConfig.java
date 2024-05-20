@@ -1,11 +1,15 @@
 package yu.cse.odiga.global.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
@@ -14,6 +18,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import yu.cse.odiga.auth.application.CustomUserDetailsService;
+import yu.cse.odiga.auth.dao.UserRepository;
 import yu.cse.odiga.global.jwt.JwtAuthenticationFilter;
 import yu.cse.odiga.global.jwt.JwtTokenProvider;
 
@@ -22,15 +28,16 @@ import yu.cse.odiga.global.jwt.JwtTokenProvider;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtTokenProvider jwtTokenProvider;
-
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain userFilterChain(HttpSecurity http,
+                                               JwtTokenProvider jwtTokenProvider,
+                                               @Qualifier("userAuthenticationProvider") AuthenticationProvider authenticationProvider)
+            throws Exception {
 
         http.
                 authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers(PathRequest.toH2Console()).permitAll()
+                        .requestMatchers(PathRequest.toH2Console()).permitAll() // 이 설정을 따로 빼줘야할듯
                         .anyRequest().authenticated()
                 )
                 // h2 설정
@@ -43,6 +50,8 @@ public class SecurityConfig {
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // session 을 사용하지 않음
                 )
 
+                .authenticationProvider(authenticationProvider)
+
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class);  // JwtAuthenticationFilter 작동 후 UsernamePasswordAuthenticationFilter 변경
 
@@ -52,5 +61,19 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public CustomUserDetailsService customUserDetailsService(UserRepository userRepository) {
+        return new CustomUserDetailsService(userRepository);
+    }
+
+    @Bean
+    public AuthenticationProvider userAuthenticationProvider(UserRepository userRepository,
+                                                             PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(customUserDetailsService(userRepository));
+        provider.setPasswordEncoder(passwordEncoder);
+        return provider;
     }
 }

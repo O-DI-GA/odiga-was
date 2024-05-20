@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import yu.cse.odiga.auth.application.AuthService;
@@ -19,7 +20,7 @@ public class AuthController {
     private final AuthService authService;
 
 
-    @RequestMapping("/signup")
+    @PostMapping("/signup")
     public ResponseEntity<?> signUp(@RequestBody SignUpDto signUpDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new DefaultResponse<>(201, "Sign up success", authService.signUp(signUpDto)));
@@ -30,7 +31,7 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new DefaultResponse<>(200, "login success", authService.login(loginDto)));
     }
-
+//
     @RequestMapping("/reissue")
     public ResponseEntity<?> reissue(@RequestBody RefreshTokenDto refreshTokenDto) {
         return ResponseEntity.status(HttpStatus.OK)

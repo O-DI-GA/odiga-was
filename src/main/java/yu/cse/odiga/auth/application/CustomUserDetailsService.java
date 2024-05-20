@@ -4,21 +4,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
 import yu.cse.odiga.auth.dao.UserRepository;
 import yu.cse.odiga.auth.domain.CustomUserDetails;
 import yu.cse.odiga.auth.domain.User;
 
-@Service
+//@Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) {
+        System.out.println("user details service");
         User user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username + "존재하지 않는 유저 입니다."));
+                .orElseThrow(() -> new UsernameNotFoundException("user not found"));
         return new CustomUserDetails(user);
     }
 }
