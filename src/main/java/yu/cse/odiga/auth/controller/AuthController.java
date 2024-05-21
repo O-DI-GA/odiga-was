@@ -25,13 +25,13 @@ public class AuthController {
                 .body(new DefaultResponse<>(201, "Sign up success", authService.signUp(signUpDto)));
     }
 
-    @RequestMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new DefaultResponse<>(200, "login success", authService.login(loginDto)));
     }
-//
-    @RequestMapping("/reissue")
+
+    @PostMapping("/reissue")
     public ResponseEntity<?> reissue(@RequestBody RefreshTokenDto refreshTokenDto) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new DefaultResponse<>(200, "reissue access token", authService.reIssue(refreshTokenDto)));
