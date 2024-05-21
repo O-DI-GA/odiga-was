@@ -24,19 +24,15 @@ public class OwnerAuthService {
     private final JwtTokenProvider jwtTokenProvider;
 
     public Owner ownerSignUp(OwnerSignUpDto ownerSignUpDto) {
-        try {
-            Owner owner = Owner.builder()
-                    .name(ownerSignUpDto.getName())
-                    .email(ownerSignUpDto.getEmail())
-                    .password(passwordEncoder.encode(ownerSignUpDto.getPassword()))
-                    .role(Role.ROLE_OWNER)
-                    .build();
+        Owner owner = Owner.builder()
+                .name(ownerSignUpDto.getName())
+                .email(ownerSignUpDto.getEmail())
+                .password(passwordEncoder.encode(ownerSignUpDto.getPassword()))
+                .role(Role.ROLE_OWNER)
+                .build();
 
-            return ownerRepository.save(owner);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return null;
+        return ownerRepository.save(owner);
+
     }
 
     public JwtTokenDto login(OwnerLoginDto ownerLoginDto) {
