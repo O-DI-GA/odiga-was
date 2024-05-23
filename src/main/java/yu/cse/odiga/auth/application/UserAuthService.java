@@ -26,6 +26,7 @@ import yu.cse.odiga.global.type.Role;
 @RequiredArgsConstructor
 public class UserAuthService {
 
+    private final ImageService imageService;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
@@ -47,6 +48,10 @@ public class UserAuthService {
                 .build();
 
         userRepository.save(user);
+
+        if (signUpDto.getProfileImage() != null && !signUpDto.getProfileImage().isEmpty()) {
+            imageService.upload(signUpDto.getProfileImage(), user);
+        }
 
         return user;
     }

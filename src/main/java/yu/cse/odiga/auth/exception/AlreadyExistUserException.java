@@ -1,6 +1,5 @@
 package yu.cse.odiga.auth.exception;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
