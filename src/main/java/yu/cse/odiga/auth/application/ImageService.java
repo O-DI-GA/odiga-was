@@ -26,7 +26,7 @@ public class ImageService {
     private final ImageRepository imageRepository;
     private final UserRepository userRepository;
 
-    @Value("${file.path:C:/Users/82102/OneDrive/문서/GTworkspace/odiga-was/upload/}")
+    @Value("${file.path:C:/Users/82102/OneDrive/바탕 화면/개강아지}")
     private String uploadFolder;
 
     public void upload(MultipartFile file, User user) {

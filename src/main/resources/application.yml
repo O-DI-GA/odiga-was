@@ -8,6 +8,9 @@ spring:
       name: user
       password: 1234
 
+  config:
+    import: classpath:S3.yml
+
   h2:
     console:
       enabled: true
