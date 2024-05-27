@@ -68,7 +68,7 @@ public class UserAuthService {
             throw new BadCredentialsException("비밀번호가 일치 하지 않습니다.");
         }
 
-        JwtTokenDto jwtTokenDto = jwtTokenProvider.createToken(loginDto.getEmail());
+        JwtTokenDto jwtTokenDto = jwtTokenProvider.createToken(user.getEmail());
 
         Optional<RefreshToken> refreshTokenInDB = refreshTokenRepository.findByUserEmail(user.getEmail());
 

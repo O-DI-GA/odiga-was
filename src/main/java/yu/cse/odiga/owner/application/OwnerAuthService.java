@@ -1,7 +1,6 @@
 package yu.cse.odiga.owner.application;
 
 
-import io.jsonwebtoken.Jwt;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,9 @@ public class OwnerAuthService {
                 .role(Role.ROLE_OWNER)
                 .build();
 
-        return ownerRepository.save(owner);
+        ownerRepository.save(owner);
+
+        return owner;
 
     }
 
