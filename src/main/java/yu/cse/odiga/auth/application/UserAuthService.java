@@ -1,6 +1,8 @@
 package yu.cse.odiga.auth.application;
 
 import io.jsonwebtoken.Claims;
+
+import java.io.IOException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -25,12 +27,11 @@ import yu.cse.odiga.global.type.Role;
 @Transactional
 @RequiredArgsConstructor
 public class UserAuthService {
-
-    private final ImageService imageService;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final S3UploadService s3UploadService;
 
     // TODO : DTO 잘못된 데이터 들어올 경우 에러처리
 
@@ -47,11 +48,15 @@ public class UserAuthService {
                 .role(Role.ROLE_USER)
                 .build();
 
-        userRepository.save(user);
-
         if (signUpDto.getProfileImage() != null && !signUpDto.getProfileImage().isEmpty()) {
-            imageService.upload(signUpDto.getProfileImage(), user);
+            try {
+                s3UploadService.upload(signUpDto.getProfileImage(), user);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
+
+        userRepository.save(user);
 
         return user;
     }
@@ -68,7 +73,7 @@ public class UserAuthService {
             throw new BadCredentialsException("비밀번호가 일치 하지 않습니다.");
         }
 
-        JwtTokenDto jwtTokenDto = jwtTokenProvider.createToken(user.getEmail());
+        JwtTokenDto jwtTokenDto = jwtTokenProvider.createToken(loginDto.getEmail());
 
         Optional<RefreshToken> refreshTokenInDB = refreshTokenRepository.findByUserEmail(user.getEmail());
 

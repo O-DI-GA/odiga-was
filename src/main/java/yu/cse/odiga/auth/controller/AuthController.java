@@ -14,23 +14,23 @@ import yu.cse.odiga.global.util.DefaultResponse;
 @RequiredArgsConstructor
 @RequestMapping("api/v1/user/auth")
 public class AuthController {
-    private final UserAuthService userauthService;
+    private final UserAuthService userAuthService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@ModelAttribute SignUpDto signUpDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new DefaultResponse<>(201, "Sign up success", userauthService.signUp(signUpDto)));
+                .body(new DefaultResponse<>(201, "Sign up success", userAuthService.signUp(signUpDto)));
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new DefaultResponse<>(200, "login success", userauthService.login(loginDto)));
+                .body(new DefaultResponse<>(200, "login success", userAuthService.login(loginDto)));
     }
 
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(@RequestBody RefreshTokenDto refreshTokenDto) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new DefaultResponse<>(200, "reissue access token", userauthService.reIssue(refreshTokenDto)));
+                .body(new DefaultResponse<>(200, "reissue access token", userAuthService.reIssue(refreshTokenDto)));
     }
 }
