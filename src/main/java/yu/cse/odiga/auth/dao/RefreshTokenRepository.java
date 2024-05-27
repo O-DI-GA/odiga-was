@@ -6,5 +6,4 @@ import yu.cse.odiga.auth.domain.RefreshToken;
 
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
     Optional<RefreshToken> findByUserEmail(String email);
-
 }

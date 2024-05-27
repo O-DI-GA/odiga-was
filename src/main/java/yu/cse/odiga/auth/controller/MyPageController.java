@@ -30,5 +30,4 @@ public class MyPageController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new DefaultResponse<>(200, "User profile fetched successfully", userProfile));
     }
-
 }

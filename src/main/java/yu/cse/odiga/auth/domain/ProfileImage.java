@@ -1,27 +1,31 @@
 package yu.cse.odiga.auth.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import java.time.LocalDateTime;
 
+@Entity
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-@Entity
-public class Image{
+public class ProfileImage{
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private long id;
-
-    private String caption;
-
     private String postImageUrl;
 
     @OneToOne
@@ -36,4 +40,3 @@ public class Image{
         this.createDate = LocalDateTime.now();
     }
 }
-
