@@ -1,25 +1,33 @@
-package yu.cse.odiga.auth.domain;
+package yu.cse.odiga.store.domain;
+
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import yu.cse.odiga.owner.domain.Owner;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RefreshToken {
+public class Store {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String token;
-    private String userEmail;
+    private String storeName;
+    private String phoneNumber;
+    private String address;
+    private int tableCount;
+
+    @ManyToOne
+    @JoinColumn
+    private Owner owner;
 }
