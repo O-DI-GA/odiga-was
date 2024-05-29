@@ -1,13 +1,17 @@
 package yu.cse.odiga.store.application;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import yu.cse.odiga.owner.domain.OwnerUserDetails;
 import yu.cse.odiga.store.dao.StoreRepository;
 import yu.cse.odiga.store.domain.Store;
+import yu.cse.odiga.store.domain.StoreImage;
 import yu.cse.odiga.store.dto.StoreRegisterDto;
 import yu.cse.odiga.store.dto.StoreResponseDto;
 
@@ -15,6 +19,7 @@ import yu.cse.odiga.store.dto.StoreResponseDto;
 @RequiredArgsConstructor
 public class OwnerStoreService {
     private final StoreRepository storeRepository;
+    private final StoreImageService storeImageService;
 
 
     @Transactional
@@ -27,6 +32,15 @@ public class OwnerStoreService {
                 .phoneNumber(storeRegisterDto.getPhoneNumber())
                 .address(storeRegisterDto.getAddress())
                 .build();
+
+        if (storeRegisterDto.getStoreImage() != null && storeRegisterDto.getStoreTitleImage() != null && !storeRegisterDto.getStoreImage().isEmpty() && !storeRegisterDto.getStoreTitleImage().isEmpty()) {
+            try {
+                storeImageService.upload(storeRegisterDto.getStoreTitleImage(), storeRegisterDto.getStoreImage(), store);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
 
         storeRepository.save(store);
     }
