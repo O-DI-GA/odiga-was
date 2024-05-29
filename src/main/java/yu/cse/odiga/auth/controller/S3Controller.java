@@ -6,7 +6,7 @@
 //import org.springframework.http.ResponseEntity;
 //import org.springframework.web.bind.annotation.*;
 //import org.springframework.web.multipart.MultipartFile;
-//import yu.cse.odiga.auth.application.S3UploadService;
+//import yu.cse.odiga.auth.application.S3ProfileImageUploadService;
 //
 //import java.io.IOException;
 //
@@ -15,7 +15,7 @@
 //@RequiredArgsConstructor
 //public class S3Controller {
 //
-//    private final S3UploadService s3UploadService;
+//    private final S3ProfileImageUploadService s3UploadService;
 //
 //    @PostMapping("/upload")
 //    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {

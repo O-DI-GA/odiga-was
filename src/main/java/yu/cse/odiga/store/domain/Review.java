@@ -7,25 +7,21 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.*;
-import yu.cse.odiga.owner.domain.Owner;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Store {
+public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String storeName;
-    private String phoneNumber;
-    private String address;
-    private int tableCount;
-    private int reviewCount = 0;
+    private String content;
+    private double rating;
+    private String imageUrl;
 
     @ManyToOne
     @JoinColumn
-    private Owner owner;
+    private Store store;
 }

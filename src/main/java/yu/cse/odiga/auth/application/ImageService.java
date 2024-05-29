@@ -44,15 +44,5 @@ public class ImageService {
 //        }
 //    }
 
-    public UserProfileDto getUserProfile(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        String profileImageUrl = (user.getProfileImage() != null) ? user.getProfileImage().getPostImageUrl(): null;
 
-        return UserProfileDto.builder()
-                .email(user.getEmail())
-                .nickname(user.getNickname())
-                .profileImageUrl(profileImageUrl)
-                .build();
-    }
 }
