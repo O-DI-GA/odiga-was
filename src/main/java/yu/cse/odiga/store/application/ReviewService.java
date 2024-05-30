@@ -12,6 +12,7 @@ import yu.cse.odiga.store.dto.ReviewRegisterDto;
 import yu.cse.odiga.store.dto.ReviewResponseDto;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class ReviewService {
     public void registerReview(Long storeId, ReviewRegisterDto reviewRegisterDto, CustomUserDetails customUserDetails) throws IOException {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid store ID: " + storeId));
-        String userNickname = customUserDetails.getNickname();
+        String userNickname = customUserDetails.getUser().getNickname();
         ProfileImage profileImage = customUserDetails.getProfileImage();
         String profileImageUrl = profileImage != null ? profileImage.getPostImageUrl() : null;
         String uploadImageUrl = s3ReviewImageUploadService.upload(reviewRegisterDto.getImage());
@@ -37,6 +38,7 @@ public class ReviewService {
                 .imageUrl(uploadImageUrl)
                 .store(store)
                 .userNickname(userNickname)
+                .createDate(LocalDateTime.now())
                 .userProfileImageUrl(profileImageUrl)
                 .build();
 
@@ -62,6 +64,7 @@ public class ReviewService {
                     .imageUrl(review.getImageUrl())
                     .userNickname(review.getUserNickname())
                     .userProfileImageUrl(review.getUserProfileImageUrl())
+                    .createDate(review.getCreateDate())
                     .build();
 
             responseReviews.add(reviewResponseDto);

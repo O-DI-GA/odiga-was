@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Builder
 @Getter
 @AllArgsConstructor
@@ -16,4 +18,5 @@ public class ReviewResponseDto {
     private String imageUrl;
     private String userNickname;
     private String userProfileImageUrl;
+    private LocalDateTime createDate;
 }
