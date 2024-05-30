@@ -17,6 +17,7 @@ import yu.cse.odiga.auth.domain.User;
 import yu.cse.odiga.auth.dto.LoginDto;
 import yu.cse.odiga.auth.dto.RefreshTokenDto;
 import yu.cse.odiga.auth.dto.SignUpDto;
+import yu.cse.odiga.auth.dto.UserProfileDto;
 import yu.cse.odiga.auth.exception.AlreadyExistUserException;
 import yu.cse.odiga.auth.exception.TokenNotFoundException;
 import yu.cse.odiga.global.jwt.JwtTokenDto;
@@ -120,5 +121,17 @@ public class UserAuthService {
         refreshToken.setToken(jwtTokenDto.getRefreshToken());
 
         return jwtTokenDto;
+    }
+
+    public UserProfileDto getUserProfile(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        String profileImageUrl = (user.getProfileImage() != null) ? user.getProfileImage().getPostImageUrl(): null;
+
+        return UserProfileDto.builder()
+                .email(user.getEmail())
+                .nickname(user.getNickname())
+                .profileImageUrl(profileImageUrl)
+                .build();
     }
 }
