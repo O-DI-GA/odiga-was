@@ -12,4 +12,5 @@ public class UserWaitingDetailDto {
     private String storeName;
     private int previousWaitingCount;
     private String waitingCode;
+    private int waitingNumber;
 }

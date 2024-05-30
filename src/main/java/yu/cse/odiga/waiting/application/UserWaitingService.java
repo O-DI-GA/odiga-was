@@ -18,7 +18,7 @@ import yu.cse.odiga.waiting.type.WaitingStatus;
 @Service
 @RequiredArgsConstructor
 public class UserWaitingService {
-    static final int RANDOM_CODE_LENGTH = 6;
+    private static final int RANDOM_CODE_LENGTH = 6;
 
     private final WaitingRepository waitingRepository;
     private final StoreRepository storeRepository;
@@ -82,6 +82,7 @@ public class UserWaitingService {
                 .storeName(waiting.getStore().getStoreName())
                 .previousWaitingCount(getPreviousWaitingCount(storeWaitings, waiting.getWaitingNumber()))
                 .waitingCode(waiting.getWaitingCode())
+                .waitingNumber(waiting.getWaitingNumber())
                 .build();
     }
 
@@ -99,10 +100,6 @@ public class UserWaitingService {
             }
         }
         return previousWaitingCount;
-    }
-
-    public int getIncompleteWaitingCount(Long storeId) {
-        return waitingRepository.findByStoreIdAndWaitingStatus(storeId, WaitingStatus.INCOMPLETE).size();
     }
 
     public String generateRandomCode() {
