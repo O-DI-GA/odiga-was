@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class ReviewResponseDto {
     private Long reviewId;
     private String content;
-    private double rating;
+    private int rating;
     private String imageUrl;
     private String userNickname;
     private String userProfileImageUrl;

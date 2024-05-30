@@ -20,9 +20,9 @@ public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     private String content;
-    private double rating;
+    private int rating;
     private String imageUrl;
     private LocalDateTime createDate;
 
