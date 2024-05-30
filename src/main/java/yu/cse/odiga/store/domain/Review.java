@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import yu.cse.odiga.auth.domain.User;
 
 import java.time.LocalDateTime;
 
@@ -23,10 +24,11 @@ public class Review {
     private String content;
     private double rating;
     private String imageUrl;
-
-    private String userNickname;
-    private String userProfileImageUrl;
     private LocalDateTime createDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToOne
     @JoinColumn

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import yu.cse.odiga.auth.domain.CustomUserDetails;
 import yu.cse.odiga.auth.domain.ProfileImage;
+import yu.cse.odiga.auth.domain.User;
 import yu.cse.odiga.store.dao.ReviewRepository;
 import yu.cse.odiga.store.dao.StoreRepository;
 import yu.cse.odiga.store.domain.Review;
@@ -27,19 +28,17 @@ public class ReviewService {
     public void registerReview(Long storeId, ReviewRegisterDto reviewRegisterDto, CustomUserDetails customUserDetails) throws IOException {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid store ID: " + storeId));
-        String userNickname = customUserDetails.getUser().getNickname();
-        ProfileImage profileImage = customUserDetails.getProfileImage();
-        String profileImageUrl = profileImage != null ? profileImage.getPostImageUrl() : null;
         String uploadImageUrl = s3ReviewImageUploadService.upload(reviewRegisterDto.getImage());
+
+        User user = customUserDetails.getUser();
 
         Review review = Review.builder()
                 .content(reviewRegisterDto.getContent())
                 .rating(reviewRegisterDto.getRating())
                 .imageUrl(uploadImageUrl)
                 .store(store)
-                .userNickname(userNickname)
+                .user(user)
                 .createDate(LocalDateTime.now())
-                .userProfileImageUrl(profileImageUrl)
                 .build();
 
         reviewRepository.save(review);
@@ -57,13 +56,17 @@ public class ReviewService {
         List<ReviewResponseDto> responseReviews = new ArrayList<>();
 
         for (Review review : reviews) {
+            User user = review.getUser();
+            String userNickname = user.getNickname();
+            String userProfileImageUrl = user.getProfileImage() != null ? user.getProfileImage().getPostImageUrl() : null;
+
             ReviewResponseDto reviewResponseDto = ReviewResponseDto.builder()
                     .reviewId(review.getId())
                     .content(review.getContent())
                     .rating(review.getRating())
                     .imageUrl(review.getImageUrl())
-                    .userNickname(review.getUserNickname())
-                    .userProfileImageUrl(review.getUserProfileImageUrl())
+                    .userNickname(userNickname)
+                    .userProfileImageUrl(userProfileImageUrl)
                     .createDate(review.getCreateDate())
                     .build();
 
