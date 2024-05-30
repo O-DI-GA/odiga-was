@@ -1,7 +1,9 @@
 package yu.cse.odiga.store.application;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,7 @@ import yu.cse.odiga.store.dto.StoreResponseDto;
 @RequiredArgsConstructor
 public class OwnerStoreService {
     private final StoreRepository storeRepository;
+    private final StoreImageService storeImageService;
 
 
     @Transactional
@@ -28,6 +31,15 @@ public class OwnerStoreService {
                 .address(storeRegisterDto.getAddress())
                 .tableCount(storeRegisterDto.getTableCount())
                 .build();
+
+        if (storeRegisterDto.getStoreImage() != null && storeRegisterDto.getStoreTitleImage() != null && !storeRegisterDto.getStoreImage().isEmpty() && !storeRegisterDto.getStoreTitleImage().isEmpty()) {
+            try {
+                storeImageService.upload(storeRegisterDto.getStoreTitleImage(), storeRegisterDto.getStoreImage(), store);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
 
         storeRepository.save(store);
     }
