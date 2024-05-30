@@ -1,4 +1,4 @@
-package yu.cse.odiga.auth.dto;
+package yu.cse.odiga.store.dto;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -1,9 +1,9 @@
-package yu.cse.odiga.auth.domain;
+package yu.cse.odiga.store.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import yu.cse.odiga.store.domain.Store;
+import yu.cse.odiga.auth.domain.User;
 
 
 @Entity

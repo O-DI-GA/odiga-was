@@ -4,8 +4,6 @@ package yu.cse.odiga.store.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
-import yu.cse.odiga.auth.domain.LikeStore;
 import yu.cse.odiga.owner.domain.Owner;
 
 import java.util.List;

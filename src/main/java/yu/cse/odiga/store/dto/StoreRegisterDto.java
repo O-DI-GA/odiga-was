@@ -4,7 +4,6 @@ package yu.cse.odiga.store.dto;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
-import yu.cse.odiga.store.domain.StoreImage;
 
 import java.util.List;
 

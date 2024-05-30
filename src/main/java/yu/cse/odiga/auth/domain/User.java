@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import yu.cse.odiga.global.type.Role;
+import yu.cse.odiga.store.domain.LikeStore;
 
 import java.util.List;
 

@@ -1,8 +1,8 @@
-package yu.cse.odiga.auth.dao;
+package yu.cse.odiga.store.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import yu.cse.odiga.auth.domain.LikeStore;
+import yu.cse.odiga.store.domain.LikeStore;
 import yu.cse.odiga.auth.domain.User;
 import yu.cse.odiga.store.domain.Store;
 

@@ -7,11 +7,9 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import yu.cse.odiga.owner.domain.OwnerUserDetails;
 import yu.cse.odiga.store.dao.StoreRepository;
 import yu.cse.odiga.store.domain.Store;
-import yu.cse.odiga.store.domain.StoreImage;
 import yu.cse.odiga.store.dto.StoreRegisterDto;
 import yu.cse.odiga.store.dto.StoreResponseDto;
 
