@@ -3,11 +3,12 @@ package yu.cse.odiga.store.dto;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
+import yu.cse.odiga.store.domain.Rating;
 
 @Builder
 @Getter
 public class ReviewRegisterDto {
     private String content;
-    private double rating;
+    private Rating rating;
     private MultipartFile image;
 }

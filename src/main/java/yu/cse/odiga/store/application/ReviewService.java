@@ -3,7 +3,6 @@ package yu.cse.odiga.store.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import yu.cse.odiga.auth.domain.CustomUserDetails;
-import yu.cse.odiga.auth.domain.ProfileImage;
 import yu.cse.odiga.auth.domain.User;
 import yu.cse.odiga.store.dao.ReviewRepository;
 import yu.cse.odiga.store.dao.StoreRepository;
@@ -63,7 +62,7 @@ public class ReviewService {
             ReviewResponseDto reviewResponseDto = ReviewResponseDto.builder()
                     .reviewId(review.getId())
                     .content(review.getContent())
-                    .rating(review.getRating())
+                    .rating(review.getRating().getValue())
                     .imageUrl(review.getImageUrl())
                     .userNickname(userNickname)
                     .userProfileImageUrl(userProfileImageUrl)

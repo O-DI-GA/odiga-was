@@ -1,12 +1,17 @@
 package yu.cse.odiga.store.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import yu.cse.odiga.auth.domain.User;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,14 +20,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Review {
-
-    // TODO : User entity 랑 연관 맺어야함, score 0 ~ 5 점 enum 으로 바꾸는게 좋을듯 (정수)
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String content;
-    private int rating;
+    private Rating rating;
     private String imageUrl;
     private LocalDateTime createDate;
 
