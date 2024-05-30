@@ -2,6 +2,8 @@ package yu.cse.odiga.store.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import yu.cse.odiga.auth.domain.CustomUserDetails;
+import yu.cse.odiga.auth.domain.ProfileImage;
 import yu.cse.odiga.store.dao.ReviewRepository;
 import yu.cse.odiga.store.dao.StoreRepository;
 import yu.cse.odiga.store.domain.Review;
@@ -21,16 +23,21 @@ public class ReviewService {
     private final StoreRepository storeRepository;
     private final S3ReviewImageUploadService s3ReviewImageUploadService;
 
-    public void registerReview(Long storeId, ReviewRegisterDto reviewRegisterDto) throws IOException {
-        String uploadImageUrl = s3ReviewImageUploadService.upload(reviewRegisterDto.getImage());
+    public void registerReview(Long storeId, ReviewRegisterDto reviewRegisterDto, CustomUserDetails customUserDetails) throws IOException {
         Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 가게가 존재하지 않습니다. id=" + storeId));
+                .orElseThrow(() -> new IllegalArgumentException("Invalid store ID: " + storeId));
+        String userNickname = customUserDetails.getNickname();
+        ProfileImage profileImage = customUserDetails.getProfileImage();
+        String profileImageUrl = profileImage != null ? profileImage.getPostImageUrl() : null;
+        String uploadImageUrl = s3ReviewImageUploadService.upload(reviewRegisterDto.getImage());
 
         Review review = Review.builder()
                 .content(reviewRegisterDto.getContent())
                 .rating(reviewRegisterDto.getRating())
                 .imageUrl(uploadImageUrl)
                 .store(store)
+                .userNickname(userNickname)
+                .userProfileImageUrl(profileImageUrl)
                 .build();
 
         reviewRepository.save(review);
@@ -53,6 +60,8 @@ public class ReviewService {
                     .content(review.getContent())
                     .rating(review.getRating())
                     .imageUrl(review.getImageUrl())
+                    .userNickname(review.getUserNickname())
+                    .userProfileImageUrl(review.getUserProfileImageUrl())
                     .build();
 
             responseReviews.add(reviewResponseDto);

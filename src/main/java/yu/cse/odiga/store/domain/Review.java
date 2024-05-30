@@ -6,7 +6,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
@@ -20,6 +23,8 @@ public class Review {
     private String content;
     private double rating;
     private String imageUrl;
+    private String userNickname;
+    private String userProfileImageUrl;
 
     @ManyToOne
     @JoinColumn
