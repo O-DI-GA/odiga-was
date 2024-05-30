@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import yu.cse.odiga.owner.domain.Owner;
-
+import yu.cse.odiga.waiting.domain.Waiting;
 import java.util.List;
 
 @Entity
@@ -47,4 +47,8 @@ public class Store {
 
     @Column
     private Integer likeCount = 0;
+
+    @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
+    private List<Waiting> waitingList = new ArrayList<>();
+
 }

@@ -9,8 +9,9 @@ import lombok.Getter;
 import lombok.Setter;
 import yu.cse.odiga.global.type.Role;
 import yu.cse.odiga.store.domain.LikeStore;
-
 import java.util.List;
+import yu.cse.odiga.store.domain.Store;
+import yu.cse.odiga.waiting.domain.Waiting;
 
 @Entity
 @Getter
@@ -36,6 +37,9 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Waiting> waitingList = new ArrayList<>();
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private ProfileImage profileImage;
