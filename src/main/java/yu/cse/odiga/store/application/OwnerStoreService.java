@@ -26,6 +26,7 @@ public class OwnerStoreService {
                 .storeName(storeRegisterDto.getStoreName())
                 .phoneNumber(storeRegisterDto.getPhoneNumber())
                 .address(storeRegisterDto.getAddress())
+                .tableCount(storeRegisterDto.getTableCount())
                 .build();
 
         storeRepository.save(store);
