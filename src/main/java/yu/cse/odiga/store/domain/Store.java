@@ -30,6 +30,7 @@ public class Store {
 
     @Column
     private int tableCount;
+    private int reviewCount = 0;
 
     @ManyToOne
     @JoinColumn

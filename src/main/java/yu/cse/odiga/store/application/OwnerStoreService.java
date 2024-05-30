@@ -55,6 +55,7 @@ public class OwnerStoreService {
                     .address(s.getAddress())
                     .phoneNumber(s.getPhoneNumber())
                     .storeName(s.getStoreName())
+                    .reviewCount(s.getReviewCount())
                     .build();
 
             responseStores.add(storeResponseDto);
@@ -62,5 +63,4 @@ public class OwnerStoreService {
 
         return responseStores;
     }
-
 }

@@ -15,4 +15,5 @@ public class StoreResponseDto {
     private String storeName;
     private String address;
     private String phoneNumber;
+    private int reviewCount;
 }
