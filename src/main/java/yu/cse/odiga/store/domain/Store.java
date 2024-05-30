@@ -3,6 +3,7 @@ package yu.cse.odiga.store.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import java.util.ArrayList;
 import lombok.*;
 import yu.cse.odiga.owner.domain.Owner;
 import yu.cse.odiga.waiting.domain.Waiting;

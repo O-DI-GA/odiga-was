@@ -2,6 +2,7 @@ package yu.cse.odiga.auth.domain;
 
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Builder;
@@ -10,7 +11,6 @@ import lombok.Setter;
 import yu.cse.odiga.global.type.Role;
 import yu.cse.odiga.store.domain.LikeStore;
 import java.util.List;
-import yu.cse.odiga.store.domain.Store;
 import yu.cse.odiga.waiting.domain.Waiting;
 
 @Entity
