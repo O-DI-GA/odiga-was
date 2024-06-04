@@ -11,12 +11,6 @@ java {
 	sourceCompatibility = '17'
 }
 
-bootJar{
-	archivesBaseName = 'odiga-was'
-	archiveFileName = 'odiga-was.jar'
-	archiveVersion = "0.0.1"
-}
-
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
