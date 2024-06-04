@@ -32,13 +32,14 @@ public class Store {
     @Column
     private int tableCount;
     private int reviewCount = 0;
+    private int likeCount = 0;
 
     @ManyToOne
     @JoinColumn
     @JsonIgnore
     private Owner owner;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "store",cascade = CascadeType.ALL, orphanRemoval = true)
     private StoreTItleImage storeTItleImage;
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -47,8 +48,8 @@ public class Store {
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LikeStore> likeStores;
 
-    @Column
-    private Integer likeCount = 0;
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Menu> menus;
 
     @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
     private List<Waiting> waitingList = new ArrayList<>();

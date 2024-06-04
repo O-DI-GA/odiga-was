@@ -26,8 +26,4 @@ public class StoreImage{
 
     private LocalDateTime createDate;
 
-    @PrePersist
-    public void createDate(){
-        this.createDate = LocalDateTime.now();
-    }
 }
