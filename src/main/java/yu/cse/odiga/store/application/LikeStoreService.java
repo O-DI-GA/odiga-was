@@ -41,8 +41,7 @@ public class LikeStoreService {
 
         likeStoreRepository.save(likeStore);
 
-        Integer currentLikeCount = store.getLikeCount();
-        store.setLikeCount(currentLikeCount != null ? currentLikeCount + 1 : 1);
+        store.setLikeCount(store.getLikeCount()+ 1);
 
         return store;
     }
