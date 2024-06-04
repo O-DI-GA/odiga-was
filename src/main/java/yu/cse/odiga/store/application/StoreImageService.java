@@ -8,10 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import yu.cse.odiga.global.S3.S3Util;
 import yu.cse.odiga.store.dao.StoreImageRepository;
-import yu.cse.odiga.store.dao.StoreTitleImageRepository;
 import yu.cse.odiga.store.domain.Store;
 import yu.cse.odiga.store.domain.StoreImage;
-import yu.cse.odiga.store.domain.StoreTItleImage;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,11 +26,7 @@ public class StoreImageService {
 
     private final S3Util s3Util;
     private final StoreImageRepository storeImageRepository;
-    private final StoreTitleImageRepository storeTitleImageRepository;
-
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
-
+    
     public void upload(MultipartFile titleImageFile, List<MultipartFile> multipartFileList, Store store) throws IOException {
 
         String originalFileName = titleImageFile.getOriginalFilename();
@@ -44,14 +38,7 @@ public class StoreImageService {
         String uploadImageUrl = s3Util.putS3(uploadFile, uniqueFileName);
         s3Util.removeNewFile(uploadFile);
 
-        StoreTItleImage storeTItleImage = StoreTItleImage.builder()
-                .postImageUrl(uploadImageUrl)
-                .store(store)
-                .createDate(LocalDateTime.now())
-                .build();
-
-        storeTitleImageRepository.save(storeTItleImage);      // 개짜침
-
+        store.setStoreTitleImage(uploadImageUrl);
         // 이미지 여러개 받는걸로 수정
 
         List<StoreImage> storeImages = new ArrayList<>();

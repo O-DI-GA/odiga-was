@@ -39,8 +39,8 @@ public class Store {
     @JsonIgnore
     private Owner owner;
 
-    @OneToOne(mappedBy = "store",cascade = CascadeType.ALL, orphanRemoval = true)
-    private StoreTItleImage storeTItleImage;
+    @Column
+    private String storeTitleImage;
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StoreImage> storeImages;
