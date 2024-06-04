@@ -35,7 +35,7 @@ public class UserWaitingService {
                 .user(customUserDetails.getUser())
                 .store(store)
                 .waitingNumber(store.getWaitingList().size() + 1)
-                .waitingCode(generateRandomCode())
+                .waitingCode(generateRandomCode()) // code 가 unique 하게 들어가야함
                 .waitingStatus(WaitingStatus.INCOMPLETE)
                 .build();
 
