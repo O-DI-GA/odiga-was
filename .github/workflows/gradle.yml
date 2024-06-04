@@ -55,5 +55,5 @@ jobs:
         key: ${{ secrets.KEY }}
         script: |
           sudo docker rm $(sudo docker ps -a)
-          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/odiga-develop-was
-          sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/odiga-develop-was
+          sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/odiga-develop-was
+          sudo docker run -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/odiga-develop-was
