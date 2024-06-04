@@ -54,4 +54,6 @@ public class Store {
     @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
     private List<Waiting> waitingList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
+    private List<Review> reviewList = new ArrayList<>();
 }

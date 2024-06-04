@@ -8,6 +8,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 public class ReviewRegisterDto {
     private String content;
-    private double rating;
+    private int rating;
     private MultipartFile image;
 }
