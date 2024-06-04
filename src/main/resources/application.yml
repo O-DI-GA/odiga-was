@@ -29,3 +29,5 @@ spring:
     generate-ddl: true
     hibernate:
       ddl-auto: create-drop
+
+
