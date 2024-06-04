@@ -3,7 +3,6 @@ package yu.cse.odiga.store.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import yu.cse.odiga.auth.domain.CustomUserDetails;
-import yu.cse.odiga.auth.domain.ProfileImage;
 import yu.cse.odiga.store.dao.ReviewRepository;
 import yu.cse.odiga.store.dao.StoreRepository;
 import yu.cse.odiga.store.domain.Review;
@@ -28,8 +27,7 @@ public class ReviewService {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid store ID: " + storeId));
         String userNickname = customUserDetails.getUser().getNickname();
-        ProfileImage profileImage = customUserDetails.getProfileImage();
-        String profileImageUrl = profileImage != null ? profileImage.getPostImageUrl() : null;
+        String profileImageUrl = customUserDetails.getProfileImageUrl() != null ? customUserDetails.getProfileImageUrl() : null;
         String uploadImageUrl = s3ReviewImageUploadService.upload(reviewRegisterDto.getImage());
 
         Review review = Review.builder()

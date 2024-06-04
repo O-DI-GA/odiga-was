@@ -29,7 +29,9 @@ public class CustomUserDetails implements UserDetails {
         return user.getEmail();
     }
 
-    public ProfileImage getProfileImage() {return user.getProfileImage();}
+    public String getProfileImageUrl() {
+        return user.getProfileImageUrl();
+    }
 
     @Override
     public boolean isAccountNonExpired() {
