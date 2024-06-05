@@ -48,15 +48,15 @@ public class StoreService {
                 .filter(waiting -> waiting.getWaitingStatus() == WaitingStatus.INCOMPLETE)
                 .toList();
 
-        double averageReviewScore = store.getReviewList().stream().mapToInt(Review::getRating).average()
-                .orElse(EMPTY_REVIVE_RATING);
+//        double averageReviewScore = store.getReviewList().stream().mapToInt(Review::getRating).average()
+//                .orElse(EMPTY_REVIVE_RATING);
 
         int emptyTableCount = Math.max(store.getTableCount() - incompleteWaitings.size(), EMPTY_TABLE_COUNT);
 
         return StoreDetailDto.builder()
                 .storeName(store.getStoreName())
                 .storeTitleImage(store.getStoreTitleImage())
-                .averageRating(averageReviewScore)
+                .averageRating(EMPTY_REVIVE_RATING)
                 .likeCount(store.getLikeCount())
                 .address(store.getAddress())
                 .tableCount(store.getTableCount())
