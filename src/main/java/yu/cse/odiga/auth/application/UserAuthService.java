@@ -23,11 +23,14 @@ import yu.cse.odiga.auth.exception.TokenNotFoundException;
 import yu.cse.odiga.global.jwt.JwtTokenDto;
 import yu.cse.odiga.global.jwt.JwtTokenProvider;
 import yu.cse.odiga.global.type.Role;
+import org.springframework.beans.factory.annotation.Value;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class UserAuthService {
+    @Value("${profile.default-image-url}")
+    private String defaultProfileImageUrl;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
@@ -55,6 +58,8 @@ public class UserAuthService {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+        } else {
+            user.setProfileImageUrl(defaultProfileImageUrl);
         }
 
         userRepository.save(user);
