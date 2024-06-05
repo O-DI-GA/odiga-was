@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import yu.cse.odiga.store.type.Rating;
 
 import java.time.LocalDateTime;
 

@@ -1,4 +1,4 @@
-package yu.cse.odiga.store.domain;
+package yu.cse.odiga.store.type;
 
 import lombok.Getter;
 
