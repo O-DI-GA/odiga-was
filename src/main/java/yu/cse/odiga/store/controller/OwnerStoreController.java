@@ -1,5 +1,6 @@
 package yu.cse.odiga.store.controller;
 
+import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import yu.cse.odiga.global.util.DefaultResponse;
 import yu.cse.odiga.owner.domain.OwnerUserDetails;
 import yu.cse.odiga.store.application.OwnerStoreService;
+import yu.cse.odiga.store.dto.MenuRegisterDto;
+import yu.cse.odiga.store.dto.MenuResponseDto;
 import yu.cse.odiga.store.dto.StoreRegisterDto;
 import yu.cse.odiga.store.dto.StoreResponseDto;
 
@@ -31,4 +34,17 @@ public class OwnerStoreController {
         return ResponseEntity.status(200).body(new DefaultResponse<>(200, "find stores", stores));
     }
 
+    @PostMapping("/{storeId}/menu")
+    public ResponseEntity<?> registerMenu(@PathVariable Long storeId, @AuthenticationPrincipal OwnerUserDetails ownerUserDetails, @ModelAttribute  // modelattribute로 수정
+    MenuRegisterDto menuRegisterDto) throws IOException {
+        ownerStoreService.menuRegister(ownerUserDetails, storeId, menuRegisterDto);
+        return ResponseEntity.status(201).body(new DefaultResponse<>(201, "created menu", null));
+    }
+
+    @GetMapping("/{storeId}/menu")
+    public ResponseEntity<?> findStoreMenu(@PathVariable Long storeId, @AuthenticationPrincipal OwnerUserDetails ownerUserDetails) {
+        List<MenuResponseDto> menus = ownerStoreService.findStoreMenu(ownerUserDetails, storeId);
+
+        return ResponseEntity.status(200).body(new DefaultResponse<>(200, "find menus", menus));
+    }
 }

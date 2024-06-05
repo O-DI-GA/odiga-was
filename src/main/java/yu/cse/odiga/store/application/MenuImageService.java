@@ -1,8 +1,5 @@
 package yu.cse.odiga.store.application;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,11 +8,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import yu.cse.odiga.global.S3.S3Util;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.UUID;
+
 @Transactional
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class S3ReviewImageUploadService {
+public class MenuImageService {
     private final S3Util s3Util;
 
     @Value("${cloud.aws.s3.bucket}")
@@ -24,7 +25,7 @@ public class S3ReviewImageUploadService {
     public String upload(MultipartFile multipartFile) throws IOException {
         String originalFileName = multipartFile.getOriginalFilename();
         String uuid = UUID.randomUUID().toString();
-        String uniqueFileName = "review/" + uuid + "_" + originalFileName.replaceAll("\\s", "_");
+        String uniqueFileName = "menuImage/" + uuid + "_" + originalFileName.replaceAll("\\s", "_");
 
         log.info("fileName: " + uniqueFileName);
 

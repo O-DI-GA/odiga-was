@@ -12,7 +12,7 @@ import yu.cse.odiga.store.application.StoreService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v1/store/")
+@RequestMapping("api/v1/store")
 public class StoreController {
 
     private final StoreService storeService;
@@ -21,6 +21,11 @@ public class StoreController {
     ResponseEntity<?> storeDetails(@PathVariable Long storeId) {
         return ResponseEntity.status(200)
                 .body(new DefaultResponse<>(200, storeId + " store details", storeService.findByStoreId(storeId)));
+    }
+
+    @GetMapping()
+    ResponseEntity<?> findAll() {
+        return ResponseEntity.status(200).body(new DefaultResponse<>(200, "find all store", storeService.findAll()));
     }
 
 }

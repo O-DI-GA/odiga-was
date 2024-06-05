@@ -126,7 +126,7 @@ public class UserAuthService {
     public UserProfileDto getUserProfile(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        String profileImageUrl = (user.getProfileImage() != null) ? user.getProfileImage().getPostImageUrl(): null;
+        String profileImageUrl = (user.getProfileImageUrl() != null) ? user.getProfileImageUrl(): null;
 
         return UserProfileDto.builder()
                 .email(user.getEmail())

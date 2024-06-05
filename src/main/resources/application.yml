@@ -4,7 +4,7 @@ jwt:
 
 spring:
   security:
-    user:
+    0ser:
       name: user
       password: 1234
   servlet:
@@ -29,3 +29,5 @@ spring:
     generate-ddl: true
     hibernate:
       ddl-auto: create-drop
+
+
