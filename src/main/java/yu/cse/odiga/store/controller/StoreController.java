@@ -12,7 +12,7 @@ import yu.cse.odiga.store.application.StoreService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v1/store/")
+@RequestMapping("api/v1/store")
 public class StoreController {
 
     private final StoreService storeService;
