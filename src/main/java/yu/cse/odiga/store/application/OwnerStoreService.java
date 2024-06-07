@@ -8,15 +8,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import yu.cse.odiga.owner.domain.OwnerUserDetails;
+import yu.cse.odiga.store.dao.CategoryRepository;
 import yu.cse.odiga.store.dao.MenuRepository;
 import yu.cse.odiga.store.dao.StoreRepository;
+import yu.cse.odiga.store.domain.Category;
 import yu.cse.odiga.store.domain.Menu;
 import yu.cse.odiga.store.domain.Store;
-import yu.cse.odiga.store.dto.MenuRegisterDto;
-import yu.cse.odiga.store.dto.MenuResponseDto;
-import yu.cse.odiga.store.dto.StoreRegisterDto;
-import yu.cse.odiga.store.dto.StoreResponseDto;
-import yu.cse.odiga.store.type.Category;
+import yu.cse.odiga.store.dto.*;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +22,7 @@ public class OwnerStoreService {
     private final StoreRepository storeRepository;
     private final StoreImageService storeImageService;
     private final MenuRepository menuRepository;
+    private final CategoryRepository categoryRepository;
     private final MenuImageService menuImageService;
 
     @Transactional
@@ -70,33 +69,74 @@ public class OwnerStoreService {
         return responseStores;
     }
 
-    public void menuRegister(OwnerUserDetails ownerUserDetails, Long storeId, MenuRegisterDto menuRegisterDto) throws IOException {
+    public void categoryRegister(OwnerUserDetails ownerUserDetails, Long storeId, CategoryDto categoryDto) {
         Store store = storeRepository.findByOwnerIdAndId(ownerUserDetails.getOwner().getId(), storeId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid store ID: " + storeId));
-        String menuName = menuRegisterDto.getMenuName();
-        int price = menuRegisterDto.getPrice();
-        String caption = menuRegisterDto.getCaption();
-        Category category = Category.valueOf(menuRegisterDto.getCategory());
-        String menuImageUrl = menuImageService.upload(menuRegisterDto.getMenuImage());
 
-        Menu menu = Menu.builder()
-                .menuName(menuName)
-                .price(price)
-                .caption(caption)
-                .menuImageUrl(menuImageUrl)
-                .category(category)
+        Category category = Category.builder()
+                .name(categoryDto.getName())
                 .store(store)
                 .build();
 
-        menuRepository.save(menu);
+        categoryRepository.save(category);
+    }
+
+    public List<CategoryDto> findCategory(OwnerUserDetails ownerUserDetails, Long storeId) {
+        Store store = storeRepository.findByOwnerIdAndId(ownerUserDetails.getOwner().getId(), storeId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid store ID: " + storeId));
+
+
+        List<Category> categories = store.getCategories();
+        List<CategoryDto> responseCategories = new ArrayList<>();
+
+        for (Category category : categories) {
+            CategoryDto categoryDto = CategoryDto.builder()
+                    .name(category.getName())
+                    .build();
+
+            responseCategories.add(categoryDto);
+        }
+
+        return responseCategories;
+    }
+
+
+    public void menuRegister(OwnerUserDetails ownerUserDetails, Long storeId, Long categoryId, MenuRegisterDto menuRegisterDto) throws IOException {
+
+        Store store = storeRepository.findByOwnerIdAndId(ownerUserDetails.getOwner().getId(), storeId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid storeID: " + storeId));
+        Category category = categoryRepository.findByStoreIdAndId(storeId, categoryId)
+                .orElseThrow(() -> new IllegalArgumentException(("Invalid categoryId: " + categoryId)));
+
+        if(store.getId()==category.getStore().getId()){
+            String menuName = menuRegisterDto.getMenuName();
+            int price = menuRegisterDto.getPrice();
+            String caption = menuRegisterDto.getCaption();
+            String menuImageUrl = menuImageService.upload(menuRegisterDto.getMenuImage());
+
+            Menu menu = Menu.builder()
+                    .menuName(menuName)
+                    .price(price)
+                    .caption(caption)
+                    .menuImageUrl(menuImageUrl)
+                    .category(category)
+                    .build();
+
+            menuRepository.save(menu);
+        }else{
+            // 같지 않다면 예외 처리하고싶은데 예외 처리 어케 하노 ㅅㅂ~~
+        }
+
 
     }
 
-    public List<MenuResponseDto> findStoreMenu(OwnerUserDetails ownerUserDetails, Long storeId) {
+    public List<MenuResponseDto> findMenu(OwnerUserDetails ownerUserDetails, Long storeId, Long categoryId) {
 
         Store store = storeRepository.findByOwnerIdAndId(ownerUserDetails.getOwner().getId(), storeId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid store ID: " + storeId));
-        List<Menu> storeMenus = store.getMenus();
+        Category category = categoryRepository.findByStoreIdAndId(storeId, categoryId)
+                .orElseThrow(() -> new IllegalArgumentException(("Invalid categoryId: " + categoryId)));
+        List<Menu> storeMenus = category.getMenus();
         List<MenuResponseDto> responseMenus = new ArrayList<>();
 
         for (Menu menu : storeMenus) {
@@ -113,5 +153,6 @@ public class OwnerStoreService {
 
         return responseMenus;
     }
+
 
 }
