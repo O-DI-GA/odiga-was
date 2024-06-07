@@ -10,10 +10,11 @@ import yu.cse.odiga.waiting.dto.WaitingValidateDto;
 @RequiredArgsConstructor
 public class GuestWaitingService {
 
-    final WaitingRepository waitingRepository;
+    private final WaitingRepository waitingRepository;
 
-    void waitingValidate(WaitingValidateDto waitingValidateDto) {
-        Waiting waiting = waitingRepository.findByWaitingCode(waitingValidateDto.getWaitingCode()).orElseThrow();
+    public void waitingValidate(WaitingValidateDto waitingValidateDto, Long storeId) {
+        Waiting waiting = waitingRepository.findByWaitingCodeAndStoreId(waitingValidateDto.getWaitingCode(), storeId)
+                .orElseThrow();
         waiting.changeWaitingStatusToComplete();
     }
 }

@@ -21,7 +21,7 @@ public class UserWaitingController {
 
     private final UserWaitingService userWaitingService;
 
-    @PostMapping("register/{storeId}")
+    @PostMapping("{storeId}")
     public ResponseEntity<?> registerWaiting(@PathVariable Long storeId,
                                              @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         userWaitingService.registerWaiting(storeId, customUserDetails);
@@ -29,7 +29,7 @@ public class UserWaitingController {
         return ResponseEntity.status(201).body(new DefaultResponse<>(201, "register waiting", null));
     }
 
-    @DeleteMapping("register/{storeId}")
+    @DeleteMapping("{storeId}")
     public ResponseEntity<?> unregisterWaiting(@PathVariable Long storeId,
                                                @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         userWaitingService.unregisterWaiting(storeId, customUserDetails);

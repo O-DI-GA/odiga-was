@@ -31,7 +31,11 @@ public class Store {
 
     @Column
     private int tableCount;
+
+    @Builder.Default
     private int reviewCount = 0;
+
+    @Builder.Default
     private int likeCount = 0;
 
     @ManyToOne

@@ -11,15 +11,11 @@ import yu.cse.odiga.waiting.type.WaitingStatus;
 @Repository
 public interface WaitingRepository extends JpaRepository<Waiting, Long> {
 
-    List<Waiting> findByUserIdAndWaitingStatus(Long userId, WaitingStatus waitingStatus);
-
     List<Waiting> findByUserId(Long userId);
 
     List<Waiting> findByStoreId(Long storeId);
 
     Optional<Waiting> findByStoreIdAndUserId(Long storeId, Long userId);
 
-    List<Waiting> findByStoreIdAndWaitingStatus(Long storeId, WaitingStatus waitingStatus);
-
-    Optional<Waiting> findByWaitingCode(String waitingCode);
+    Optional<Waiting> findByWaitingCodeAndStoreId(String waitingCode, Long storeId);
 }
