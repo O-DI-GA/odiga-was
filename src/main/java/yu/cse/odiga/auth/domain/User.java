@@ -10,6 +10,8 @@ import lombok.Setter;
 import yu.cse.odiga.global.type.Role;
 import yu.cse.odiga.store.domain.LikeStore;
 import java.util.List;
+
+import yu.cse.odiga.store.domain.Review;
 import yu.cse.odiga.waiting.domain.Waiting;
 
 @Entity
@@ -45,4 +47,7 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LikeStore> likeStores;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews = new ArrayList<>();
 }
