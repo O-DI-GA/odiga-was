@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import yu.cse.odiga.store.type.Category;
+import yu.cse.odiga.store.domain.Category;
 
 @Builder
 @Getter

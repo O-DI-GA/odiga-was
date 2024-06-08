@@ -18,9 +18,6 @@ import yu.cse.odiga.global.S3.S3Util;
 public class S3ReviewImageUploadService {
     private final S3Util s3Util;
 
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
-
     public String upload(MultipartFile multipartFile) throws IOException {
         String originalFileName = multipartFile.getOriginalFilename();
         String uuid = UUID.randomUUID().toString();

@@ -53,7 +53,7 @@ public class Store {
     private List<LikeStore> likeStores;
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Menu> menus;
+    private List<Category> categories;
 
     @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
     private List<Waiting> waitingList = new ArrayList<>();

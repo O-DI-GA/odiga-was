@@ -21,9 +21,6 @@ public class S3ProfileImageUploadService {
 
     private final S3Util s3Util;
 
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
-
     public void upload(MultipartFile multipartFile, User user) throws IOException {
         String originalFileName = multipartFile.getOriginalFilename();
         String uuid = UUID.randomUUID().toString();

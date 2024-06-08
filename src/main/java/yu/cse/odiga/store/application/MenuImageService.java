@@ -19,9 +19,6 @@ import java.util.UUID;
 public class MenuImageService {
     private final S3Util s3Util;
 
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
-
     public String upload(MultipartFile multipartFile) throws IOException {
         String originalFileName = multipartFile.getOriginalFilename();
         String uuid = UUID.randomUUID().toString();

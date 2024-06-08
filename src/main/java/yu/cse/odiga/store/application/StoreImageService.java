@@ -2,7 +2,6 @@ package yu.cse.odiga.store.application;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,11 +25,8 @@ public class StoreImageService {
 
     private final S3Util s3Util;
     private final StoreImageRepository storeImageRepository;
-
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
-
     public void upload(MultipartFile titleImageFile, List<MultipartFile> multipartFileList, Store store) throws IOException {
+
 
         String originalFileName = titleImageFile.getOriginalFilename();
         String uuid = UUID.randomUUID().toString();
