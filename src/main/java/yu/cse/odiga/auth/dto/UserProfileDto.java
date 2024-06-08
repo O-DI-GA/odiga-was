@@ -8,5 +8,5 @@ import lombok.Getter;
 public class UserProfileDto {
     private String email;
     private String nickname;
-    private String profileImageUrl; // 프로필 이미지 URL을 저장할 필드
+    private String profileImageUrl;
 }

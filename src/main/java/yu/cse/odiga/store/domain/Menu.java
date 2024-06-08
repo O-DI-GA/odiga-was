@@ -14,7 +14,7 @@ import yu.cse.odiga.store.type.Category;
 public class Menu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column
     private String menuName;

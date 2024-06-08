@@ -16,7 +16,7 @@ public class StoreImage{
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     private String postImageUrl;
 
     @ManyToOne
@@ -25,5 +25,4 @@ public class StoreImage{
     private Store store;
 
     private LocalDateTime createDate;
-
 }

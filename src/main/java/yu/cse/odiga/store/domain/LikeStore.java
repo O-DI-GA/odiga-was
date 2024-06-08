@@ -15,7 +15,7 @@ import yu.cse.odiga.auth.domain.User;
 public class LikeStore {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @ManyToOne
     @JsonIgnore
