@@ -1,12 +1,16 @@
 package yu.cse.odiga.store.application;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import yu.cse.odiga.store.dao.StoreImageRepository;
 import yu.cse.odiga.store.dao.StoreRepository;
 import yu.cse.odiga.store.domain.Store;
+import yu.cse.odiga.store.domain.StoreImage;
 import yu.cse.odiga.store.dto.StoreDetailDto;
+import yu.cse.odiga.store.dto.StoreImagesDto;
 import yu.cse.odiga.waiting.dao.WaitingRepository;
 import yu.cse.odiga.waiting.domain.Waiting;
 import yu.cse.odiga.waiting.type.WaitingStatus;
@@ -15,6 +19,7 @@ import yu.cse.odiga.waiting.type.WaitingStatus;
 @RequiredArgsConstructor
 public class StoreService {
     final StoreRepository storeRepository;
+    final StoreImageRepository storeImageRepository;
     final WaitingRepository waitingRepository;
     private static final int EMPTY_COUNT = 0;
 
@@ -38,4 +43,18 @@ public class StoreService {
                 .build();
     }
 
+    public List<StoreImagesDto> findStoreImagesByStoreId(Long storeId){
+        List<StoreImage> storeImages = storeImageRepository.findByStoreId(storeId);
+        List<StoreImagesDto> responseStoreImages = new ArrayList<>();
+
+        for (StoreImage si : storeImages) {
+            StoreImagesDto storeImagesDto = StoreImagesDto.builder()
+                    .storeImagesUrl(si.getPostImageUrl())
+                    .build();
+
+            responseStoreImages.add(storeImagesDto);
+        }
+
+        return responseStoreImages;
+    }
 }

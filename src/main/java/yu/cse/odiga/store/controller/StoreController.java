@@ -23,4 +23,10 @@ public class StoreController {
                 .body(new DefaultResponse<>(200, storeId + " store details", storeService.findByStoreId(storeId)));
     }
 
+    @GetMapping("{storeId}/storeimages")
+    ResponseEntity<?> storeImages(@PathVariable Long storeId) {
+        return ResponseEntity.status(200)
+                .body(new DefaultResponse<>(200, storeId + " store images", storeService.findStoreImagesByStoreId(storeId)));
+    }
+
 }

@@ -33,7 +33,7 @@ public class OwnerStoreController {
 
     @PostMapping("/{storeId}/category")
     public ResponseEntity<?> registerCategory(@PathVariable Long storeId, @AuthenticationPrincipal OwnerUserDetails ownerUserDetails,
-                                              CategoryDto categoryDto) throws IOException {
+                                              @RequestBody CategoryDto categoryDto) throws IOException {
         ownerStoreService.categoryRegister(ownerUserDetails, storeId, categoryDto);
         return ResponseEntity.status(201).body(new DefaultResponse<>(201, "created category", null));
     }
