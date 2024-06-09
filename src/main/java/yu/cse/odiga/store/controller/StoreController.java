@@ -31,6 +31,14 @@ public class StoreController {
                 .body(new DefaultResponse<>(200, storeId + "menus", storeService.findStoreMenus(storeId)));
     }
 
+
+    @GetMapping("map")
+    ResponseEntity<?> findAroundStoreListInMap(@RequestParam("longitude") double longitude,
+                                               @RequestParam("latitude") double latitude) {
+        return ResponseEntity.status(200).body(new DefaultResponse<>(200, "find store",
+                storeService.findAroundStoreInMap(latitude, longitude)));
+    }
+
     @GetMapping()
     ResponseEntity<?> findAroundStoreList(@RequestParam("longitude") double longitude,
                                           @RequestParam("latitude") double latitude, @RequestParam("orderCondition")

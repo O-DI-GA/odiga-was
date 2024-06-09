@@ -20,10 +20,10 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     @Query(value = "select s from Store s where st_dwithin(s.location, :point, :distance) = true")
     List<Store> findAroundStores(@Param("point") Point point, @Param("distance") double distance);
 
-    @Query(value = "select s from Store s where st_dwithin(s.location, :point, :distance) = true order by s.likeCount limit 10")
+    @Query(value = "select s from Store s where st_dwithin(s.location, :point, :distance) = true order by s.likeCount DESC limit 10")
     List<Store> findStoresRangeAndOrderByLikeCount(@Param("point") Point point, @Param("distance") double distance);
 
-    @Query(value = "select s from Store s where st_dwithin(s.location, :point, :distance) = true order by s.reviewCount limit 10")
+    @Query(value = "select s from Store s where st_dwithin(s.location, :point, :distance) = true order by s.reviewCount DESC limit 10")
     List<Store> findStoresRangeAndOrderByReviewCount(@Param("point") Point point, @Param("distance") double distance);
 
     @Query(value = "SELECT s FROM Store s JOIN FETCH s.waitingList w WHERE st_dwithin(s.location, :point, :distance) = true AND w.waitingStatus = 'INCOMPLETE' ORDER BY SIZE(w) DESC")

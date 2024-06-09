@@ -19,6 +19,7 @@ import yu.cse.odiga.store.domain.Store;
 import yu.cse.odiga.store.dto.MenuDto;
 import yu.cse.odiga.store.dto.StoreDetailDto;
 import yu.cse.odiga.store.dto.StoreListDto;
+import yu.cse.odiga.store.dto.StoreMapDto;
 import yu.cse.odiga.store.dto.StoreMenuListDto;
 import yu.cse.odiga.store.type.OrderCondition;
 import yu.cse.odiga.waiting.domain.Waiting;
@@ -32,16 +33,30 @@ public class StoreService {
     private static final double EMPTY_REVIEW_RATING = 0.0;
     private static final double RANGE_OF_RADIUS = 0.7;
 
-    public List<StoreListDto> findAll() {
-        List<Store> stores = storeRepository.findAll();
-        List<StoreListDto> storeList = new ArrayList<>();
+    public List<StoreMapDto> findAroundStoreInMap(Double latitude, Double longitude) {
+
+        GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+        Point point = geometryFactory.createPoint(new Coordinate(longitude, latitude));
+
+        List<Store> stores = storeRepository.findAroundStores(point, RANGE_OF_RADIUS);
+        List<StoreMapDto> storeList = new ArrayList<>();
         for (Store s : stores) {
-            StoreListDto storeListDto = StoreListDto.builder()
+            List<Waiting> incompleteWaitings = s.getWaitingList().stream()
+                    .filter(waiting -> waiting.getWaitingStatus() == WaitingStatus.INCOMPLETE)
+                    .toList();
+
+            int emptyTableCount = Math.max(s.getTableCount() - incompleteWaitings.size(), EMPTY_TABLE_COUNT);
+
+            StoreMapDto storeMapDto = StoreMapDto.builder()
                     .storeId(s.getId())
                     .storeName(s.getStoreName())
-                    .storeTitleImage(s.getStoreTitleImage())
+                    .latitude(s.getLocation().getY())
+                    .longitude(s.getLocation().getX())
+                    .waitingCount(incompleteWaitings.size())
+                    .emptyTableCount(emptyTableCount)
                     .build();
-            storeList.add(storeListDto);
+
+            storeList.add(storeMapDto);
         }
 
         return storeList;
