@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ReviewResponseDto {
     private Long reviewId;
+    private String storeName;
     private String content;
     private int rating;
     private String imageUrl;

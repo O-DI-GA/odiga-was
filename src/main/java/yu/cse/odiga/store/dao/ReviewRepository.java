@@ -8,4 +8,5 @@ import yu.cse.odiga.store.domain.Review;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByStoreId(Long storeId);
+    List<Review> findByUserId(Long userId);
 }

@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.util.UUID;
 
@@ -60,15 +62,17 @@ public class S3Util {
         }
     }
 
-    public void deleteFile(String fileName) {
+    public void deleteFile(String fileUrl) {
         try {
-            // URL 디코딩을 통해 원래의 파일 이름을 가져옴
-            String decodedFileName = URLDecoder.decode(fileName, "UTF-8");
-            log.info("Deleting file from S3: " + decodedFileName);
-            amazonS3.deleteObject(bucket, decodedFileName);
+            URL url = new URL(fileUrl);
+            String objectKey = url.getPath().substring(1);
+            String decodedObjectKey = URLDecoder.decode(objectKey, "UTF-8");
+            log.info("삭제할 파일 경로: " + decodedObjectKey);
+            amazonS3.deleteObject(bucket, decodedObjectKey);
+        } catch (MalformedURLException e) {
+            log.error("잘못된 url: {}", e.getMessage());
         } catch (UnsupportedEncodingException e) {
-            log.error("Error while decoding the file name: {}", e.getMessage());
+            log.error("디코딩 중 오류 발생: {}", e.getMessage());
         }
     }
-
 }
