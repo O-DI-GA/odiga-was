@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import lombok.*;
+import org.locationtech.jts.geom.Point;
 import yu.cse.odiga.owner.domain.Owner;
 import yu.cse.odiga.waiting.domain.Waiting;
 import java.util.List;
@@ -29,6 +30,9 @@ public class Store {
     @Column
     private String address;
 
+    @Column(columnDefinition = "geometry(Point, 4326)")
+    private Point location;
+
     @Column
     private int tableCount;
 
@@ -37,6 +41,7 @@ public class Store {
 
     @Builder.Default
     private int likeCount = 0;
+
 
     @ManyToOne
     @JoinColumn

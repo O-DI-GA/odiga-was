@@ -6,6 +6,7 @@ import java.util.List;
 
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.locationtech.jts.geom.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import yu.cse.odiga.owner.domain.OwnerUserDetails;
@@ -30,9 +31,13 @@ public class OwnerStoreService {
     public void storeRegister(OwnerUserDetails ownerUserDetails,
                               StoreRegisterDto storeRegisterDto) {
 
+        GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+        Point location = geometryFactory.createPoint(new Coordinate(storeRegisterDto.getLongitude(), storeRegisterDto.getLatitude()));
+
         Store store = Store.builder()
                 .owner(ownerUserDetails.getOwner())
                 .storeName(storeRegisterDto.getStoreName())
+                .location(location)
                 .phoneNumber(storeRegisterDto.getPhoneNumber())
                 .address(storeRegisterDto.getAddress())
                 .tableCount(storeRegisterDto.getTableCount())
@@ -59,6 +64,7 @@ public class OwnerStoreService {
         for (Store s : ownerStores) {
             StoreResponseDto storeResponseDto = StoreResponseDto.builder()
                     .storeId(s.getId())
+                    .location(s.getLocation())
                     .address(s.getAddress())
                     .phoneNumber(s.getPhoneNumber())
                     .storeName(s.getStoreName())

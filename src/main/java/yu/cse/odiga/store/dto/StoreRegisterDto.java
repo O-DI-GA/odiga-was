@@ -15,6 +15,9 @@ public class StoreRegisterDto {
     private String address;
     private int tableCount;
 
+    private Double longitude; // 경도
+    private Double latitude; // 위도
+
     private MultipartFile storeTitleImage;
     private List<MultipartFile> storeImage;
 }

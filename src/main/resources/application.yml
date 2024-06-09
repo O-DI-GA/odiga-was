@@ -6,16 +6,9 @@ profile:
   default-image-url: "https://odiga-bucket.s3.ap-northeast-2.amazonaws.com/profile/defaultProfileImage.png"
 
 spring:
-  security:
-    0ser:
-      name: user
-      password: 1234
-  servlet:
-    multipart:
-      max-file-size: 2MB
-      max-request-size: 10MB
-    file:
-      path: c:/develop/workspace/odiga-was/src/upload/
+  sql:
+    init:
+      schema-locations: classpath:sql/h2gis-config.sql
 
   config:
     import: classpath:S3.yml
@@ -30,6 +23,7 @@ spring:
   jpa:
     show-sql: true
     generate-ddl: true
+    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: create-drop
 
