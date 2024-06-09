@@ -47,13 +47,13 @@ public class Store {
     private String storeTitleImage;
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<StoreImage> storeImages;
+    private List<StoreImage> storeImages = new ArrayList<>();
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LikeStore> likeStores;
+    private List<LikeStore> likeStores = new ArrayList<>();
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Category> categories;
+    private List<Category> categories = new ArrayList<>();
 
     @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
     private List<Waiting> waitingList = new ArrayList<>();

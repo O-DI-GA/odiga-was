@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,14 +38,15 @@ public class OwnerStoreService {
                 .tableCount(storeRegisterDto.getTableCount())
                 .build();
 
-        if (storeRegisterDto.getStoreImage() != null && storeRegisterDto.getStoreTitleImage() != null && !storeRegisterDto.getStoreImage().isEmpty() && !storeRegisterDto.getStoreTitleImage().isEmpty()) {
+        if (storeRegisterDto.getStoreImage() != null && storeRegisterDto.getStoreTitleImage() != null
+                && !storeRegisterDto.getStoreImage().isEmpty() && !storeRegisterDto.getStoreTitleImage().isEmpty()) {
             try {
-                storeImageService.upload(storeRegisterDto.getStoreTitleImage(), storeRegisterDto.getStoreImage(), store);
+                storeImageService.upload(storeRegisterDto.getStoreTitleImage(), storeRegisterDto.getStoreImage(),
+                        store);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-
 
         storeRepository.save(store);
     }
@@ -85,7 +87,6 @@ public class OwnerStoreService {
         Store store = storeRepository.findByOwnerIdAndId(ownerUserDetails.getOwner().getId(), storeId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid store ID: " + storeId));
 
-
         List<Category> categories = store.getCategories();
         List<CategoryDto> responseCategories = new ArrayList<>();
 
@@ -101,14 +102,16 @@ public class OwnerStoreService {
     }
 
 
-    public void menuRegister(OwnerUserDetails ownerUserDetails, Long storeId, Long categoryId, MenuRegisterDto menuRegisterDto) throws IOException {
+    public void menuRegister(OwnerUserDetails ownerUserDetails, Long storeId, Long categoryId,
+                             MenuRegisterDto menuRegisterDto) throws IOException {
 
         Store store = storeRepository.findByOwnerIdAndId(ownerUserDetails.getOwner().getId(), storeId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid storeID: " + storeId));
+
         Category category = categoryRepository.findByStoreIdAndId(storeId, categoryId)
                 .orElseThrow(() -> new IllegalArgumentException(("Invalid categoryId: " + categoryId)));
 
-        if(store.getId()==category.getStore().getId()){
+        if (Objects.equals(store.getId(), category.getStore().getId())) {
             String menuName = menuRegisterDto.getMenuName();
             int price = menuRegisterDto.getPrice();
             String caption = menuRegisterDto.getCaption();
@@ -123,19 +126,20 @@ public class OwnerStoreService {
                     .build();
 
             menuRepository.save(menu);
-        }else{
-            // 같지 않다면 예외 처리하고싶은데 예외 처리 어케 하노 ㅅㅂ~~
+
+        } else {
+            throw new IllegalArgumentException("");
         }
-
-
     }
 
     public List<MenuResponseDto> findMenu(OwnerUserDetails ownerUserDetails, Long storeId, Long categoryId) {
 
         Store store = storeRepository.findByOwnerIdAndId(ownerUserDetails.getOwner().getId(), storeId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid store ID: " + storeId));
+
         Category category = categoryRepository.findByStoreIdAndId(storeId, categoryId)
                 .orElseThrow(() -> new IllegalArgumentException(("Invalid categoryId: " + categoryId)));
+
         List<Menu> storeMenus = category.getMenus();
         List<MenuResponseDto> responseMenus = new ArrayList<>();
 

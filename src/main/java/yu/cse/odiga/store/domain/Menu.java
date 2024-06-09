@@ -1,6 +1,5 @@
 package yu.cse.odiga.store.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,6 +27,6 @@ public class Menu {
     private String menuImageUrl;
 
     @ManyToOne
-    @JoinColumn(name = "storeId")
+    @JoinColumn
     private Category category;
 }

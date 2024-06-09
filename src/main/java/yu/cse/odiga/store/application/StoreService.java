@@ -7,23 +7,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PutMapping;
 import yu.cse.odiga.store.dao.StoreRepository;
-import yu.cse.odiga.store.domain.Review;
+import yu.cse.odiga.store.domain.Category;
+import yu.cse.odiga.store.domain.Menu;
 import yu.cse.odiga.store.domain.Store;
+import yu.cse.odiga.store.dto.MenuDto;
 import yu.cse.odiga.store.dto.StoreDetailDto;
 import yu.cse.odiga.store.dto.StoreListDto;
-import yu.cse.odiga.waiting.dao.WaitingRepository;
+import yu.cse.odiga.store.dto.StoreMenuListDto;
 import yu.cse.odiga.waiting.domain.Waiting;
 import yu.cse.odiga.waiting.type.WaitingStatus;
 
 @Service
 @RequiredArgsConstructor
 public class StoreService {
-    final StoreRepository storeRepository;
-    final WaitingRepository waitingRepository;
+    private final StoreRepository storeRepository;
     private static final int EMPTY_TABLE_COUNT = 0;
-    private static final double EMPTY_REVIVE_RATING = 0.0;
+    private static final double EMPTY_REVIEW_RATING = 0.0;
 
     public List<StoreListDto> findAll() {
         List<Store> stores = storeRepository.findAll();
@@ -56,7 +56,7 @@ public class StoreService {
         return StoreDetailDto.builder()
                 .storeName(store.getStoreName())
                 .storeTitleImage(store.getStoreTitleImage())
-                .averageRating(EMPTY_REVIVE_RATING)
+                .averageRating(EMPTY_REVIEW_RATING)
                 .likeCount(store.getLikeCount())
                 .address(store.getAddress())
                 .tableCount(store.getTableCount())
@@ -66,5 +66,36 @@ public class StoreService {
                 .build();
     }
 
+    public List<StoreMenuListDto> findStoreMenus(Long storeId) {
 
+        Store store = storeRepository.findById(storeId).orElseThrow();
+
+        List<Category> storeCategoryList = store.getCategories();
+        List<StoreMenuListDto> menuListDtoList = new ArrayList<>();
+
+        for (Category category : storeCategoryList) {
+            List<Menu> menus = category.getMenus();
+            List<MenuDto> menuList = new ArrayList<>();
+
+            for (Menu menu : menus) {
+                MenuDto menuDto = MenuDto.builder()
+                        .menuId(menu.getId())
+                        .menuName(menu.getMenuName())
+                        .menuImageUrl(menu.getMenuImageUrl())
+                        .menuPrice(menu.getPrice())
+                        .build();
+
+                menuList.add(menuDto);
+            }
+
+            StoreMenuListDto storeMenuListDto = StoreMenuListDto.builder()
+                    .categoryName(category.getName())
+                    .menuList(menuList)
+                    .build();
+
+            menuListDtoList.add(storeMenuListDto);
+        }
+
+        return menuListDtoList;
+    }
 }

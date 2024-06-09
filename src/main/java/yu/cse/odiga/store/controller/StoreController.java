@@ -23,6 +23,12 @@ public class StoreController {
                 .body(new DefaultResponse<>(200, storeId + " store details", storeService.findByStoreId(storeId)));
     }
 
+    @GetMapping("{storeId}/menus")
+    ResponseEntity<?> storeMenus(@PathVariable Long storeId) {
+        return ResponseEntity.status(200)
+                .body(new DefaultResponse<>(200, storeId + "menus", storeService.findStoreMenus(storeId)));
+    }
+
     @GetMapping()
     ResponseEntity<?> findAll() {
         return ResponseEntity.status(200).body(new DefaultResponse<>(200, "find all store", storeService.findAll()));
