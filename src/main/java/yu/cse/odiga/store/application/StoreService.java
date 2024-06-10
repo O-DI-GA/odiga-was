@@ -2,22 +2,22 @@ package yu.cse.odiga.store.application;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.PrecisionModel;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
+import yu.cse.odiga.store.dao.StoreImageRepository;
 import yu.cse.odiga.store.dao.StoreRepository;
 import yu.cse.odiga.store.domain.Category;
 import yu.cse.odiga.store.domain.Menu;
 import yu.cse.odiga.store.domain.Store;
+import yu.cse.odiga.store.domain.StoreImage;
 import yu.cse.odiga.store.dto.MenuDto;
 import yu.cse.odiga.store.dto.StoreDetailDto;
+import yu.cse.odiga.store.dto.StoreImagesDto;
 import yu.cse.odiga.store.dto.StoreListDto;
 import yu.cse.odiga.store.dto.StoreMapDto;
 import yu.cse.odiga.store.dto.StoreMenuListDto;
@@ -29,6 +29,7 @@ import yu.cse.odiga.waiting.type.WaitingStatus;
 @RequiredArgsConstructor
 public class StoreService {
     private final StoreRepository storeRepository;
+    private final StoreImageRepository storeImageRepository;
     private static final int EMPTY_TABLE_COUNT = 0;
     private static final double EMPTY_REVIEW_RATING = 0.0;
     private static final double RANGE_OF_RADIUS = 0.7;
@@ -157,7 +158,24 @@ public class StoreService {
 
             menuListDtoList.add(storeMenuListDto);
         }
-
         return menuListDtoList;
+
     }
+
+
+    public List<StoreImagesDto> findStoreImagesByStoreId(Long storeId) {
+        List<StoreImage> storeImages = storeImageRepository.findByStoreId(storeId);
+        List<StoreImagesDto> responseStoreImages = new ArrayList<>();
+
+        for (StoreImage si : storeImages) {
+            StoreImagesDto storeImagesDto = StoreImagesDto.builder()
+                    .storeImagesUrl(si.getPostImageUrl())
+                    .build();
+
+            responseStoreImages.add(storeImagesDto);
+        }
+
+        return responseStoreImages;
+    }
+
 }

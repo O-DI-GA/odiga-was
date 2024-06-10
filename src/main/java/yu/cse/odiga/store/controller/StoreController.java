@@ -25,12 +25,12 @@ public class StoreController {
                 .body(new DefaultResponse<>(200, storeId + " store details", storeService.findByStoreId(storeId)));
     }
 
-    @GetMapping("{storeId}/menus")
-    ResponseEntity<?> storeMenus(@PathVariable Long storeId) {
+    @GetMapping("{storeId}/storeimages")
+    ResponseEntity<?> storeImages(@PathVariable Long storeId) {
         return ResponseEntity.status(200)
-                .body(new DefaultResponse<>(200, storeId + "menus", storeService.findStoreMenus(storeId)));
+                .body(new DefaultResponse<>(200, storeId + " store images",
+                        storeService.findStoreImagesByStoreId(storeId)));
     }
-
 
     @GetMapping("map")
     ResponseEntity<?> findAroundStoreListInMap(@RequestParam("longitude") double longitude,
