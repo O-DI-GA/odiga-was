@@ -34,7 +34,6 @@ public class UserAuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final S3ProfileImageUploadService s3ProfileImageUploadService;
 
     // TODO : DTO 잘못된 데이터 들어올 경우 에러처리
 
@@ -49,17 +48,8 @@ public class UserAuthService {
                 .nickname(signUpDto.getNickname())
                 .password(passwordEncoder.encode(signUpDto.getPassword()))
                 .role(Role.ROLE_USER)
+                .profileImageUrl(defaultProfileImageUrl)
                 .build();
-
-        if (signUpDto.getProfileImage() != null && !signUpDto.getProfileImage().isEmpty()) {
-            try {
-                s3ProfileImageUploadService.upload(signUpDto.getProfileImage(), user);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            user.setProfileImageUrl(defaultProfileImageUrl);
-        }
 
         userRepository.save(user);
 
