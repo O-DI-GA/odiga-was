@@ -59,6 +59,8 @@ public class Store {
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> categories = new ArrayList<>();
+    
+    // TODO : waiting 번호를 따로 필드로 만들어서 사용해야할듯
 
     @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
     private List<Waiting> waitingList = new ArrayList<>();

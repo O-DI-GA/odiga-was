@@ -17,6 +17,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import yu.cse.odiga.auth.domain.User;
 import yu.cse.odiga.store.domain.Menu;
 import yu.cse.odiga.store.domain.Store;
@@ -25,6 +26,7 @@ import yu.cse.odiga.waiting.type.WaitingStatus;
 @Entity
 @Builder
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Waiting {
@@ -36,10 +38,12 @@ public class Waiting {
 
     private int waitingNumber;
 
+    private int peopleCount;
+
     @Enumerated(EnumType.STRING)
     private WaitingStatus waitingStatus;
 
-    @OneToMany(mappedBy = "waiting", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "waiting") // fetch.LAZY 안하니깐 성공함 ㄷㄷ
     List<WaitingMenu> waitingMenuList = new ArrayList<>();
 
     @ManyToOne

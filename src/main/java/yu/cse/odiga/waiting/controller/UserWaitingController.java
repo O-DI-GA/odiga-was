@@ -8,11 +8,13 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import yu.cse.odiga.auth.domain.CustomUserDetails;
 import yu.cse.odiga.global.util.DefaultResponse;
 import yu.cse.odiga.waiting.application.UserWaitingService;
+import yu.cse.odiga.waiting.dto.WaitingRegisterDto;
 
 @RestController
 @RequestMapping("api/v1/user/waiting")
@@ -23,10 +25,11 @@ public class UserWaitingController {
 
     @PostMapping("{storeId}")
     public ResponseEntity<?> registerWaiting(@PathVariable Long storeId,
+                                             @RequestBody WaitingRegisterDto waitingRegisterDto,
                                              @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        userWaitingService.registerWaiting(storeId, customUserDetails);
 
-        return ResponseEntity.status(201).body(new DefaultResponse<>(201, "register waiting", null));
+        return ResponseEntity.status(201).body(new DefaultResponse<>(201, "register waiting",
+                userWaitingService.registerWaiting(storeId, waitingRegisterDto, customUserDetails)));
     }
 
     @DeleteMapping("{storeId}")

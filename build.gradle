@@ -26,6 +26,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation group: 'org.hibernate', name: 'hibernate-spatial', version: '6.2.25.Final'
     implementation group: 'org.orbisgis', name: 'h2gis', version: '2.2.1'
+
+    implementation 'org.postgresql:postgresql:42.6.0'
     runtimeOnly 'com.h2database:h2'
 
     implementation 'org.springframework.boot:spring-boot-starter-security'

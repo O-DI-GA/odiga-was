@@ -7,12 +7,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import yu.cse.odiga.auth.domain.CustomUserDetails;
+import yu.cse.odiga.store.dao.MenuRepository;
 import yu.cse.odiga.store.dao.StoreRepository;
+import yu.cse.odiga.store.domain.Category;
+import yu.cse.odiga.store.domain.Menu;
 import yu.cse.odiga.store.domain.Store;
+import yu.cse.odiga.waiting.dao.WaitingMenuRepository;
 import yu.cse.odiga.waiting.dao.WaitingRepository;
 import yu.cse.odiga.waiting.domain.Waiting;
+import yu.cse.odiga.waiting.domain.WaitingMenu;
 import yu.cse.odiga.waiting.dto.UserWaitingDetailDto;
 import yu.cse.odiga.waiting.dto.UserWaitingDto;
+import yu.cse.odiga.waiting.dto.WaitingCodeResponseDto;
+import yu.cse.odiga.waiting.dto.WaitingMenuDto;
+import yu.cse.odiga.waiting.dto.WaitingRegisterDto;
 import yu.cse.odiga.waiting.type.WaitingStatus;
 
 @Service
@@ -22,28 +30,55 @@ public class UserWaitingService {
 
     private final WaitingRepository waitingRepository;
     private final StoreRepository storeRepository;
+    private final MenuRepository menuRepository;
+    private final WaitingMenuRepository waitingMenuRepository;
 
     /**
      * Waiting 등록
      */
-    
+
     // TODO : 웨이팅 등록시 메뉴 인원수 추가
     @Transactional
-    public void registerWaiting(Long storeId, CustomUserDetails customUserDetails) {
+    public WaitingCodeResponseDto registerWaiting(Long storeId, WaitingRegisterDto waitingRegisterDto,
+                                                  CustomUserDetails customUserDetails) {
 
         Store store = storeRepository.findById(storeId).orElseThrow();
+        List<WaitingMenu> waitingMenus = new ArrayList<>();
+        List<WaitingMenuDto> requestMenus = waitingRegisterDto.getRegisterMenus();
+        String randomWaitingCode = generateRandomCode();
 
         Waiting waiting = Waiting.builder()
                 .user(customUserDetails.getUser())
                 .store(store)
+                .peopleCount(waitingRegisterDto.getPeopleCount())
                 .waitingNumber(store.getWaitingList().size() + 1)
-                .waitingCode(generateRandomCode()) // code 가 unique 하게 들어가야함
+                .waitingCode(randomWaitingCode) // 코드 + 웨이팅 번호 + storeID 로 확인 하면 될듯
                 .waitingStatus(WaitingStatus.INCOMPLETE)
                 .build();
 
-        waitingRepository.save(waiting);
+        for (WaitingMenuDto menuDto : requestMenus) {
+            Menu menu = menuRepository.findById(menuDto.getMenuId()).orElseThrow();
+            WaitingMenu waitingMenu = WaitingMenu.builder()
+                    .menu(menu)
+                    .waiting(waiting)
+                    .menuCount(menuDto.getMenuCount())
+                    .totalPrice(menu.getPrice() * menuDto.getMenuCount())
+                    .build();
 
+            waitingMenus.add(waitingMenu);
+        }
+
+        waitingRepository.save(waiting);
+        waitingMenuRepository.saveAll(waitingMenus);
+
+        waiting.setWaitingMenuList(waitingMenus);
+        //TODO : 웨이팅 인증 코드 return 필요함.
+
+        return WaitingCodeResponseDto.builder()
+                .waitingCode(randomWaitingCode)
+                .build();
     }
+
 
     /**
      * Waiting 취소
@@ -56,10 +91,10 @@ public class UserWaitingService {
     }
 
     public List<UserWaitingDto> findUserWaitings(CustomUserDetails customUserDetails) {
-        List<Waiting> userWaitings = waitingRepository.findByUserId(customUserDetails.getUser().getId());
+        List<Waiting> incompleteUserWaitings = waitingRepository.findByUserIdAndWaitingStatus(customUserDetails.getUser().getId(), WaitingStatus.INCOMPLETE);
         List<UserWaitingDto> waitingDtoList = new ArrayList<>();
 
-        for (Waiting waiting : userWaitings) {
+        for (Waiting waiting : incompleteUserWaitings) {
             if (waiting.isIncomplete()) {
                 List<Waiting> storeWaitings = waitingRepository.findByStoreId(waiting.getStore().getId());
                 UserWaitingDto userWaitingDto = UserWaitingDto.builder()
