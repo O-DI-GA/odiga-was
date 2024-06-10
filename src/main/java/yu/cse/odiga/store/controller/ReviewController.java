@@ -20,7 +20,7 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @PostMapping("/post")
+    @PostMapping("")
     public ResponseEntity<?> registerReview(@PathVariable Long storeId, @AuthenticationPrincipal CustomUserDetails customUserDetails, @ModelAttribute ReviewRegisterDto reviewRegisterDto) throws IOException {
         reviewService.registerReview(storeId, reviewRegisterDto, customUserDetails);
         return ResponseEntity.status(HttpStatus.CREATED).body(new DefaultResponse<>(201, "created review", null));

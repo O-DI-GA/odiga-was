@@ -6,9 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import yu.cse.odiga.global.util.DefaultResponse;
 import yu.cse.odiga.store.application.StoreService;
+import yu.cse.odiga.store.type.OrderCondition;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,9 +25,27 @@ public class StoreController {
                 .body(new DefaultResponse<>(200, storeId + " store details", storeService.findByStoreId(storeId)));
     }
 
+    @GetMapping("{storeId}/menus")
+    ResponseEntity<?> storeMenus(@PathVariable Long storeId) {
+        return ResponseEntity.status(200)
+                .body(new DefaultResponse<>(200, storeId + "menus", storeService.findStoreMenus(storeId)));
+    }
+
+
+    @GetMapping("map")
+    ResponseEntity<?> findAroundStoreListInMap(@RequestParam("longitude") double longitude,
+                                               @RequestParam("latitude") double latitude) {
+        return ResponseEntity.status(200).body(new DefaultResponse<>(200, "find store",
+                storeService.findAroundStoreInMap(latitude, longitude)));
+    }
+
     @GetMapping()
-    ResponseEntity<?> findAll() {
-        return ResponseEntity.status(200).body(new DefaultResponse<>(200, "find all store", storeService.findAll()));
+    ResponseEntity<?> findAroundStoreList(@RequestParam("longitude") double longitude,
+                                          @RequestParam("latitude") double latitude, @RequestParam("orderCondition")
+                                          String orderCondition) {
+
+        return ResponseEntity.status(200).body(new DefaultResponse<>(200, "find store",
+                storeService.findAroundListStoreList(latitude, longitude, orderCondition)));
     }
 
 }

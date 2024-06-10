@@ -26,6 +26,8 @@ public class UserWaitingService {
     /**
      * Waiting 등록
      */
+    
+    // TODO : 웨이팅 등록시 메뉴 인원수 추가
     @Transactional
     public void registerWaiting(Long storeId, CustomUserDetails customUserDetails) {
 

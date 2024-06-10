@@ -6,11 +6,11 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class StoreListDto {
-    private String storeTitleImage;
-    private String storeName;
+public class StoreMapDto {
     private Long storeId;
-    private int likeCount;
-    private int reviewCount;
+    private String storeName;
+    private Double longitude;
+    private Double latitude;
+    private int emptyTableCount;
     private int waitingCount;
 }
