@@ -2,17 +2,15 @@ package yu.cse.odiga.store.application;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PutMapping;
+import yu.cse.odiga.store.dao.StoreImageRepository;
 import yu.cse.odiga.store.dao.StoreRepository;
-import yu.cse.odiga.store.domain.Review;
 import yu.cse.odiga.store.domain.Store;
+import yu.cse.odiga.store.domain.StoreImage;
 import yu.cse.odiga.store.dto.StoreDetailDto;
-import yu.cse.odiga.store.dto.StoreListDto;
+import yu.cse.odiga.store.dto.StoreImagesDto;
 import yu.cse.odiga.waiting.dao.WaitingRepository;
 import yu.cse.odiga.waiting.domain.Waiting;
 import yu.cse.odiga.waiting.type.WaitingStatus;
@@ -21,24 +19,14 @@ import yu.cse.odiga.waiting.type.WaitingStatus;
 @RequiredArgsConstructor
 public class StoreService {
     final StoreRepository storeRepository;
+    final StoreImageRepository storeImageRepository;
     final WaitingRepository waitingRepository;
     private static final int EMPTY_TABLE_COUNT = 0;
     private static final double EMPTY_REVIVE_RATING = 0.0;
 
-    public List<StoreListDto> findAll() {
-        List<Store> stores = storeRepository.findAll();
-        List<StoreListDto> storeList = new ArrayList<>();
-        for (Store s : stores) {
-            StoreListDto storeListDto = StoreListDto.builder()
-                    .storeId(s.getId())
-                    .storeName(s.getStoreName())
-                    .storeTitleImage(s.getStoreTitleImage())
-                    .build();
-            storeList.add(storeListDto);
-        }
 
-        return storeList;
-    }
+    // TODO : store 관련 이미지 기능 merge 후 추가
+    // TODO : 찜 관련 이미지 기능 merge 후 추가
 
     public StoreDetailDto findByStoreId(Long storeId) {
         Store store = storeRepository.findById(storeId).orElseThrow();
@@ -66,5 +54,19 @@ public class StoreService {
                 .build();
     }
 
+    public List<StoreImagesDto> findStoreImagesByStoreId(Long storeId){
+        List<StoreImage> storeImages = storeImageRepository.findByStoreId(storeId);
+        List<StoreImagesDto> responseStoreImages = new ArrayList<>();
+
+        for (StoreImage si : storeImages) {
+            StoreImagesDto storeImagesDto = StoreImagesDto.builder()
+                    .storeImagesUrl(si.getPostImageUrl())
+                    .build();
+
+            responseStoreImages.add(storeImagesDto);
+        }
+
+        return responseStoreImages;
+    }
 
 }
