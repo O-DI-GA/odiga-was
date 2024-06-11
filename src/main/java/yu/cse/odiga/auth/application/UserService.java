@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,8 @@ import yu.cse.odiga.store.dto.ReviewResponseDto;
 @Transactional
 @RequiredArgsConstructor
 public class UserService {
+    @Value("${profile.default-image-url}")
+    private String defaultProfileImageUrl;
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
     private final S3ProfileImageUploadService s3ProfileImageUploadService;
@@ -29,10 +32,14 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 계정 입니다."));
 
-        if(profileImage != null && !profileImage.isEmpty()) {
+        if (profileImage != null && !profileImage.isEmpty()) {
             try {
-                String oldFileName = user.getProfileImageUrl();
-                s3ProfileImageUploadService.updateFile(profileImage, oldFileName, user);
+                if (user.getProfileImageUrl().equals(defaultProfileImageUrl)) {
+                    s3ProfileImageUploadService.upload(profileImage, user);
+                } else {
+                    String oldFileName = user.getProfileImageUrl();
+                    s3ProfileImageUploadService.updateFile(profileImage, oldFileName, user);
+                }
             } catch (IOException e) {
                 throw new IllegalArgumentException("파일 업로드에 실패했습니다.");
             }
@@ -46,7 +53,7 @@ public class UserService {
     }
     public UserProfileDto getUserProfile(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("유저가 존재하지 않습니다."));
         String profileImageUrl = (user.getProfileImageUrl() != null) ? user.getProfileImageUrl(): null;
 
         return UserProfileDto.builder()
