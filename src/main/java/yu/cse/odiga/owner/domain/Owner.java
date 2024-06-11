@@ -18,7 +18,6 @@ import lombok.NoArgsConstructor;
 import yu.cse.odiga.global.type.Role;
 import yu.cse.odiga.store.domain.Store;
 
-
 @Entity
 @Getter
 @Builder

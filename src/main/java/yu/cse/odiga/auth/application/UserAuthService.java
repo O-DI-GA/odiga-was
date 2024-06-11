@@ -1,8 +1,6 @@
 package yu.cse.odiga.auth.application;
 
 import io.jsonwebtoken.Claims;
-
-import java.io.IOException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;

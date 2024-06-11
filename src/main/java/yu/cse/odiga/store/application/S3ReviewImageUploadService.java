@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,11 +30,5 @@ public class S3ReviewImageUploadService {
         s3Util.removeNewFile(uploadFile);
 
         return uploadImageUrl;
-    }
-
-    public void updateFile(MultipartFile newFile, String oldFileName) throws IOException {
-        log.info("S3 oldFileName: " + oldFileName);
-        s3Util.deleteFile(oldFileName);
-        upload(newFile);
     }
 }

@@ -70,7 +70,6 @@ public class ReviewService {
 
             responseReviews.add(reviewResponseDto);
         }
-
         return responseReviews;
     }
 }

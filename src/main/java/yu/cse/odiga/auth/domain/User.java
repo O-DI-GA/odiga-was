@@ -22,7 +22,6 @@ import yu.cse.odiga.waiting.domain.Waiting;
 @NoArgsConstructor
 @Table(name = "Users") // H2 database의 설정이랑 겹침
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

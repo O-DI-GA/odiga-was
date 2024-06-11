@@ -6,7 +6,6 @@ import lombok.Getter;
 @Builder
 @Getter
 public class LikeStoreDto {
-
     private String userEmail;
     private String storeName;
 

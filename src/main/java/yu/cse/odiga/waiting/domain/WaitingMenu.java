@@ -1,6 +1,5 @@
 package yu.cse.odiga.waiting.domain;
 
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,7 +19,6 @@ import yu.cse.odiga.store.domain.Menu;
 @AllArgsConstructor
 @NoArgsConstructor
 public class WaitingMenu {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

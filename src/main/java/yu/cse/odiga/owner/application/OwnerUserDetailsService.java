@@ -8,7 +8,6 @@ import yu.cse.odiga.owner.dao.OwnerRepository;
 import yu.cse.odiga.owner.domain.Owner;
 import yu.cse.odiga.owner.domain.OwnerUserDetails;
 
-
 @RequiredArgsConstructor
 public class OwnerUserDetailsService implements UserDetailsService {
 

@@ -1,10 +1,8 @@
 package yu.cse.odiga.waiting.domain;
 
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,7 +17,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import yu.cse.odiga.auth.domain.User;
-import yu.cse.odiga.store.domain.Menu;
 import yu.cse.odiga.store.domain.Store;
 import yu.cse.odiga.waiting.type.WaitingStatus;
 

@@ -1,6 +1,5 @@
 package yu.cse.odiga.waiting.application;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import yu.cse.odiga.auth.domain.CustomUserDetails;
 import yu.cse.odiga.store.dao.MenuRepository;
 import yu.cse.odiga.store.dao.StoreRepository;
-import yu.cse.odiga.store.domain.Category;
 import yu.cse.odiga.store.domain.Menu;
 import yu.cse.odiga.store.domain.Store;
 import yu.cse.odiga.waiting.dao.WaitingMenuRepository;

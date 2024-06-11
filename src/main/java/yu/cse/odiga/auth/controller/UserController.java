@@ -4,11 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import yu.cse.odiga.auth.application.UserService;
 import yu.cse.odiga.auth.domain.CustomUserDetails;
-import yu.cse.odiga.auth.dto.UserProfileDto;
+import yu.cse.odiga.auth.dto.UserProfileUpdateDto;
 import yu.cse.odiga.global.util.DefaultResponse;
 
 @RestController
@@ -18,25 +21,20 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/profile")
-    public ResponseEntity<?> myPage(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        UserProfileDto userProfile = userService.getUserProfile(userDetails.getUsername());
-
+    public ResponseEntity<?> myPage(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new DefaultResponse<>(200, "User profile fetched successfully", userProfile));
+                .body(new DefaultResponse<>(200, "User profile fetched successfully", userService.getUserProfile(customUserDetails.getUsername())));
     }
 
     @PutMapping("/profile/edit")
-    public ResponseEntity<?> editProfile(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                         @ModelAttribute MultipartFile profileImage,
-                                         @RequestParam(required = false) String nickname){
-        userService.updateUserProfile(userDetails.getUsername(), profileImage, nickname);
-        UserProfileDto updatedProfile = userService.getUserProfile(userDetails.getUsername());
+    public ResponseEntity<?> editProfile(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                         @ModelAttribute UserProfileUpdateDto userProfileUpdateDto){
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new DefaultResponse<>(200, "User profile updated successfully", updatedProfile));
+                .body(new DefaultResponse<>(200, "User profile updated successfully", userService.updateUserProfile(customUserDetails, userProfileUpdateDto)));
     }
 
     @GetMapping("/reviews")
-    public ResponseEntity<?> findUserReviews(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        return ResponseEntity.status(HttpStatus.OK).body(new DefaultResponse<>(200, "find user reviews", userService.findUserReviews(userDetails)));
+    public ResponseEntity<?> findUserReviews(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return ResponseEntity.status(HttpStatus.OK).body(new DefaultResponse<>(200, "find user reviews", userService.findUserReviews(customUserDetails)));
     }
 }

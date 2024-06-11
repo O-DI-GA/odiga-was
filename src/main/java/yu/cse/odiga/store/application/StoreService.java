@@ -1,6 +1,5 @@
 package yu.cse.odiga.store.application;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -176,5 +175,4 @@ public class StoreService {
 
         return responseStoreImages;
     }
-
 }
