@@ -32,7 +32,7 @@ public class StoreService {
     private final StoreImageRepository storeImageRepository;
     private static final int EMPTY_TABLE_COUNT = 0;
     private static final double EMPTY_REVIEW_RATING = 0.0;
-    private static final double RANGE_OF_RADIUS = 0.7;
+    private static final double RANGE_OF_RADIUS = 0.007; // 약 700m
 
     public List<StoreMapDto> findAroundStoreInMap(Double latitude, Double longitude) {
 
@@ -105,7 +105,6 @@ public class StoreService {
 
     public StoreDetailDto findByStoreId(Long storeId) {
         Store store = storeRepository.findById(storeId).orElseThrow();
-//        List<Waiting> waiting = waitingRepository.findByStoreIdAndWaitingStatus(storeId, WaitingStatus.INCOMPLETE);
 
         List<Waiting> incompleteWaitings = store.getWaitingList().stream()
                 .filter(waiting -> waiting.getWaitingStatus() == WaitingStatus.INCOMPLETE)
