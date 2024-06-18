@@ -3,13 +3,13 @@ package yu.cse.odiga.waiting.application;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import yu.cse.odiga.auth.domain.CustomUserDetails;
 import yu.cse.odiga.store.dao.MenuRepository;
 import yu.cse.odiga.store.dao.StoreRepository;
-import yu.cse.odiga.store.domain.Category;
 import yu.cse.odiga.store.domain.Menu;
 import yu.cse.odiga.store.domain.Store;
 import yu.cse.odiga.waiting.dao.WaitingMenuRepository;
@@ -21,6 +21,8 @@ import yu.cse.odiga.waiting.dto.UserWaitingDto;
 import yu.cse.odiga.waiting.dto.WaitingCodeResponseDto;
 import yu.cse.odiga.waiting.dto.WaitingMenuDto;
 import yu.cse.odiga.waiting.dto.WaitingRegisterDto;
+import yu.cse.odiga.waiting.exception.AlreadyHasWaitingException;
+import yu.cse.odiga.waiting.exception.NotFoundWaitingException;
 import yu.cse.odiga.waiting.type.WaitingStatus;
 
 @Service
@@ -41,6 +43,13 @@ public class UserWaitingService {
     @Transactional
     public WaitingCodeResponseDto registerWaiting(Long storeId, WaitingRegisterDto waitingRegisterDto,
                                                   CustomUserDetails customUserDetails) {
+
+        Optional<Waiting> userWaiting = waitingRepository.findByStoreIdAndUserId(storeId,
+                customUserDetails.getUser().getId());
+
+        if (userWaiting.isPresent() && !userWaiting.get().isIncomplete()) {
+            throw new AlreadyHasWaitingException("이미 웨이팅을 등록한 가게 입니다.");
+        }
 
         Store store = storeRepository.findById(storeId).orElseThrow();
         List<WaitingMenu> waitingMenus = new ArrayList<>();
@@ -86,12 +95,13 @@ public class UserWaitingService {
     @Transactional
     public void unregisterWaiting(Long storeId, CustomUserDetails customUserDetails) {
         Waiting waiting = waitingRepository.findByStoreIdAndUserId(storeId, customUserDetails.getUser().getId())
-                .orElseThrow();
+                .orElseThrow(() -> new NotFoundWaitingException("등록된 웨이팅이 없습니다."));
         waiting.changeWaitingStatusToComplete();
     }
 
     public List<UserWaitingDto> findUserWaitings(CustomUserDetails customUserDetails) {
-        List<Waiting> incompleteUserWaitings = waitingRepository.findByUserIdAndWaitingStatus(customUserDetails.getUser().getId(), WaitingStatus.INCOMPLETE);
+        List<Waiting> incompleteUserWaitings = waitingRepository.findByUserIdAndWaitingStatus(
+                customUserDetails.getUser().getId(), WaitingStatus.INCOMPLETE);
         List<UserWaitingDto> waitingDtoList = new ArrayList<>();
 
         for (Waiting waiting : incompleteUserWaitings) {
@@ -110,7 +120,8 @@ public class UserWaitingService {
     }
 
     public UserWaitingDetailDto userWaitingDetail(Long waitingId) {
-        Waiting waiting = waitingRepository.findById(waitingId).orElseThrow();
+        Waiting waiting = waitingRepository.findById(waitingId)
+                .orElseThrow(() -> new NotFoundWaitingException("등록된 웨이팅이 없습니다."));
         List<Waiting> storeWaitings = waitingRepository.findByStoreId(waiting.getStore().getId());
 
         return UserWaitingDetailDto.builder()

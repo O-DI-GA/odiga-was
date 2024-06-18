@@ -37,7 +37,7 @@ public class UserWaitingController {
                                                @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         userWaitingService.unregisterWaiting(storeId, customUserDetails);
 
-        return ResponseEntity.status(200).body(new DefaultResponse<>(200, "unreigister waiting", null));
+        return ResponseEntity.status(200).body(new DefaultResponse<>(200, "unregister waiting", null));
     }
 
     @GetMapping("/my")
