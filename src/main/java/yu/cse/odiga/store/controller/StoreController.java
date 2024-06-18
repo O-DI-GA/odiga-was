@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import yu.cse.odiga.global.util.DefaultResponse;
 import yu.cse.odiga.store.application.StoreService;
-import yu.cse.odiga.store.type.OrderCondition;
 
 @RestController
 @RequiredArgsConstructor
