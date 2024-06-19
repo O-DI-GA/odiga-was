@@ -11,6 +11,10 @@ import yu.cse.odiga.store.domain.LikeStore;
 import yu.cse.odiga.auth.domain.User;
 import yu.cse.odiga.store.dao.StoreRepository;
 import yu.cse.odiga.store.domain.Store;
+import yu.cse.odiga.store.dto.LikeResponseDto;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -63,5 +67,25 @@ public class LikeStoreService {
         store.setLikeCount(store.getLikeCount()-1);
 
         return store;
+    }
+
+    public List<LikeResponseDto> findUserLikedStores(CustomUserDetails customUserDetails) {
+        List<LikeStore> likeStores = likeStoreRepository.findByUserId(customUserDetails.getUser().getId());
+        List<LikeResponseDto> responseLikes = new ArrayList<>();
+
+        for (LikeStore likeStore : likeStores) {
+            Store store = likeStore.getStore();
+            LikeResponseDto likeResponseDto = LikeResponseDto.builder()
+                    .storeId(store.getId())
+                    .storeName(store.getStoreName())
+                    .address(store.getAddress())
+                    .phoneNumber(store.getPhoneNumber())
+                    .storeCategory(store.getStoreCategory())
+                    .storeTitleImageUrl(store.getStoreTitleImage())
+                    .build();
+            responseLikes.add(likeResponseDto);
+        }
+
+        return responseLikes;
     }
 }

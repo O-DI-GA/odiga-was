@@ -41,6 +41,7 @@ public class OwnerStoreService {
                 .phoneNumber(storeRegisterDto.getPhoneNumber())
                 .address(storeRegisterDto.getAddress())
                 .tableCount(storeRegisterDto.getTableCount())
+                .storeCategory(storeRegisterDto.getStoreCategory())
                 .build();
 
         if (storeRegisterDto.getStoreImage() != null && storeRegisterDto.getStoreTitleImage() != null

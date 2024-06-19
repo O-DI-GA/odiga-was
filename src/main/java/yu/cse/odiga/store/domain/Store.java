@@ -54,6 +54,9 @@ public class Store {
     @Builder.Default
     private int likeCount = 0;
 
+    @Column
+    private String storeCategory;
+
     @ManyToOne
     @JoinColumn
     @JsonIgnore

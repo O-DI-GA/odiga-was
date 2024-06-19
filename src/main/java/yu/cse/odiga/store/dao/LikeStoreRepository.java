@@ -6,9 +6,11 @@ import yu.cse.odiga.store.domain.LikeStore;
 import yu.cse.odiga.auth.domain.User;
 import yu.cse.odiga.store.domain.Store;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface LikeStoreRepository extends JpaRepository<LikeStore, Long> {
     Optional<LikeStore> findByUserAndStore(User user, Store store);
+    List<LikeStore> findByUserId(Long userId);
 }
