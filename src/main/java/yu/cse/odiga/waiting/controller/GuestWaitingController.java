@@ -18,7 +18,7 @@ import yu.cse.odiga.waiting.dto.WaitingValidateDto;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("api/v1/owner/store/{storeId}/waiting")
+@RequestMapping("api/v1/tablet/store/{storeId}/waiting")
 public class GuestWaitingController {
 
     private final GuestWaitingService guestWaitingService;
