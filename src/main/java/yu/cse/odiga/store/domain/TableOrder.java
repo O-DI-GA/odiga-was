@@ -36,7 +36,7 @@ public class TableOrder {
     private PaymentStatus paymentStatus;
 
     @ManyToOne
-    @JoinColumn(name = "storeId")
+    @JoinColumn(name = "storeTableId")
     private StoreTable storeTable;
 
     @OneToMany(mappedBy = "tableOrder", fetch = FetchType.LAZY)

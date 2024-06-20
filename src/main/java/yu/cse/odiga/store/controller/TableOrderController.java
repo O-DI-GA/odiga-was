@@ -11,7 +11,7 @@ import yu.cse.odiga.global.util.DefaultResponse;
 import yu.cse.odiga.store.application.TableOrderService;
 
 @RestController
-@RequestMapping("api/v1/owner/table/{storeId}/order")
+@RequestMapping("api/v1/table/{storeId}/order")
 @RequiredArgsConstructor
 public class TableOrderController {
     private final TableOrderService tableOrderService;

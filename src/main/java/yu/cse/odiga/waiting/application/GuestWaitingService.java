@@ -56,6 +56,7 @@ public class GuestWaitingService {
                 .storeTable(storeTable)
                 .build();
 
+        tableOrderRepository.save(tableOrder);
 
         List<TableOrderMenu> tableOrderMenuList = new ArrayList<>();
 
@@ -77,7 +78,7 @@ public class GuestWaitingService {
 
         storeTable.changeTableStatusToInUse();
 
-        tableOrderRepository.save(tableOrder);
+
 
         waiting.changeWaitingStatusToComplete();
 
