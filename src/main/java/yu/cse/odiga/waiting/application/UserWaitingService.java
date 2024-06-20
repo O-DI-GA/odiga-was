@@ -82,7 +82,6 @@ public class UserWaitingService {
         waitingMenuRepository.saveAll(waitingMenus);
 
         waiting.setWaitingMenuList(waitingMenus);
-        //TODO : 웨이팅 인증 코드 return 필요함.
 
         return WaitingCodeResponseDto.builder()
                 .waitingCode(randomWaitingCode)

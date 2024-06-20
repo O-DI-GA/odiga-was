@@ -46,7 +46,6 @@ public class GuestWaitingService {
         }
         // random 으로 지정한 테이블 넘버
         int tableNumber = getRandomTableNumber(emptyTableList);
-        System.out.println(tableNumber);
 
         // TODO : 해당하는 메뉴들을 테이블에 넣어 줘야함
 
