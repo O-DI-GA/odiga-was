@@ -40,4 +40,14 @@ public class WaitingExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
+    @ExceptionHandler(AlreadyEnterWaitingCodeException.class)
+    public ResponseEntity<?> alreadyEnterWaitingCodeException(AlreadyEnterWaitingCodeException ex) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .httpStatusCode(400)
+                .errorMessage(ex.getMessage())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
 }

@@ -19,6 +19,7 @@ import yu.cse.odiga.waiting.dao.WaitingRepository;
 import yu.cse.odiga.waiting.domain.Waiting;
 import yu.cse.odiga.waiting.domain.WaitingMenu;
 import yu.cse.odiga.waiting.dto.WaitingValidateDto;
+import yu.cse.odiga.waiting.exception.AlreadyEnterWaitingCodeException;
 import yu.cse.odiga.waiting.exception.WaitingCodeValidateException;
 
 @Service
@@ -34,6 +35,10 @@ public class GuestWaitingService {
     public TableNumberResponseDto waitingValidate(WaitingValidateDto waitingValidateDto, Long storeId) {
         Waiting waiting = waitingRepository.findByWaitingCodeAndStoreId(waitingValidateDto.getWaitingCode(), storeId)
                 .orElseThrow(() -> new WaitingCodeValidateException("웨이팅 코드가 일치 하지 않습니다.")); //이거 한 분기 더 예외 처리 해야하는데
+
+        if (!waiting.isIncomplete()) {
+            throw new AlreadyEnterWaitingCodeException("이미 완료된 웨이팅 입니다.");
+        }
 
         List<StoreTable> storeTables = waiting.getStore().getTables();
 
@@ -78,8 +83,6 @@ public class GuestWaitingService {
 
         storeTable.changeTableStatusToInUse();
 
-
-
         waiting.changeWaitingStatusToComplete();
 
         return TableNumberResponseDto.builder()
@@ -89,6 +92,10 @@ public class GuestWaitingService {
 
     public int getRandomTableNumber(HashMap<Integer, Long> emptyTableList) {
         Random random = new Random();
-        return random.nextInt(emptyTableList.size());
+        List<Integer> keys = new ArrayList<>(emptyTableList.keySet());
+        int randomIndex = random.nextInt(keys.size());
+        int tableNumber = keys.get(randomIndex);
+        System.out.println(tableNumber);
+        return tableNumber;
     }
 }
