@@ -15,11 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import yu.cse.odiga.store.type.TableStatus;
 
 @Entity
 @Builder
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class StoreTable {
@@ -38,6 +40,15 @@ public class StoreTable {
     @Enumerated(EnumType.STRING)
     private TableStatus tableStatus;
 
-    @OneToMany(mappedBy = "storeTable", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "storeTable")
     private List<TableOrder> tableOrderList = new ArrayList<>();
+
+    public boolean isTableEmpty() {
+        return this.tableStatus == TableStatus.EMPTY;
+    }
+
+    public void changeTableStatusToInUse() {
+        this.tableStatus = TableStatus.INUSE;
+    }
+
 }

@@ -44,10 +44,11 @@ public class UserWaitingService {
     public WaitingCodeResponseDto registerWaiting(Long storeId, WaitingRegisterDto waitingRegisterDto,
                                                   CustomUserDetails customUserDetails) {
 
+        // TODO : 해당 로직 변경 필요 웨이팅을 재등록하는 case 도 있음
         Optional<Waiting> userWaiting = waitingRepository.findByStoreIdAndUserId(storeId,
                 customUserDetails.getUser().getId());
 
-        if (userWaiting.isPresent() && !userWaiting.get().isIncomplete()) {
+        if (userWaiting.isPresent() && userWaiting.get().isIncomplete()) {
             throw new AlreadyHasWaitingException("이미 웨이팅을 등록한 가게 입니다.");
         }
 

@@ -15,12 +15,16 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import yu.cse.odiga.store.type.PaymentStatus;
 
 @Entity
 @Builder
 @AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
 public class TableOrder {
 
