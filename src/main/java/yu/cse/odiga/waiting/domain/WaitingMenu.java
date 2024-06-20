@@ -28,7 +28,7 @@ public class WaitingMenu {
     @JoinColumn
     @ManyToOne
     private Waiting waiting;
-    @OneToOne
+    @ManyToOne
     private Menu menu;
 
     private int menuCount;

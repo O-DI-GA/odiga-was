@@ -51,11 +51,14 @@ public class UserWaitingService {
         if (userWaiting.isPresent() && userWaiting.get().isIncomplete()) {
             throw new AlreadyHasWaitingException("이미 웨이팅을 등록한 가게 입니다.");
         }
+        // 취소하고 다시 웨이팅 기능 이상함
 
         Store store = storeRepository.findById(storeId).orElseThrow();
         List<WaitingMenu> waitingMenus = new ArrayList<>();
         List<WaitingMenuDto> requestMenus = waitingRegisterDto.getRegisterMenus();
         String randomWaitingCode = generateRandomCode();
+
+        System.out.println("----------------------tqlkf");
 
         Waiting waiting = Waiting.builder()
                 .user(customUserDetails.getUser())
@@ -65,6 +68,8 @@ public class UserWaitingService {
                 .waitingCode(randomWaitingCode) // 코드 + 웨이팅 번호 + storeID 로 확인 하면 될듯
                 .waitingStatus(WaitingStatus.INCOMPLETE)
                 .build();
+
+        waitingRepository.save(waiting);
 
         for (WaitingMenuDto menuDto : requestMenus) {
             Menu menu = menuRepository.findById(menuDto.getMenuId()).orElseThrow();
@@ -76,12 +81,16 @@ public class UserWaitingService {
                     .build();
 
             waitingMenus.add(waitingMenu);
+            waitingMenuRepository.save(waitingMenu);
         }
+        System.out.println("----------------------tqlkf2");
 
-        waitingRepository.save(waiting);
-        waitingMenuRepository.saveAll(waitingMenus);
+
+        System.out.println("----------------------tqlkf3");
 
         waiting.setWaitingMenuList(waitingMenus);
+
+        System.out.println("----------------------tqlkf5");
 
         return WaitingCodeResponseDto.builder()
                 .waitingCode(randomWaitingCode)
