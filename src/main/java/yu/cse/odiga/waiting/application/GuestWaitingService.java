@@ -78,8 +78,6 @@ public class GuestWaitingService {
 
         storeTable.changeTableStatusToInUse();
 
-
-
         waiting.changeWaitingStatusToComplete();
 
         return TableNumberResponseDto.builder()
@@ -89,6 +87,10 @@ public class GuestWaitingService {
 
     public int getRandomTableNumber(HashMap<Integer, Long> emptyTableList) {
         Random random = new Random();
-        return random.nextInt(emptyTableList.size());
+        List<Integer> keys = new ArrayList<>(emptyTableList.keySet());
+        int randomIndex = random.nextInt(keys.size());
+        int tableNumber = keys.get(randomIndex);
+        System.out.println(tableNumber);
+        return tableNumber;
     }
 }
