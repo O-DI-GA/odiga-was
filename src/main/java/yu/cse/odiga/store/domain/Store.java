@@ -31,6 +31,7 @@ public class Store {
     private String address;
 
     @Column(columnDefinition = "geometry(Point, 4326)")
+    @JsonIgnore
     private Point location;
 
     @Column

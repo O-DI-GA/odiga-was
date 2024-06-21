@@ -10,4 +10,5 @@ public class UserWaitingDto {
     private Long storeId;
     private String storeName;
     private int previousWaitingCount;
+    private String storeTitleImage;
 }

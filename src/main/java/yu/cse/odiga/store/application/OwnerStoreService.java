@@ -69,6 +69,7 @@ public class OwnerStoreService {
                     .address(s.getAddress())
                     .phoneNumber(s.getPhoneNumber())
                     .storeName(s.getStoreName())
+                    .storeCategory(s.getStoreCategory())
                     .reviewCount(s.getReviewCount())
                     .build();
 

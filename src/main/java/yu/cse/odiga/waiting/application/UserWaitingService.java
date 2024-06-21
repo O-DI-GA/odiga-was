@@ -116,6 +116,7 @@ public class UserWaitingService {
                         .storeId(waiting.getStore().getId())
                         .storeName(waiting.getStore().getStoreName())
                         .previousWaitingCount(getPreviousWaitingCount(storeWaitings, waiting.getWaitingNumber()))
+                        .storeTitleImage(waiting.getStore().getStoreTitleImage())
                         .build();
                 waitingDtoList.add(userWaitingDto);
             }
