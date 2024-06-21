@@ -36,6 +36,8 @@ public class GuestWaitingService {
         Waiting waiting = waitingRepository.findByWaitingCodeAndStoreId(waitingValidateDto.getWaitingCode(), storeId)
                 .orElseThrow(() -> new WaitingCodeValidateException("웨이팅 코드가 일치 하지 않습니다.")); //이거 한 분기 더 예외 처리 해야하는데
 
+        // TODO : 자신의 웨이팅 순서가 아닐때 예외처리 필요함.
+
         if (!waiting.isIncomplete()) {
             throw new AlreadyEnterWaitingCodeException("이미 완료된 웨이팅 입니다.");
         }

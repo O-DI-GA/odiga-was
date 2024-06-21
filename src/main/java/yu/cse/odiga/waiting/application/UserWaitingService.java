@@ -58,8 +58,6 @@ public class UserWaitingService {
         List<WaitingMenuDto> requestMenus = waitingRegisterDto.getRegisterMenus();
         String randomWaitingCode = generateRandomCode();
 
-        System.out.println("----------------------tqlkf");
-
         Waiting waiting = Waiting.builder()
                 .user(customUserDetails.getUser())
                 .store(store)
@@ -83,14 +81,8 @@ public class UserWaitingService {
             waitingMenus.add(waitingMenu);
             waitingMenuRepository.save(waitingMenu);
         }
-        System.out.println("----------------------tqlkf2");
-
-
-        System.out.println("----------------------tqlkf3");
 
         waiting.setWaitingMenuList(waitingMenus);
-
-        System.out.println("----------------------tqlkf5");
 
         return WaitingCodeResponseDto.builder()
                 .waitingCode(randomWaitingCode)
@@ -103,9 +95,10 @@ public class UserWaitingService {
      */
     @Transactional
     public void unregisterWaiting(Long storeId, CustomUserDetails customUserDetails) {
-        Waiting waiting = waitingRepository.findByStoreIdAndUserId(storeId, customUserDetails.getUser().getId())
+        Waiting waiting = waitingRepository.findByStoreIdAndUserIdAndWaitingStatus(storeId,
+                        customUserDetails.getUser().getId(), WaitingStatus.INCOMPLETE)
                 .orElseThrow(() -> new NotFoundWaitingException("등록된 웨이팅이 없습니다."));
-        waiting.changeWaitingStatusToComplete();
+        waiting.changeWaitingStatusToCancel();
     }
 
     public List<UserWaitingDto> findUserWaitings(CustomUserDetails customUserDetails) {
