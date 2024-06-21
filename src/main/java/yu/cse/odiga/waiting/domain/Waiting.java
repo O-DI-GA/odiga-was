@@ -55,7 +55,11 @@ public class Waiting {
         this.waitingStatus = WaitingStatus.COMPLETE;
     }
 
+    public void changeWaitingStatusToCancel() {
+        this.waitingStatus = WaitingStatus.CANCEL;
+    }
+
     public boolean isIncomplete() {
         return this.waitingStatus == WaitingStatus.INCOMPLETE;
-     }
+    }
 }

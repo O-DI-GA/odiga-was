@@ -2,6 +2,7 @@ package yu.cse.odiga.waiting.application;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,9 @@ import yu.cse.odiga.waiting.dto.UserWaitingDto;
 import yu.cse.odiga.waiting.dto.WaitingCodeResponseDto;
 import yu.cse.odiga.waiting.dto.WaitingMenuDto;
 import yu.cse.odiga.waiting.dto.WaitingRegisterDto;
+import yu.cse.odiga.waiting.exception.AlreadyCancelWaitingException;
+import yu.cse.odiga.waiting.exception.AlreadyHasWaitingException;
+import yu.cse.odiga.waiting.exception.NotFoundWaitingException;
 import yu.cse.odiga.waiting.type.WaitingStatus;
 
 @Service
@@ -34,11 +38,18 @@ public class UserWaitingService {
     /**
      * Waiting 등록
      */
-
-    // TODO : 웨이팅 등록시 메뉴 인원수 추가
     @Transactional
     public WaitingCodeResponseDto registerWaiting(Long storeId, WaitingRegisterDto waitingRegisterDto,
                                                   CustomUserDetails customUserDetails) {
+
+        // TODO : 해당 로직 변경 필요 웨이팅을 재등록하는 case 도 있음
+        Optional<Waiting> userWaiting = waitingRepository.findByStoreIdAndUserIdAndWaitingStatus(storeId,
+                customUserDetails.getUser().getId(), WaitingStatus.INCOMPLETE);
+
+        if (userWaiting.isPresent()) {
+            throw new AlreadyHasWaitingException("이미 웨이팅을 등록한 가게 입니다.");
+        }
+        // 취소하고 다시 웨이팅 기능 이상함
 
         Store store = storeRepository.findById(storeId).orElseThrow();
         List<WaitingMenu> waitingMenus = new ArrayList<>();
@@ -54,6 +65,8 @@ public class UserWaitingService {
                 .waitingStatus(WaitingStatus.INCOMPLETE)
                 .build();
 
+        waitingRepository.save(waiting);
+
         for (WaitingMenuDto menuDto : requestMenus) {
             Menu menu = menuRepository.findById(menuDto.getMenuId()).orElseThrow();
             WaitingMenu waitingMenu = WaitingMenu.builder()
@@ -64,13 +77,10 @@ public class UserWaitingService {
                     .build();
 
             waitingMenus.add(waitingMenu);
+            waitingMenuRepository.save(waitingMenu);
         }
 
-        waitingRepository.save(waiting);
-        waitingMenuRepository.saveAll(waitingMenus);
-
         waiting.setWaitingMenuList(waitingMenus);
-        //TODO : 웨이팅 인증 코드 return 필요함.
 
         return WaitingCodeResponseDto.builder()
                 .waitingCode(randomWaitingCode)
@@ -82,14 +92,20 @@ public class UserWaitingService {
      * Waiting 취소
      */
     @Transactional
-    public void unregisterWaiting(Long storeId, CustomUserDetails customUserDetails) {
-        Waiting waiting = waitingRepository.findByStoreIdAndUserId(storeId, customUserDetails.getUser().getId())
-                .orElseThrow();
-        waiting.changeWaitingStatusToComplete();
+    public void unregisterWaiting(Long waitingId) {
+        Waiting waiting = waitingRepository.findById(waitingId)
+                .orElseThrow(() -> new NotFoundWaitingException("등록된 웨이팅이 없습니다."));
+
+        if (!waiting.isIncomplete()) {
+            throw new AlreadyCancelWaitingException("이미 취소된 웨이팅 입니다");
+        }
+
+        waiting.changeWaitingStatusToCancel();
     }
 
     public List<UserWaitingDto> findUserWaitings(CustomUserDetails customUserDetails) {
-        List<Waiting> incompleteUserWaitings = waitingRepository.findByUserIdAndWaitingStatus(customUserDetails.getUser().getId(), WaitingStatus.INCOMPLETE);
+        List<Waiting> incompleteUserWaitings = waitingRepository.findByUserIdAndWaitingStatus(
+                customUserDetails.getUser().getId(), WaitingStatus.INCOMPLETE);
         List<UserWaitingDto> waitingDtoList = new ArrayList<>();
 
         for (Waiting waiting : incompleteUserWaitings) {
@@ -108,7 +124,8 @@ public class UserWaitingService {
     }
 
     public UserWaitingDetailDto userWaitingDetail(Long waitingId) {
-        Waiting waiting = waitingRepository.findById(waitingId).orElseThrow();
+        Waiting waiting = waitingRepository.findById(waitingId)
+                .orElseThrow(() -> new NotFoundWaitingException("등록된 웨이팅이 없습니다."));
         List<Waiting> storeWaitings = waitingRepository.findByStoreId(waiting.getStore().getId());
 
         return UserWaitingDetailDto.builder()

@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum OrderCondition {
+public enum SortCondition {
     STORE_LIKE_COUNT("LIKE"), STORE_REVIEW_COUNT("REVIEW"), STORE_WAITING_COUNT("WAITING");
 
     private final String value;

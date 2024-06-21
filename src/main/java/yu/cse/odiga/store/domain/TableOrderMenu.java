@@ -1,4 +1,4 @@
-package yu.cse.odiga.waiting.domain;
+package yu.cse.odiga.store.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -6,30 +6,29 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import yu.cse.odiga.store.domain.Menu;
 
 @Entity
 @Builder
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class WaitingMenu {
+public class TableOrderMenu {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @JoinColumn
-    @ManyToOne
-    private Waiting waiting;
     @ManyToOne
     private Menu menu;
 
     private int menuCount;
 
-    private int totalPrice;
+    @ManyToOne
+    @JoinColumn(name = "tableOrderId")
+    private TableOrder tableOrder;
 }

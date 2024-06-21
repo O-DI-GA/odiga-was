@@ -20,7 +20,7 @@ import yu.cse.odiga.store.dto.StoreImagesDto;
 import yu.cse.odiga.store.dto.StoreListDto;
 import yu.cse.odiga.store.dto.StoreMapDto;
 import yu.cse.odiga.store.dto.StoreMenuListDto;
-import yu.cse.odiga.store.type.OrderCondition;
+import yu.cse.odiga.store.type.SortCondition;
 import yu.cse.odiga.waiting.domain.Waiting;
 import yu.cse.odiga.waiting.type.WaitingStatus;
 
@@ -71,13 +71,13 @@ public class StoreService {
 
         List<Store> findStoreByDistance = new ArrayList<>();
 
-        if (OrderCondition.STORE_LIKE_COUNT.getValue().equals(orderCondition)) {
+        if (SortCondition.STORE_LIKE_COUNT.getValue().equals(orderCondition)) {
             findStoreByDistance = storeRepository.findStoresRangeAndOrderByLikeCount(point,
                     RANGE_OF_RADIUS);  //반경 700m 거리 안에 있는 가게중에 가장 찜이 많은 가게 10개
-        } else if (OrderCondition.STORE_REVIEW_COUNT.getValue().equals(orderCondition)) {
+        } else if (SortCondition.STORE_REVIEW_COUNT.getValue().equals(orderCondition)) {
             findStoreByDistance = storeRepository.findStoresRangeAndOrderByReviewCount(point,
                     RANGE_OF_RADIUS);  //반경 700m 거리 안에 있는 가게중에 가장 리뷰가 많은 가게 10개
-        } else if (OrderCondition.STORE_WAITING_COUNT.getValue().equals(orderCondition)) {
+        } else if (SortCondition.STORE_WAITING_COUNT.getValue().equals(orderCondition)) {
             findStoreByDistance = storeRepository.findStoresRangeAndOrderByWaitingCount(point, RANGE_OF_RADIUS);
         }
 
@@ -112,6 +112,7 @@ public class StoreService {
 //        double averageReviewScore = store.getReviewList().stream().mapToInt(Review::getRating).average()
 //                .orElse(EMPTY_REVIVE_RATING);
 
+        // TODO : 실제 TableStatus 로 다시 로직 짜야함 TableStatus.INUSE 로 필터링 해서
         int emptyTableCount = Math.max(store.getTableCount() - incompleteWaitings.size(), EMPTY_TABLE_COUNT);
 
         return StoreDetailDto.builder()

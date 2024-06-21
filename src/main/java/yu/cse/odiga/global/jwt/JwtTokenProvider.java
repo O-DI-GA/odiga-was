@@ -43,6 +43,7 @@ public class JwtTokenProvider {
                 .compact();
 
         String refreshToken = Jwts.builder()
+                .setSubject(email)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .setExpiration(expireTime)
                 .compact();
