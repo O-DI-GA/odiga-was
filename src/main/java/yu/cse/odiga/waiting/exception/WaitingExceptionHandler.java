@@ -50,4 +50,15 @@ public class WaitingExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
+    @ExceptionHandler(AlreadyCancelWaitingException.class)
+    public ResponseEntity<?> alreadyCancelWaitingException(AlreadyCancelWaitingException ex) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .httpStatusCode(400)
+                .errorMessage(ex.getMessage())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+
 }

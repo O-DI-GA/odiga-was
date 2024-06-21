@@ -34,7 +34,8 @@ public class GuestWaitingService {
     // TODO : 키오스크에서 결제 안하면 그냥 바로 history 넣어 줘야함 -> 결제 쪽 service 에서 구현해야 할듯
     public TableNumberResponseDto waitingValidate(WaitingValidateDto waitingValidateDto, Long storeId) {
         Waiting waiting = waitingRepository.findByWaitingCodeAndStoreId(waitingValidateDto.getWaitingCode(), storeId)
-                .orElseThrow(() -> new WaitingCodeValidateException("웨이팅 코드가 일치 하지 않습니다.")); //이거 한 분기 더 예외 처리 해야하는데
+                .orElseThrow(() -> new WaitingCodeValidateException(
+                        "웨이팅 코드가 일치 하지 않습니다.")); //이거 한 분기 더 예외 처리 해야하는데 항상 waiting code 가 다르지 않을 수 있음
 
         // TODO : 자신의 웨이팅 순서가 아닐때 예외처리 필요함.
 
@@ -97,7 +98,6 @@ public class GuestWaitingService {
         List<Integer> keys = new ArrayList<>(emptyTableList.keySet());
         int randomIndex = random.nextInt(keys.size());
         int tableNumber = keys.get(randomIndex);
-        System.out.println(tableNumber);
         return tableNumber;
     }
 }

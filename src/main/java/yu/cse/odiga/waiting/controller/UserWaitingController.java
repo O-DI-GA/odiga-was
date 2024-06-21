@@ -32,10 +32,9 @@ public class UserWaitingController {
                 userWaitingService.registerWaiting(storeId, waitingRegisterDto, customUserDetails)));
     }
 
-    @DeleteMapping("{storeId}")
-    public ResponseEntity<?> unregisterWaiting(@PathVariable Long storeId,
-                                               @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        userWaitingService.unregisterWaiting(storeId, customUserDetails);
+    @DeleteMapping("{waitingId}")
+    public ResponseEntity<?> unregisterWaiting(@PathVariable Long waitingId) {
+        userWaitingService.unregisterWaiting(waitingId);
 
         return ResponseEntity.status(200).body(new DefaultResponse<>(200, "unregister waiting", null));
     }

@@ -21,6 +21,7 @@ import yu.cse.odiga.waiting.dto.UserWaitingDto;
 import yu.cse.odiga.waiting.dto.WaitingCodeResponseDto;
 import yu.cse.odiga.waiting.dto.WaitingMenuDto;
 import yu.cse.odiga.waiting.dto.WaitingRegisterDto;
+import yu.cse.odiga.waiting.exception.AlreadyCancelWaitingException;
 import yu.cse.odiga.waiting.exception.AlreadyHasWaitingException;
 import yu.cse.odiga.waiting.exception.NotFoundWaitingException;
 import yu.cse.odiga.waiting.type.WaitingStatus;
@@ -38,17 +39,15 @@ public class UserWaitingService {
     /**
      * Waiting 등록
      */
-
-    // TODO : 웨이팅 등록시 메뉴 인원수 추가
     @Transactional
     public WaitingCodeResponseDto registerWaiting(Long storeId, WaitingRegisterDto waitingRegisterDto,
                                                   CustomUserDetails customUserDetails) {
 
         // TODO : 해당 로직 변경 필요 웨이팅을 재등록하는 case 도 있음
-        Optional<Waiting> userWaiting = waitingRepository.findByStoreIdAndUserId(storeId,
-                customUserDetails.getUser().getId());
+        Optional<Waiting> userWaiting = waitingRepository.findByStoreIdAndUserIdAndWaitingStatus(storeId,
+                customUserDetails.getUser().getId(), WaitingStatus.INCOMPLETE);
 
-        if (userWaiting.isPresent() && userWaiting.get().isIncomplete()) {
+        if (userWaiting.isPresent()) {
             throw new AlreadyHasWaitingException("이미 웨이팅을 등록한 가게 입니다.");
         }
         // 취소하고 다시 웨이팅 기능 이상함
@@ -94,10 +93,14 @@ public class UserWaitingService {
      * Waiting 취소
      */
     @Transactional
-    public void unregisterWaiting(Long storeId, CustomUserDetails customUserDetails) {
-        Waiting waiting = waitingRepository.findByStoreIdAndUserIdAndWaitingStatus(storeId,
-                        customUserDetails.getUser().getId(), WaitingStatus.INCOMPLETE)
+    public void unregisterWaiting(Long waitingId) {
+        Waiting waiting = waitingRepository.findById(waitingId)
                 .orElseThrow(() -> new NotFoundWaitingException("등록된 웨이팅이 없습니다."));
+
+        if (!waiting.isIncomplete()) {
+            throw new AlreadyCancelWaitingException("이미 취소된 웨이팅 입니다");
+        }
+
         waiting.changeWaitingStatusToCancel();
     }
 
