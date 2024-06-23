@@ -10,6 +10,7 @@ import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.stereotype.Service;
 import yu.cse.odiga.store.dao.StoreImageRepository;
 import yu.cse.odiga.store.dao.StoreRepository;
+import yu.cse.odiga.store.dao.StoreTableRepository;
 import yu.cse.odiga.store.domain.Category;
 import yu.cse.odiga.store.domain.Menu;
 import yu.cse.odiga.store.domain.Store;
@@ -21,13 +22,17 @@ import yu.cse.odiga.store.dto.StoreListDto;
 import yu.cse.odiga.store.dto.StoreMapDto;
 import yu.cse.odiga.store.dto.StoreMenuListDto;
 import yu.cse.odiga.store.type.SortCondition;
+import yu.cse.odiga.waiting.dao.WaitingRepository;
 import yu.cse.odiga.waiting.domain.Waiting;
+import yu.cse.odiga.store.type.TableStatus;
 import yu.cse.odiga.waiting.type.WaitingStatus;
 
 @Service
 @RequiredArgsConstructor
 public class StoreService {
+    private final WaitingRepository waitingRepository;
     private final StoreRepository storeRepository;
+    private final StoreTableRepository storeTableRepository;
     private final StoreImageRepository storeImageRepository;
     private static final int EMPTY_TABLE_COUNT = 0;
     private static final double EMPTY_REVIEW_RATING = 0.0;
@@ -105,15 +110,25 @@ public class StoreService {
     public StoreDetailDto findByStoreId(Long storeId) {
         Store store = storeRepository.findById(storeId).orElseThrow();
 
-        List<Waiting> incompleteWaitings = store.getWaitingList().stream()
-                .filter(waiting -> waiting.getWaitingStatus() == WaitingStatus.INCOMPLETE)
-                .toList();
+//        List<Waiting> incompleteWaitings = store.getWaitingList().stream()
+//                .filter(waiting -> waiting.getWaitingStatus() == WaitingStatus.INCOMPLETE)
+//                .toList();
 
 //        double averageReviewScore = store.getReviewList().stream().mapToInt(Review::getRating).average()
 //                .orElse(EMPTY_REVIVE_RATING);
 
         // TODO : 실제 TableStatus 로 다시 로직 짜야함 TableStatus.INUSE 로 필터링 해서
-        int emptyTableCount = Math.max(store.getTableCount() - incompleteWaitings.size(), EMPTY_TABLE_COUNT);
+//        int emptyTableCount = Math.max(store.getTableCount() - incompleteWaitings.size(), EMPTY_TABLE_COUNT);
+        int emptyTableCount = 0;
+        int waitingCount = 0;
+
+        List<Waiting> waitingList = waitingRepository.findByStoreIdAndWaitingStatus(storeId, WaitingStatus.INCOMPLETE);
+
+        if (waitingList.isEmpty()) {
+            emptyTableCount = storeTableRepository.findByStoreIdAndTableStatus(storeId, TableStatus.EMPTY).size();
+        } else {
+            waitingCount = waitingList.size();
+        }
 
         return StoreDetailDto.builder()
                 .storeName(store.getStoreName())
@@ -122,9 +137,11 @@ public class StoreService {
                 .likeCount(store.getLikeCount())
                 .address(store.getAddress())
                 .tableCount(store.getTableCount())
+
                 .emptyTableCount(emptyTableCount)
+                .waitingCount(waitingCount)
+
                 .phoneNumber(store.getPhoneNumber())
-                .waitingCount(incompleteWaitings.size())
                 .build();
     }
 
