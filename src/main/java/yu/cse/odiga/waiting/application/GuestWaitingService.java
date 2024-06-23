@@ -91,6 +91,8 @@ public class GuestWaitingService {
 
         waiting.changeWaitingStatusToComplete();
 
+        waitingRepository.save(waiting);    
+
         return TableNumberResponseDto.builder()
                 .tableNumber(tableNumber)
                 .build();
