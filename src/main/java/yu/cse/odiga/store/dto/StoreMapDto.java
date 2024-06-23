@@ -12,4 +12,5 @@ public class StoreMapDto {
     private Double latitude;
     private int emptyTableCount;
     private int waitingCount;
+    private String storeCategory;
 }

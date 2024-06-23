@@ -59,6 +59,7 @@ public class StoreService {
                     .longitude(s.getLocation().getX())
                     .waitingCount(incompleteWaitings.size())
                     .emptyTableCount(emptyTableCount)
+                    .storeCategory(s.getStoreCategory())
                     .build();
 
             storeList.add(storeMapDto);
@@ -99,6 +100,7 @@ public class StoreService {
                     .waitingCount(incompleteWaitings.size())
                     .storeId(store.getId())
                     .storeName(store.getStoreName())
+                    .storeCategory(store.getStoreCategory())
                     .build();
 
             responseStore.add(storeListDto);
@@ -137,10 +139,9 @@ public class StoreService {
                 .likeCount(store.getLikeCount())
                 .address(store.getAddress())
                 .tableCount(store.getTableCount())
-
+                .storeCategory(store.getStoreCategory())
                 .emptyTableCount(emptyTableCount)
                 .waitingCount(waitingCount)
-
                 .phoneNumber(store.getPhoneNumber())
                 .build();
     }
