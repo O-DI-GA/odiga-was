@@ -32,7 +32,7 @@ public class GuestWaitingService {
     private final StoreTableRepository storeTableRepository;
     private final TableOrderRepository tableOrderRepository;
     private final TableOrderMenuRepository tableOrderMenuRepository;
-    
+
     // TODO : 나중에 중복 코드 관련 예외 필요
     // TODO : 키오스크에서 결제 안하면 그냥 바로 history 넣어 줘야함 -> 결제 쪽 service 에서 구현해야 할듯
     public TableNumberResponseDto waitingValidate(WaitingValidateDto waitingValidateDto, Long storeId) {
@@ -103,6 +103,8 @@ public class GuestWaitingService {
 
         storeTable.changeTableStatusToInUse();
 
+        storeTableRepository.save(storeTable);
+
         return TableNumberResponseDto.builder()
                 .tableNumber(tableNumber)
                 .build();
@@ -112,7 +114,6 @@ public class GuestWaitingService {
         Random random = new Random();
         List<Integer> keys = new ArrayList<>(emptyTableList.keySet());
         int randomIndex = random.nextInt(keys.size());
-        int tableNumber = keys.get(randomIndex);
-        return tableNumber;
+        return keys.get(randomIndex);
     }
 }
