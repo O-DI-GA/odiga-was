@@ -24,12 +24,12 @@ public class TableOrderController {
                 tableOrderService.findTableOrderList(storeId, tableNumber)));
     }
 
-    @GetMapping("{tableOrderHistoryId}")
-    public ResponseEntity<?> findTableOrderHistoryById(@PathVariable Long storeId,
-                                                       @PathVariable Long tableOrderHistoryId) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new DefaultResponse<>(200, "Table Order history by id " + tableOrderHistoryId,
-                        tableOrderService.findByIdOrderHistory(tableOrderHistoryId)));
-    }
+//    @GetMapping("{tableOrderHistoryId}")
+//    public ResponseEntity<?> findTableOrderHistoryById(@PathVariable Long storeId,
+//                                                       @PathVariable Long tableOrderHistoryId) {
+//        return ResponseEntity.status(HttpStatus.OK)
+//                .body(new DefaultResponse<>(200, "Table Order history by id " + tableOrderHistoryId,
+//                        tableOrderService.findByIdOrderHistory(tableOrderHistoryId)));
+//    }
 
 }
