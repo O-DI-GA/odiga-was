@@ -9,6 +9,7 @@ import lombok.Getter;
 @Builder
 @Getter
 public class TableOrderMenuHistoryDto {
+    private Long tableOrderHistoryId;
     private List<TableOrderMenuListDto> tableOrderMenuListDtoList;
     private int totalOrderPrice;
 }

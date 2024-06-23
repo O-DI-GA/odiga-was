@@ -40,7 +40,26 @@ public class TableOrderService {
             tableOrder = tableOrderOptional.get();
         }
 
-        List<TableOrderMenu> tableOrderMenuList = tableOrder.getTableOrderMenuList();
+        return TableOrderMenuHistoryDto.builder()
+                .tableOrderHistoryId(tableOrder.getId())
+                .totalOrderPrice(tableOrder.getTableTotalPrice())
+                .tableOrderMenuListDtoList(
+                        tableOrderMenuListToTableOrderMenuListDtoList(tableOrder.getTableOrderMenuList()))
+                .build();
+    }
+
+    public TableOrderMenuHistoryDto findByIdOrderHistory(Long tableOrderHistoryId) {
+        TableOrder tableOrder = tableOrderRepository.findById(tableOrderHistoryId).orElseThrow();
+
+        return TableOrderMenuHistoryDto.builder()
+                .tableOrderHistoryId(tableOrder.getId())
+                .tableOrderMenuListDtoList(
+                        tableOrderMenuListToTableOrderMenuListDtoList(tableOrder.getTableOrderMenuList()))
+                .build();
+    }
+
+    public List<TableOrderMenuListDto> tableOrderMenuListToTableOrderMenuListDtoList(
+            List<TableOrderMenu> tableOrderMenuList) {
         List<TableOrderMenuListDto> tableOrderMenuListDtoList = new ArrayList<>();
         for (TableOrderMenu tableOrderMenu : tableOrderMenuList) {
             TableOrderMenuListDto tableOrderMenuDto = TableOrderMenuListDto.builder()
@@ -51,10 +70,8 @@ public class TableOrderService {
             tableOrderMenuListDtoList.add(tableOrderMenuDto);
         }
 
-        return TableOrderMenuHistoryDto.builder()
-                .totalOrderPrice(tableOrder.getTableTotalPrice())
-                .tableOrderMenuListDtoList(tableOrderMenuListDtoList)
-                .build();
+        return tableOrderMenuListDtoList;
     }
+
 
 }

@@ -1,5 +1,6 @@
 package yu.cse.odiga.store.controller;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,14 @@ public class TableOrderController {
     public ResponseEntity<?> findTableOrderHistory(@PathVariable Long storeId, @PathVariable int tableNumber) {
         return ResponseEntity.status(HttpStatus.OK).body(new DefaultResponse<>(200, "Table order history",
                 tableOrderService.findTableOrderList(storeId, tableNumber)));
+    }
+
+    @GetMapping("{tableOrderHistoryId}")
+    public ResponseEntity<?> findTableOrderHistoryById(@PathVariable Long storeId,
+                                                       @PathVariable Long tableOrderHistoryId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new DefaultResponse<>(200, "Table Order history by id " + tableOrderHistoryId,
+                        tableOrderService.findByIdOrderHistory(tableOrderHistoryId)));
     }
 
 }
