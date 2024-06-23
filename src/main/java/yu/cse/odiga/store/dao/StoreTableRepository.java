@@ -6,4 +6,6 @@ import yu.cse.odiga.store.domain.StoreTable;
 
 public interface StoreTableRepository extends JpaRepository<StoreTable, Long> {
 
+    Optional<StoreTable> findByStoreIdAndTableNumber(Long storeId, int tableNumber);
+
 }

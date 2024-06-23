@@ -21,6 +21,7 @@ import yu.cse.odiga.waiting.domain.WaitingMenu;
 import yu.cse.odiga.waiting.dto.WaitingValidateDto;
 import yu.cse.odiga.waiting.exception.AlreadyEnterWaitingCodeException;
 import yu.cse.odiga.waiting.exception.WaitingCodeValidateException;
+import yu.cse.odiga.waiting.type.WaitingStatus;
 
 @Service
 @RequiredArgsConstructor
@@ -33,15 +34,17 @@ public class GuestWaitingService {
 
     // TODO : 키오스크에서 결제 안하면 그냥 바로 history 넣어 줘야함 -> 결제 쪽 service 에서 구현해야 할듯
     public TableNumberResponseDto waitingValidate(WaitingValidateDto waitingValidateDto, Long storeId) {
-        Waiting waiting = waitingRepository.findByWaitingCodeAndStoreId(waitingValidateDto.getWaitingCode(), storeId)
+        Waiting waiting = waitingRepository.findByWaitingCodeAndStoreIdAndWaitingStatus(
+                        waitingValidateDto.getWaitingCode(), storeId,
+                        WaitingStatus.INCOMPLETE)
                 .orElseThrow(() -> new WaitingCodeValidateException(
                         "웨이팅 코드가 일치 하지 않습니다.")); //이거 한 분기 더 예외 처리 해야하는데 항상 waiting code 가 다르지 않을 수 있음
 
         // TODO : 자신의 웨이팅 순서가 아닐때 예외처리 필요함.
 
-        if (!waiting.isIncomplete()) {
-            throw new AlreadyEnterWaitingCodeException("이미 완료된 웨이팅 입니다.");
-        }
+//        if (!waiting.isIncomplete()) {
+//            throw new AlreadyEnterWaitingCodeException("이미 완료된 웨이팅 입니다.");
+//        }
 
         List<StoreTable> storeTables = waiting.getStore().getTables();
 

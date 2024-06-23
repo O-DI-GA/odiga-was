@@ -12,17 +12,33 @@ import yu.cse.odiga.store.domain.TableOrder;
 import yu.cse.odiga.store.domain.TableOrderMenu;
 import yu.cse.odiga.store.dto.TableOrderMenuHistoryDto;
 import yu.cse.odiga.store.dto.TableOrderMenuListDto;
+import yu.cse.odiga.store.type.PaymentStatus;
 
 @Service
 @RequiredArgsConstructor
 public class TableOrderService {
     private final TableOrderRepository tableOrderRepository;
+    private final StoreTableRepository storeTableRepository;
 
     public TableOrderMenuHistoryDto findTableOrderList(Long storeId, int tableNumber) {
 
         // 엄청난 쿼리가 발생할거 같은데 이게 맞나?
-        TableOrder tableOrder = tableOrderRepository.findByStoreTable_StoreIdAndStoreTable_TableNumber(storeId,
-                tableNumber).orElseThrow();
+        Optional<TableOrder> tableOrderOptional = tableOrderRepository.findByStoreTable_StoreIdAndStoreTable_TableNumber(
+                storeId, tableNumber);
+
+        TableOrder tableOrder;
+
+        if (tableOrderOptional.isEmpty()) {
+            StoreTable storeTable = storeTableRepository.findByStoreIdAndTableNumber(storeId, tableNumber)
+                    .orElseThrow();
+            tableOrder = TableOrder.builder()
+                    .storeTable(storeTable)
+                    .paymentStatus(PaymentStatus.PENDING)
+                    .build();
+            tableOrderRepository.save(tableOrder);
+        } else {
+            tableOrder = tableOrderOptional.get();
+        }
 
         List<TableOrderMenu> tableOrderMenuList = tableOrder.getTableOrderMenuList();
         List<TableOrderMenuListDto> tableOrderMenuListDtoList = new ArrayList<>();
