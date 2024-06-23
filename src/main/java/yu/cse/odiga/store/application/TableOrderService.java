@@ -65,6 +65,7 @@ public class TableOrderService {
             TableOrderMenuListDto tableOrderMenuDto = TableOrderMenuListDto.builder()
                     .menuName(tableOrderMenu.getMenu().getMenuName())
                     .menuCount(tableOrderMenu.getMenuCount())
+                    .menuImageUrl(tableOrderMenu.getMenu().getMenuImageUrl())
                     .menuTotalPrice(tableOrderMenu.getMenu().getPrice() * tableOrderMenu.getMenuCount())
                     .build();
             tableOrderMenuListDtoList.add(tableOrderMenuDto);

@@ -61,4 +61,14 @@ public class WaitingExceptionHandler {
     }
 
 
+    @ExceptionHandler(NotValidateTurnException.class)
+    public ResponseEntity<?> notValidateTurnException(NotValidateTurnException ex) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .httpStatusCode(400)
+                .errorMessage(ex.getMessage())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
 }

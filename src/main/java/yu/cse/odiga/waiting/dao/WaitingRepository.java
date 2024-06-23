@@ -25,8 +25,10 @@ public interface WaitingRepository extends JpaRepository<Waiting, Long> {
 
     Optional<Waiting> findByWaitingCodeAndStoreId(String waitingCode, Long storeId);
 
-    Optional<Waiting> findByWaitingCodeAndStoreIdAndWaitingStatus(String waitingCode, Long storeId,
-                                                                  WaitingStatus waitingStatus);
+    List<Waiting> findByWaitingCodeAndStoreIdAndWaitingStatus(String waitingCode, Long storeId,
+                                                              WaitingStatus waitingStatus);
+
+    Optional<Waiting> findByStoreIdAndWaitingNumber(Long storeId, int waitingNumber);
 
 
 }

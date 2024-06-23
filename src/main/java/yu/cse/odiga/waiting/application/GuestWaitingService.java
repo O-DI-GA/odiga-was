@@ -20,6 +20,7 @@ import yu.cse.odiga.waiting.domain.Waiting;
 import yu.cse.odiga.waiting.domain.WaitingMenu;
 import yu.cse.odiga.waiting.dto.WaitingValidateDto;
 import yu.cse.odiga.waiting.exception.AlreadyEnterWaitingCodeException;
+import yu.cse.odiga.waiting.exception.NotValidateTurnException;
 import yu.cse.odiga.waiting.exception.WaitingCodeValidateException;
 import yu.cse.odiga.waiting.type.WaitingStatus;
 
@@ -31,20 +32,33 @@ public class GuestWaitingService {
     private final StoreTableRepository storeTableRepository;
     private final TableOrderRepository tableOrderRepository;
     private final TableOrderMenuRepository tableOrderMenuRepository;
-
+    
+    // TODO : 나중에 중복 코드 관련 예외 필요
     // TODO : 키오스크에서 결제 안하면 그냥 바로 history 넣어 줘야함 -> 결제 쪽 service 에서 구현해야 할듯
     public TableNumberResponseDto waitingValidate(WaitingValidateDto waitingValidateDto, Long storeId) {
-        Waiting waiting = waitingRepository.findByWaitingCodeAndStoreIdAndWaitingStatus(
-                        waitingValidateDto.getWaitingCode(), storeId,
-                        WaitingStatus.INCOMPLETE)
-                .orElseThrow(() -> new WaitingCodeValidateException(
-                        "웨이팅 코드가 일치 하지 않습니다.")); //이거 한 분기 더 예외 처리 해야하는데 항상 waiting code 가 다르지 않을 수 있음
+        List<Waiting> storeWaitings = waitingRepository.findByStoreId(storeId);
 
-        // TODO : 자신의 웨이팅 순서가 아닐때 예외처리 필요함.
+        int nowStoreWaitingNumber = Integer.MAX_VALUE;
 
-//        if (!waiting.isIncomplete()) {
-//            throw new AlreadyEnterWaitingCodeException("이미 완료된 웨이팅 입니다.");
-//        }
+        for (Waiting w : storeWaitings) { // 지금 차례 확인
+            if (w.isIncomplete()) {
+                nowStoreWaitingNumber = Math.min(w.getWaitingNumber(), nowStoreWaitingNumber);
+            }
+        }
+
+        Waiting waiting = waitingRepository.findByStoreIdAndWaitingNumber(storeId, nowStoreWaitingNumber).orElseThrow();
+
+        if (!waiting.getWaitingCode().equals(waitingValidateDto.getWaitingCode())) {
+            throw new WaitingCodeValidateException("유효한 웨이팅 코드가 아닙니다.");
+        }
+
+        if (!waiting.isIncomplete()) {
+            throw new AlreadyEnterWaitingCodeException("이미 완료된 웨이팅 입니다.");
+        }
+
+        waiting.changeWaitingStatusToComplete();
+
+        waitingRepository.save(waiting);
 
         List<StoreTable> storeTables = waiting.getStore().getTables();
 
@@ -88,10 +102,6 @@ public class GuestWaitingService {
         tableOrderMenuRepository.saveAll(tableOrderMenuList);
 
         storeTable.changeTableStatusToInUse();
-
-        waiting.changeWaitingStatusToComplete();
-
-        waitingRepository.save(waiting);    
 
         return TableNumberResponseDto.builder()
                 .tableNumber(tableNumber)

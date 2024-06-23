@@ -10,4 +10,5 @@ public class TableOrderMenuListDto {
     private String menuName;
     private int menuCount;
     private int menuTotalPrice;
+    private String menuImageUrl;
 }
