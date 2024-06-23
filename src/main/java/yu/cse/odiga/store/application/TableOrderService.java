@@ -23,22 +23,22 @@ public class TableOrderService {
     public TableOrderMenuHistoryDto findTableOrderList(Long storeId, int tableNumber) {
 
         // 엄청난 쿼리가 발생할거 같은데 이게 맞나?
-        Optional<TableOrder> tableOrderOptional = tableOrderRepository.findByStoreTable_StoreIdAndStoreTable_TableNumber(
-                storeId, tableNumber);
+        TableOrder tableOrder = tableOrderRepository.findByStoreTable_StoreIdAndStoreTable_TableNumber(
+                storeId, tableNumber).orElseThrow();
 
-        TableOrder tableOrder;
-
-        if (tableOrderOptional.isEmpty()) {
-            StoreTable storeTable = storeTableRepository.findByStoreIdAndTableNumber(storeId, tableNumber)
-                    .orElseThrow();
-            tableOrder = TableOrder.builder()
-                    .storeTable(storeTable)
-                    .paymentStatus(PaymentStatus.PENDING)
-                    .build();
-            tableOrderRepository.save(tableOrder);
-        } else {
-            tableOrder = tableOrderOptional.get();
-        }
+//        TableOrder tableOrder;
+//
+//        if (tableOrderOptional.isEmpty()) {
+//            StoreTable storeTable = storeTableRepository.findByStoreIdAndTableNumber(storeId, tableNumber)
+//                    .orElseThrow();
+//            tableOrder = TableOrder.builder()
+//                    .storeTable(storeTable)
+//                    .paymentStatus(PaymentStatus.PENDING)
+//                    .build();
+//            tableOrderRepository.save(tableOrder);
+//        } else {
+//            tableOrder = tableOrderOptional.get();
+//        }
 
         return TableOrderMenuHistoryDto.builder()
                 .tableOrderHistoryId(tableOrder.getId())
