@@ -12,4 +12,5 @@ public class StoreListDto {
     private int likeCount;
     private int reviewCount;
     private int waitingCount;
+    private String storeCategory;
 }

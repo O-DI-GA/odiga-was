@@ -15,4 +15,5 @@ public class StoreDetailDto {
     private String phoneNumber;
     private String address;
     private int emptyTableCount;
+    private String storeCategory;
 }
