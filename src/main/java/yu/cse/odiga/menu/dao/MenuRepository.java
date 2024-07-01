@@ -1,12 +1,8 @@
-package yu.cse.odiga.store.dao;
+package yu.cse.odiga.menu.dao;
 
-import java.util.Optional;
-import org.geolatte.geom.M;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import yu.cse.odiga.store.domain.Menu;
-
-import java.util.List;
+import yu.cse.odiga.menu.domain.Menu;
 
 @Repository
 public interface MenuRepository extends JpaRepository<Menu, Long> {

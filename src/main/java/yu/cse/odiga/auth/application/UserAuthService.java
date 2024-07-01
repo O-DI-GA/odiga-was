@@ -3,6 +3,7 @@ package yu.cse.odiga.auth.application;
 import io.jsonwebtoken.Claims;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,7 +21,6 @@ import yu.cse.odiga.auth.exception.TokenNotFoundException;
 import yu.cse.odiga.global.jwt.JwtTokenDto;
 import yu.cse.odiga.global.jwt.JwtTokenProvider;
 import yu.cse.odiga.global.type.Role;
-import org.springframework.beans.factory.annotation.Value;
 
 @Service
 @Transactional

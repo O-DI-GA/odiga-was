@@ -1,4 +1,4 @@
-package yu.cse.odiga.store.dto;
+package yu.cse.odiga.menu.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

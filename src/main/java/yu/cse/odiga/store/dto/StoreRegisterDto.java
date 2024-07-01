@@ -1,10 +1,9 @@
 package yu.cse.odiga.store.dto;
 
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Builder
 @Getter

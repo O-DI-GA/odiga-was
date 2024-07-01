@@ -1,20 +1,19 @@
 package yu.cse.odiga.store.application;
 
 import com.amazonaws.services.kms.model.NotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import yu.cse.odiga.auth.domain.CustomUserDetails;
-import yu.cse.odiga.store.dao.LikeStoreRepository;
 import yu.cse.odiga.auth.dao.UserRepository;
-import yu.cse.odiga.store.domain.LikeStore;
+import yu.cse.odiga.auth.domain.CustomUserDetails;
 import yu.cse.odiga.auth.domain.User;
+import yu.cse.odiga.store.dao.LikeStoreRepository;
 import yu.cse.odiga.store.dao.StoreRepository;
+import yu.cse.odiga.store.domain.LikeStore;
 import yu.cse.odiga.store.domain.Store;
 import yu.cse.odiga.store.dto.LikeResponseDto;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

@@ -1,10 +1,10 @@
-package yu.cse.odiga.store.dto;
+package yu.cse.odiga.menu.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import yu.cse.odiga.store.domain.Category;
+import yu.cse.odiga.menu.domain.Category;
 
 @Builder
 @Getter

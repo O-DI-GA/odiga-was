@@ -2,13 +2,27 @@ package yu.cse.odiga.store.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
-import lombok.*;
+import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.locationtech.jts.geom.Point;
+import yu.cse.odiga.menu.domain.Category;
 import yu.cse.odiga.owner.domain.Owner;
 import yu.cse.odiga.waiting.domain.Waiting;
-import java.util.List;
 
 @Entity
 @Getter
@@ -71,4 +85,8 @@ public class Store {
 
     @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
     private List<Review> reviewList = new ArrayList<>();
+
+    public boolean checkStoreOwner(Long ownerId) { // 메소드 명 바꿀필요가 있어보임
+        return this.getOwner().getId().equals(ownerId);
+    }
 }
