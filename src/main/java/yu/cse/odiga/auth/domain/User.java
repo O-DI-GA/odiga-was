@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import yu.cse.odiga.global.type.Role;
 import yu.cse.odiga.store.domain.LikeStore;
-import yu.cse.odiga.store.domain.Review;
+import yu.cse.odiga.review.domain.Review;
 import yu.cse.odiga.waiting.domain.Waiting;
 
 @Entity

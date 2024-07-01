@@ -1,4 +1,4 @@
-package yu.cse.odiga.store.domain;
+package yu.cse.odiga.review.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,6 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import yu.cse.odiga.auth.domain.User;
+import yu.cse.odiga.store.domain.Store;
 import yu.cse.odiga.store.type.Rating;
 
 @Entity

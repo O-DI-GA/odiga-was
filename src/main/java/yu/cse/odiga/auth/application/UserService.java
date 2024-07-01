@@ -14,9 +14,9 @@ import yu.cse.odiga.auth.domain.CustomUserDetails;
 import yu.cse.odiga.auth.domain.User;
 import yu.cse.odiga.auth.dto.UserProfileDto;
 import yu.cse.odiga.auth.dto.UserProfileUpdateDto;
-import yu.cse.odiga.store.dao.ReviewRepository;
-import yu.cse.odiga.store.domain.Review;
-import yu.cse.odiga.store.dto.ReviewResponseDto;
+import yu.cse.odiga.review.dao.ReviewRepository;
+import yu.cse.odiga.review.domain.Review;
+import yu.cse.odiga.review.dto.ReviewResponseDto;
 
 @Slf4j
 @Service

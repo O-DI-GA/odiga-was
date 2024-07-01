@@ -61,7 +61,7 @@ public class OwnerMenuService {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 가게 입니다. : " + storeId));
 
-        if (!store.checkStoreOwner(ownerUserDetails.getOwner().getId())) {
+        if (store.isNotStoreOwner(ownerUserDetails.getOwner().getId())) {
             throw new IllegalArgumentException("올바르지 않은 접근 입니다.");
         }
 
@@ -109,7 +109,7 @@ public class OwnerMenuService {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 가게 입니다. :  " + storeId));
 
-        if (!store.checkStoreOwner(ownerId)) {
+        if (store.isNotStoreOwner(ownerId)) {
             throw new IllegalArgumentException("올바르지 않은 접근 입니다.");
         }
 

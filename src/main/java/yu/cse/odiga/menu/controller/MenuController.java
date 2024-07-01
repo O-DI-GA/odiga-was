@@ -16,7 +16,7 @@ public class MenuController {
 
     private final MenuService menuService;
 
-    @GetMapping("{storeId}")
+    @GetMapping()
     ResponseEntity<?> storeDetailMenus(@PathVariable Long storeId) {
         return ResponseEntity.status(200)
                 .body(new DefaultResponse<>(200, storeId + " Store Menus", menuService.findStoreMenus(storeId)));

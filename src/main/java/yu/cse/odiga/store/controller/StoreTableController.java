@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import yu.cse.odiga.global.util.DefaultResponse;
 import yu.cse.odiga.store.application.StoreTableService;
-import yu.cse.odiga.store.domain.TableRegisterDto;
+import yu.cse.odiga.store.dto.TableRegisterDto;
 
 @RestController
 @RequestMapping("api/v1/owner/table")
