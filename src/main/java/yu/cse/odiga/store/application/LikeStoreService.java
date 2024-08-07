@@ -27,13 +27,14 @@ public class LikeStoreService {
     public Store add(Long storeId, CustomUserDetails customUserDetails) throws Exception {
 
         User user = userRepository.findByEmail(customUserDetails.getUsername())
-                .orElseThrow(() -> new NotFoundException("Could not found user email : " + customUserDetails.getUsername()));
+                .orElseThrow(
+                        () -> new NotFoundException("Could not found user email : " + customUserDetails.getUsername()));
 
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new NotFoundException("Could not found store id : " + storeId));
 
         // 이미 좋아요되어있으면 에러 반환
-        if (likeStoreRepository.findByUserAndStore(user, store).isPresent()){
+        if (likeStoreRepository.findByUserAndStore(user, store).isPresent()) {
             throw new Exception();
         }
 
@@ -44,7 +45,7 @@ public class LikeStoreService {
 
         likeStoreRepository.save(likeStore);
 
-        store.setLikeCount(store.getLikeCount()+ 1);
+        store.setLikeCount(store.getLikeCount() + 1);
 
         return store;
     }
@@ -53,7 +54,8 @@ public class LikeStoreService {
     public Store delete(Long storeId, CustomUserDetails customUserDetails) {
 
         User user = userRepository.findByEmail(customUserDetails.getUsername())
-                .orElseThrow(() -> new NotFoundException("Could not found user email : " + customUserDetails.getUsername()));
+                .orElseThrow(
+                        () -> new NotFoundException("Could not found user email : " + customUserDetails.getUsername()));
 
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new NotFoundException("Could not found store id : " + storeId));
@@ -63,7 +65,7 @@ public class LikeStoreService {
 
         likeStoreRepository.delete(likeStore);
 
-        store.setLikeCount(store.getLikeCount()-1);
+        store.setLikeCount(store.getLikeCount() - 1);
 
         return store;
     }

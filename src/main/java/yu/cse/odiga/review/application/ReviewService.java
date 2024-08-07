@@ -48,7 +48,7 @@ public class ReviewService {
 
         reviewRepository.save(review);
 
-        store.increaseReviewCount(); // update 쿼리 @Transactional 필요한듯
+        store.increaseReviewCount();
     }
 
     public List<ReviewResponseDto> findStoreReviews(Long storeId) {
