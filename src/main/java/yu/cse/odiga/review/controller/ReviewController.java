@@ -1,5 +1,6 @@
-package yu.cse.odiga.store.controller;
+package yu.cse.odiga.review.controller;
 
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import yu.cse.odiga.auth.domain.CustomUserDetails;
 import yu.cse.odiga.global.util.DefaultResponse;
-import yu.cse.odiga.store.dto.ReviewRegisterDto;
-import yu.cse.odiga.store.application.ReviewService;
-import java.io.IOException;
+import yu.cse.odiga.review.application.ReviewService;
+import yu.cse.odiga.review.dto.ReviewRegisterDto;
 
 @RestController
 @RequestMapping("/api/v1/user/store/{storeId}/reviews")

@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.locationtech.jts.geom.*;
+import org.locationtech.jts.geom.Point;
 
 @JsonIgnoreProperties({"location"})
 @Builder

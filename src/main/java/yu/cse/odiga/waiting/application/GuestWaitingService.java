@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
-import org.postgresql.util.OSUtil;
 import org.springframework.stereotype.Service;
 import yu.cse.odiga.store.dao.StoreTableRepository;
 import yu.cse.odiga.store.dao.TableOrderMenuRepository;
@@ -20,9 +19,7 @@ import yu.cse.odiga.waiting.domain.Waiting;
 import yu.cse.odiga.waiting.domain.WaitingMenu;
 import yu.cse.odiga.waiting.dto.WaitingValidateDto;
 import yu.cse.odiga.waiting.exception.AlreadyEnterWaitingCodeException;
-import yu.cse.odiga.waiting.exception.NotValidateTurnException;
 import yu.cse.odiga.waiting.exception.WaitingCodeValidateException;
-import yu.cse.odiga.waiting.type.WaitingStatus;
 
 @Service
 @RequiredArgsConstructor

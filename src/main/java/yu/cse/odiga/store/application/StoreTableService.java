@@ -6,7 +6,7 @@ import yu.cse.odiga.store.dao.StoreRepository;
 import yu.cse.odiga.store.dao.StoreTableRepository;
 import yu.cse.odiga.store.domain.Store;
 import yu.cse.odiga.store.domain.StoreTable;
-import yu.cse.odiga.store.domain.TableRegisterDto;
+import yu.cse.odiga.store.dto.TableRegisterDto;
 import yu.cse.odiga.store.type.TableStatus;
 
 @Service

@@ -1,20 +1,21 @@
-package yu.cse.odiga.store.application;
-
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import yu.cse.odiga.auth.domain.CustomUserDetails;
-import yu.cse.odiga.auth.domain.User;
-import yu.cse.odiga.store.dao.ReviewRepository;
-import yu.cse.odiga.store.dao.StoreRepository;
-import yu.cse.odiga.store.domain.Review;
-import yu.cse.odiga.store.domain.Store;
-import yu.cse.odiga.store.dto.ReviewRegisterDto;
-import yu.cse.odiga.store.dto.ReviewResponseDto;
+package yu.cse.odiga.review.application;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import yu.cse.odiga.auth.domain.CustomUserDetails;
+import yu.cse.odiga.auth.domain.User;
+import yu.cse.odiga.review.dao.ReviewRepository;
+import yu.cse.odiga.store.application.S3ReviewImageUploadService;
+import yu.cse.odiga.store.dao.StoreRepository;
+import yu.cse.odiga.review.domain.Review;
+import yu.cse.odiga.store.domain.Store;
+import yu.cse.odiga.review.dto.ReviewRegisterDto;
+import yu.cse.odiga.review.dto.ReviewResponseDto;
 
 @Service
 @RequiredArgsConstructor
@@ -24,10 +25,16 @@ public class ReviewService {
     private final StoreRepository storeRepository;
     private final S3ReviewImageUploadService s3ReviewImageUploadService;
 
-    public void registerReview(Long storeId, ReviewRegisterDto reviewRegisterDto, CustomUserDetails customUserDetails) throws IOException {
+
+    @Transactional
+    public void registerReview(Long storeId, ReviewRegisterDto reviewRegisterDto, CustomUserDetails customUserDetails)
+            throws IOException {
+
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid store ID: " + storeId));
+
         String uploadImageUrl = s3ReviewImageUploadService.upload(reviewRegisterDto.getImage());
+
         User user = customUserDetails.getUser();
 
         Review review = Review.builder()
@@ -40,13 +47,8 @@ public class ReviewService {
                 .build();
 
         reviewRepository.save(review);
-        updateReviewCount(store);
-    }
 
-    private void updateReviewCount(Store store) {
-        int currentReviewCount = store.getReviewCount();
-        store.setReviewCount(currentReviewCount + 1);
-        storeRepository.save(store);
+        store.increaseReviewCount();
     }
 
     public List<ReviewResponseDto> findStoreReviews(Long storeId) {

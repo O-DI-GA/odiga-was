@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import yu.cse.odiga.store.application.LikeStoreService;
 import yu.cse.odiga.auth.domain.CustomUserDetails;
 import yu.cse.odiga.global.util.DefaultResponse;
+import yu.cse.odiga.store.application.LikeStoreService;
 
 @RestController
 @RequiredArgsConstructor

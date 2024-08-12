@@ -1,5 +1,11 @@
 package yu.cse.odiga.store.application;
 
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -9,13 +15,6 @@ import yu.cse.odiga.global.S3.S3Util;
 import yu.cse.odiga.store.dao.StoreImageRepository;
 import yu.cse.odiga.store.domain.Store;
 import yu.cse.odiga.store.domain.StoreImage;
-
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 @Transactional
 @Slf4j

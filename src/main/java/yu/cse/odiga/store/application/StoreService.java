@@ -11,20 +11,16 @@ import org.springframework.stereotype.Service;
 import yu.cse.odiga.store.dao.StoreImageRepository;
 import yu.cse.odiga.store.dao.StoreRepository;
 import yu.cse.odiga.store.dao.StoreTableRepository;
-import yu.cse.odiga.store.domain.Category;
-import yu.cse.odiga.store.domain.Menu;
 import yu.cse.odiga.store.domain.Store;
 import yu.cse.odiga.store.domain.StoreImage;
-import yu.cse.odiga.store.dto.MenuDto;
 import yu.cse.odiga.store.dto.StoreDetailDto;
 import yu.cse.odiga.store.dto.StoreImagesDto;
 import yu.cse.odiga.store.dto.StoreListDto;
 import yu.cse.odiga.store.dto.StoreMapDto;
-import yu.cse.odiga.store.dto.StoreMenuListDto;
 import yu.cse.odiga.store.type.SortCondition;
+import yu.cse.odiga.store.type.TableStatus;
 import yu.cse.odiga.waiting.dao.WaitingRepository;
 import yu.cse.odiga.waiting.domain.Waiting;
-import yu.cse.odiga.store.type.TableStatus;
 import yu.cse.odiga.waiting.type.WaitingStatus;
 
 @Service
@@ -146,38 +142,7 @@ public class StoreService {
                 .build();
     }
 
-    public List<StoreMenuListDto> findStoreMenus(Long storeId) {
 
-        Store store = storeRepository.findById(storeId).orElseThrow();
-
-        List<Category> storeCategoryList = store.getCategories();
-        List<StoreMenuListDto> menuListDtoList = new ArrayList<>();
-
-        for (Category category : storeCategoryList) {
-            List<Menu> menus = category.getMenus();
-            List<MenuDto> menuList = new ArrayList<>();
-
-            for (Menu menu : menus) {
-                MenuDto menuDto = MenuDto.builder()
-                        .menuId(menu.getId())
-                        .menuName(menu.getMenuName())
-                        .menuImageUrl(menu.getMenuImageUrl())
-                        .menuPrice(menu.getPrice())
-                        .build();
-
-                menuList.add(menuDto);
-            }
-
-            StoreMenuListDto storeMenuListDto = StoreMenuListDto.builder()
-                    .categoryName(category.getName())
-                    .menuList(menuList)
-                    .build();
-
-            menuListDtoList.add(storeMenuListDto);
-        }
-        return menuListDtoList;
-
-    }
 
 
     public List<StoreImagesDto> findStoreImagesByStoreId(Long storeId) {
