@@ -30,8 +30,9 @@ jobs:
 
       - name: Set up application.yml
         run: |
-          mkdir ./src/main/resources
           cd ./src/main/resources
+          touch ./S3.yml
+          echo "${{ secrets.S3 }}" > ./S3.yml
           touch ./application.yml
           echo "${{ secrets.APPLICATION }}" > ./application.yml
           touch ./application-dev.yml
