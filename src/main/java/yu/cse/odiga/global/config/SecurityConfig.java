@@ -64,9 +64,9 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain ownerFilterChain(HttpSecurity http,
-                                               JwtTokenProvider jwtTokenProvider,
-                                               @Qualifier("ownerAuthenticationProvider") AuthenticationProvider authenticationProvider,
-                                               OwnerUserDetailsService ownerUserDetailsService) throws Exception {
+                                                JwtTokenProvider jwtTokenProvider,
+                                                @Qualifier("ownerAuthenticationProvider") AuthenticationProvider authenticationProvider,
+                                                OwnerUserDetailsService ownerUserDetailsService) throws Exception {
         System.out.println("ownerFilterChain");
 
         http
@@ -105,6 +105,7 @@ public class SecurityConfig {
     }
 
     @Bean
+    @Qualifier("userAuthenticationProvider")
     public AuthenticationProvider userAuthenticationProvider(UserRepository userRepository,
                                                              PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -119,6 +120,7 @@ public class SecurityConfig {
     }
 
     @Bean
+    @Qualifier("ownerAuthenticationProvider")
     public AuthenticationProvider ownerAuthenticationProvider(OwnerRepository ownerRepository,
                                                               PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();

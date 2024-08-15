@@ -47,5 +47,4 @@ public class TableOrder {
                 .mapToInt(orderMenu -> orderMenu.getMenu().getPrice() * orderMenu.getMenuCount())
                 .sum();
     }
-
 }

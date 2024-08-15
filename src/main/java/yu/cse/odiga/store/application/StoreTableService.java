@@ -15,6 +15,11 @@ public class StoreTableService {
     private final StoreTableRepository storeTableRepository;
     private final StoreRepository storeRepository;
 
+
+    /**
+     * stores GET 요청해서 그 id로 store table을 만드는게 맞는듯.
+     * 테블릿에서 테블릿을 설정하는 메소드
+     * */
     public void createStoreTable(Long storeId, TableRegisterDto tableRegisterDto) {
 
         Store store = storeRepository.findById(storeId).orElseThrow();
