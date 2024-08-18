@@ -14,17 +14,18 @@ import yu.cse.odiga.store.application.StoreTableService;
 import yu.cse.odiga.store.dto.TableRegisterDto;
 
 @RestController
-@RequestMapping("api/v1/owner/table")
+@RequestMapping("api/v1/owner/store/{storeId}/tables")
 @RequiredArgsConstructor
 public class StoreTableController {
 
     private final StoreTableService storeTableService;
 
 
-    @PostMapping("{storeId}")
+    @PostMapping
     public ResponseEntity<?> creatStoreTable(@PathVariable Long storeId,
                                              @RequestBody TableRegisterDto tableRegisterDto) {
-        storeTableService.createStoreTable(storeId, tableRegisterDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new DefaultResponse<>(201, "create store table", null));
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new DefaultResponse<>(201, "create store table", storeTableService.createStoreTable(storeId, tableRegisterDto)));
     }
 }
