@@ -42,6 +42,14 @@ public class TableOrder {
     @OneToMany(mappedBy = "tableOrder", fetch = FetchType.LAZY)
     private List<TableOrderMenu> tableOrderMenuList = new ArrayList<>();
 
+    public void completeOrder() {
+        storeTable.changeTableStatusToEmpty();
+    }
+
+    public Store getStore() {
+        return storeTable.getStore();
+    }
+
     public int getTableTotalPrice() {
         return tableOrderMenuList.stream()
                 .mapToInt(orderMenu -> orderMenu.getMenu().getPrice() * orderMenu.getMenuCount())

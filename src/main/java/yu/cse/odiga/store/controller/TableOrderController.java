@@ -24,12 +24,12 @@ public class TableOrderController {
     }
 
     //TODO : 나중에 payments로 옮겨야함
-    @GetMapping("{tableOrderHistoryId}/payment")
+    @GetMapping("{tableOrderId}/payment")
     public ResponseEntity<?> findTableOrderHistoryById(@PathVariable Long storeId,
-                                                       @PathVariable Long tableOrderHistoryId) {
+                                                       @PathVariable Long tableOrderId) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new DefaultResponse<>(200, "Table Order history by id " + tableOrderHistoryId,
-                        tableOrderService.findByIdOrderHistory(tableOrderHistoryId)));
+                .body(new DefaultResponse<>(200, "Table Order history by id " + tableOrderId,
+                        tableOrderService.findByTableOrderHistoryByTableOrderId(tableOrderId)));
     }
 
 }

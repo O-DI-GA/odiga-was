@@ -1,17 +1,13 @@
 package yu.cse.odiga.store.application;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import yu.cse.odiga.store.dao.StoreTableRepository;
 import yu.cse.odiga.store.dao.TableOrderRepository;
 import yu.cse.odiga.store.domain.StoreTable;
 import yu.cse.odiga.store.domain.TableOrder;
-import yu.cse.odiga.store.domain.TableOrderMenu;
 import yu.cse.odiga.store.dto.TableOrderMenuHistoryDto;
-import yu.cse.odiga.store.dto.TableOrderMenuListDto;
 import yu.cse.odiga.store.type.PaymentStatus;
 
 @Service
@@ -20,59 +16,45 @@ public class TableOrderService {
     private final TableOrderRepository tableOrderRepository;
     private final StoreTableRepository storeTableRepository;
 
-    public TableOrderMenuHistoryDto findTableOrderList(Long storeId, int tableNumber) {
+    public void createTableOrder(Long storeTableId) {
+        StoreTable storeTable = storeTableRepository.findById(storeTableId).orElseThrow();
 
-        // 엄청난 쿼리가 발생할거 같은데 이게 맞나?
+        if (storeTable.isTableEmpty()) {
+            TableOrder tableOrder = TableOrder.builder()
+                    .paymentStatus(PaymentStatus.PENDING)
+                    .tableOrderMenuList(new ArrayList<>())
+                    .storeTable(storeTable)
+                    .build();
+
+            tableOrderRepository.save(tableOrder);
+            storeTable.changeTableStatusToInUse();
+        }
+    }
+
+    public TableOrderMenuHistoryDto findTableOrderList(Long storeId, int tableNumber) { // 곧 삭제할 코드
+
         TableOrder tableOrder = tableOrderRepository.findByStoreTable_StoreIdAndStoreTable_TableNumber(
                 storeId, tableNumber).orElseThrow();
-
-//        TableOrder tableOrder;
-//
-//        if (tableOrderOptional.isEmpty()) {
-//            StoreTable storeTable = storeTableRepository.findByStoreIdAndTableNumber(storeId, tableNumber)
-//                    .orElseThrow();
-//            tableOrder = TableOrder.builder()
-//                    .storeTable(storeTable)
-//                    .paymentStatus(PaymentStatus.PENDING)
-//                    .build();
-//            tableOrderRepository.save(tableOrder);
-//        } else {
-//            tableOrder = tableOrderOptional.get();
-//        }
 
         return TableOrderMenuHistoryDto.builder()
                 .tableOrderHistoryId(tableOrder.getId())
                 .totalOrderPrice(tableOrder.getTableTotalPrice())
-                .tableOrderMenuListDtoList(
-                        tableOrderMenuListToTableOrderMenuListDtoList(tableOrder.getTableOrderMenuList()))
+                .tableOrderMenuListDtoList(TableOrderMenuHistoryDto.from((tableOrder.getTableOrderMenuList())))
                 .build();
     }
 
-    public TableOrderMenuHistoryDto findByIdOrderHistory(Long tableOrderHistoryId) {
-        TableOrder tableOrder = tableOrderRepository.findById(tableOrderHistoryId).orElseThrow();
+    public TableOrderMenuHistoryDto findTableOrderHistoryByTableId(Long storeTableId) {
+        // 상태가 결제아직 안한 상태만 불러와야함
+        return null;
+    }
+
+    public TableOrderMenuHistoryDto findByTableOrderHistoryByTableOrderId(Long tableOrderId) {
+        TableOrder tableOrder = tableOrderRepository.findById(tableOrderId).orElseThrow();
 
         return TableOrderMenuHistoryDto.builder()
                 .tableOrderHistoryId(tableOrder.getId())
-                .tableOrderMenuListDtoList(
-                        tableOrderMenuListToTableOrderMenuListDtoList(tableOrder.getTableOrderMenuList()))
+                .totalOrderPrice(tableOrder.getTableTotalPrice())
+                .tableOrderMenuListDtoList(TableOrderMenuHistoryDto.from((tableOrder.getTableOrderMenuList())))
                 .build();
     }
-
-    public List<TableOrderMenuListDto> tableOrderMenuListToTableOrderMenuListDtoList(
-            List<TableOrderMenu> tableOrderMenuList) {
-        List<TableOrderMenuListDto> tableOrderMenuListDtoList = new ArrayList<>();
-        for (TableOrderMenu tableOrderMenu : tableOrderMenuList) {
-            TableOrderMenuListDto tableOrderMenuDto = TableOrderMenuListDto.builder()
-                    .menuName(tableOrderMenu.getMenu().getMenuName())
-                    .menuCount(tableOrderMenu.getMenuCount())
-                    .menuImageUrl(tableOrderMenu.getMenu().getMenuImageUrl())
-                    .menuTotalPrice(tableOrderMenu.getMenu().getPrice() * tableOrderMenu.getMenuCount())
-                    .build();
-            tableOrderMenuListDtoList.add(tableOrderMenuDto);
-        }
-
-        return tableOrderMenuListDtoList;
-    }
-
-
 }

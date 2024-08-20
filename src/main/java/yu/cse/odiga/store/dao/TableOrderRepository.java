@@ -7,4 +7,6 @@ import yu.cse.odiga.store.domain.TableOrder;
 public interface TableOrderRepository extends JpaRepository<TableOrder, Long> {
 
     Optional<TableOrder> findByStoreTable_StoreIdAndStoreTable_TableNumber(Long storeId, int tableNumber);
+
+    Optional<TableOrder> findByStoreTableId(Long storeTableId);
 }

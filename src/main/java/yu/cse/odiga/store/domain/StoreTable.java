@@ -50,4 +50,8 @@ public class StoreTable {
         this.tableStatus = TableStatus.INUSE;
     }
 
+    public void changeTableStatusToEmpty() {
+        this.tableStatus = TableStatus.EMPTY;
+    }
+
 }
