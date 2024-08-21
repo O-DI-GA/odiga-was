@@ -33,4 +33,8 @@ public class UseHistoryService {
         useHistoryRepository.findByUserId(userId);
         // TODO : DTO 변환
     }
+
+    public void findAllStoreUseHistoryByStoreId(Long storeId) {
+
+    }
 }

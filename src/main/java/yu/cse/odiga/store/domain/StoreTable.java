@@ -46,6 +46,10 @@ public class StoreTable {
         return this.tableStatus == TableStatus.EMPTY;
     }
 
+    public void addNewTableOrder(TableOrder tableOrder) {
+        tableOrderList.add(tableOrder);
+    }
+
     public void changeTableStatusToInUse() {
         this.tableStatus = TableStatus.INUSE;
     }

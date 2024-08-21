@@ -1,5 +1,6 @@
 package yu.cse.odiga.store.application;
 
+import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,19 +17,38 @@ public class TableOrderService {
     private final TableOrderRepository tableOrderRepository;
     private final StoreTableRepository storeTableRepository;
 
-    public void createTableOrder(Long storeTableId) {
-        StoreTable storeTable = storeTableRepository.findById(storeTableId).orElseThrow();
+    @Transactional
+    public void createTableOrder(Long storeTableId) { // 테이블이 비어 있을 경우 이걸로 생성 해야함.
+        StoreTable storeTable = storeTableRepository.findById(storeTableId)
+                .orElseThrow(() -> new IllegalStateException("존재 하지 않는 store table id 입니다."));
+
+        TableOrder tableOrder = TableOrder.builder()
+                .paymentStatus(PaymentStatus.PENDING)
+                .tableOrderMenuList(new ArrayList<>())
+                .storeTable(storeTable)
+                .build();
+
+        tableOrderRepository.save(tableOrder);
+        storeTable.addNewTableOrder(tableOrder);
+        storeTable.changeTableStatusToInUse();
+
+    }
+
+    public void checkEmptyTableByStoreTableId(Long storeTableId) {
+        StoreTable storeTable = storeTableRepository.findById(storeTableId)
+                .orElseThrow(() -> new IllegalStateException("존재 하지 않는 store table id 입니다."));
 
         if (storeTable.isTableEmpty()) {
-            TableOrder tableOrder = TableOrder.builder()
-                    .paymentStatus(PaymentStatus.PENDING)
-                    .tableOrderMenuList(new ArrayList<>())
-                    .storeTable(storeTable)
-                    .build();
-
-            tableOrderRepository.save(tableOrder);
-            storeTable.changeTableStatusToInUse();
+            // return true;
         }
+        // return false;
+    }
+
+    public void orderOrderMenuByTableOrderId(Long tableOrderId) {
+        TableOrder tableOrder = tableOrderRepository.findById(tableOrderId)
+                .orElseThrow(() -> new IllegalStateException("존재 하지 않는 table order id 입니다."));
+        // 메뉴들 받아서 TableOrderMenu 만들고 추가
+
     }
 
     public TableOrderMenuHistoryDto findTableOrderList(Long storeId, int tableNumber) { // 곧 삭제할 코드

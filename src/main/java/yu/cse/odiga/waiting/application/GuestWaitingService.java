@@ -1,5 +1,6 @@
 package yu.cse.odiga.waiting.application;
 
+import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +33,7 @@ public class GuestWaitingService {
 
     // TODO : 나중에 중복 코드 관련 예외 필요
     // TODO : 키오스크에서 결제 안하면 그냥 바로 history 넣어 줘야함 -> 결제 쪽 service 에서 구현해야 할듯
+    @Transactional
     public TableNumberResponseDto waitingValidate(WaitingValidateDto waitingValidateDto, Long storeId) {
         List<Waiting> storeWaitings = waitingRepository.findByStoreId(storeId);
 
@@ -88,7 +90,8 @@ public class GuestWaitingService {
             TableOrderMenu tableOrderMenu = TableOrderMenu.builder()
                     .tableOrder(tableOrder)
                     .menu(waitingMenu.getMenu())
-                    .menuCount(waitingMenu.getMenuCount())
+                    .menuCount(
+                            waitingMenu.getMenuCount())
                     .build();
 
             tableOrderMenuList.add(tableOrderMenu);
@@ -109,6 +112,7 @@ public class GuestWaitingService {
 
     public int getRandomTableNumber(HashMap<Integer, Long> emptyTableList) {
         Random random = new Random();
+        // emptyTableList 의 size() == 0 일때 예외 처리
         List<Integer> keys = new ArrayList<>(emptyTableList.keySet());
         int randomIndex = random.nextInt(keys.size());
         return keys.get(randomIndex);

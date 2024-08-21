@@ -20,7 +20,7 @@ public class PaymentService {
     private final UseHistoryService useHistoryService;
 
     @Transactional
-    public void pay(Long tableOrderId, CustomUserDetails customUserDetails) {
+    public void payInUserApp(Long tableOrderId, CustomUserDetails customUserDetails) {
         // TODO : Order id -> 주문 정보 가져와서 그걸로 결제 -> 완료시 사용 내역에 저장
         TableOrder tableOrder = tableOrderRepository.findById(tableOrderId).orElseThrow();
         // TODO : 추후 실제 결제 로직 구현 필요
