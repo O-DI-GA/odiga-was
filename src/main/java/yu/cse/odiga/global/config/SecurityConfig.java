@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
@@ -56,8 +57,13 @@ public class SecurityConfig {
 
                 .authenticationProvider(authenticationProvider)
 
+
+
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, customUserDetailsService),
-                        UsernamePasswordAuthenticationFilter.class);  // JwtAuthenticationFilter 작동 후 UsernamePasswordAuthenticationFilter 변경
+                        UsernamePasswordAuthenticationFilter.class)// JwtAuthenticationFilter 작동 후 UsernamePasswordAuthenticationFilter 변경
+
+
+                .cors(AbstractHttpConfigurer::disable);
 
         return http.build();
     }
@@ -89,7 +95,9 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider)
 
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, ownerUserDetailsService),
-                        UsernamePasswordAuthenticationFilter.class);
+                        UsernamePasswordAuthenticationFilter.class)
+
+                .cors(AbstractHttpConfigurer::disable);
 
         return http.build();
     }
