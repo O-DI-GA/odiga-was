@@ -9,7 +9,6 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
@@ -18,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 import yu.cse.odiga.auth.application.CustomUserDetailsService;
 import yu.cse.odiga.auth.dao.UserRepository;
 import yu.cse.odiga.global.jwt.JwtAuthenticationFilter;
@@ -29,6 +29,8 @@ import yu.cse.odiga.owner.dao.OwnerRepository;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final CorsConfigurationSource corsConfigurationSource;
 
     @Bean
     public SecurityFilterChain userFilterChain(HttpSecurity http,
@@ -51,19 +53,16 @@ public class SecurityConfig {
                 .httpBasic(HttpBasicConfigurer::disable) // Rest 방식 -> 원래는 web 에서 username, password 를 받는다.
                 .csrf(CsrfConfigurer::disable) // Rest 방식 -> rest 방식은 csrf 공격을 받을리가 없다.
 
+                .cors((cors) -> cors.configurationSource(corsConfigurationSource))
+
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // session 을 사용하지 않음
                 )
 
                 .authenticationProvider(authenticationProvider)
 
-
-
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, customUserDetailsService),
-                        UsernamePasswordAuthenticationFilter.class)// JwtAuthenticationFilter 작동 후 UsernamePasswordAuthenticationFilter 변경
-
-
-                .cors(AbstractHttpConfigurer::disable);
+                        UsernamePasswordAuthenticationFilter.class); // JwtAuthenticationFilter 작동 후 UsernamePasswordAuthenticationFilter 변경
 
         return http.build();
     }
@@ -85,8 +84,11 @@ public class SecurityConfig {
 
                 .headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
 
-                .httpBasic(HttpBasicConfigurer::disable) // Rest 방식 -> 원래는 web 에서 username, password 를 받는다.
+                .httpBasic(HttpBasicConfigurer::disable)
+
                 .csrf(CsrfConfigurer::disable) // Rest 방식 -> rest 방식은 csrf 공격을 받을리가 없다.
+
+                .cors((cors) -> cors.configurationSource(corsConfigurationSource))
 
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // session 을 사용하지 않음
@@ -95,9 +97,7 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider)
 
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, ownerUserDetailsService),
-                        UsernamePasswordAuthenticationFilter.class)
-
-                .cors(AbstractHttpConfigurer::disable);
+                        UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

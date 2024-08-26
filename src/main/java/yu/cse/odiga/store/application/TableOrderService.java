@@ -31,6 +31,7 @@ public class TableOrderService {
         tableOrderRepository.save(tableOrder);
         storeTable.addNewTableOrder(tableOrder);
         storeTable.changeTableStatusToInUse();
+        // TODO : table order id return 필요
     }
 
     public void checkEmptyTableByStoreTableId(Long storeTableId) {
@@ -53,6 +54,7 @@ public class TableOrderService {
     public TableOrderMenuHistoryDto findTableOrderList(Long storeId, int tableNumber) { // 곧 삭제할 코드
         TableOrder tableOrder = tableOrderRepository.findByStoreTable_StoreIdAndStoreTable_TableNumber(
                 storeId, tableNumber).orElseThrow();
+        
         return TableOrderMenuHistoryDto.from(tableOrder);
     }
 
