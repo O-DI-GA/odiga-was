@@ -37,7 +37,7 @@ public class OwnerMenuController {
     @GetMapping("/{storeId}/category")
     public ResponseEntity<?> findCategory(@PathVariable Long storeId,
                                           @AuthenticationPrincipal OwnerUserDetails ownerUserDetails) {
-        List<CategoryDto> categories = ownerMenuService.findCategory(ownerUserDetails, storeId);
+        List<CategoryDto> categories = ownerMenuService.findAllCategoryByStoreId(ownerUserDetails, storeId);
 
         return ResponseEntity.status(200).body(new DefaultResponse<>(200, "find categories", categories));
     }
