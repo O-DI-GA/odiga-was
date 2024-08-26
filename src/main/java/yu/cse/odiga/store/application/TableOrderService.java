@@ -31,7 +31,6 @@ public class TableOrderService {
         tableOrderRepository.save(tableOrder);
         storeTable.addNewTableOrder(tableOrder);
         storeTable.changeTableStatusToInUse();
-
     }
 
     public void checkEmptyTableByStoreTableId(Long storeTableId) {
@@ -44,7 +43,7 @@ public class TableOrderService {
         // return false;
     }
 
-    public void orderOrderMenuByTableOrderId(Long tableOrderId) {
+    public void orderMenuByTableOrderId(Long tableOrderId) {
         TableOrder tableOrder = tableOrderRepository.findById(tableOrderId)
                 .orElseThrow(() -> new IllegalStateException("존재 하지 않는 table order id 입니다."));
         // 메뉴들 받아서 TableOrderMenu 만들고 추가
@@ -52,15 +51,9 @@ public class TableOrderService {
     }
 
     public TableOrderMenuHistoryDto findTableOrderList(Long storeId, int tableNumber) { // 곧 삭제할 코드
-
         TableOrder tableOrder = tableOrderRepository.findByStoreTable_StoreIdAndStoreTable_TableNumber(
                 storeId, tableNumber).orElseThrow();
-
-        return TableOrderMenuHistoryDto.builder()
-                .tableOrderHistoryId(tableOrder.getId())
-                .totalOrderPrice(tableOrder.getTableTotalPrice())
-                .tableOrderMenuListDtoList(TableOrderMenuHistoryDto.from((tableOrder.getTableOrderMenuList())))
-                .build();
+        return TableOrderMenuHistoryDto.from(tableOrder);
     }
 
     public TableOrderMenuHistoryDto findTableOrderHistoryByTableId(Long storeTableId) {
@@ -70,11 +63,6 @@ public class TableOrderService {
 
     public TableOrderMenuHistoryDto findByTableOrderHistoryByTableOrderId(Long tableOrderId) {
         TableOrder tableOrder = tableOrderRepository.findById(tableOrderId).orElseThrow();
-
-        return TableOrderMenuHistoryDto.builder()
-                .tableOrderHistoryId(tableOrder.getId())
-                .totalOrderPrice(tableOrder.getTableTotalPrice())
-                .tableOrderMenuListDtoList(TableOrderMenuHistoryDto.from((tableOrder.getTableOrderMenuList())))
-                .build();
+        return TableOrderMenuHistoryDto.from(tableOrder);
     }
 }

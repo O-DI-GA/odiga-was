@@ -1,9 +1,9 @@
 package yu.cse.odiga.store.dto;
 
-import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
+import yu.cse.odiga.store.domain.TableOrder;
 import yu.cse.odiga.store.domain.TableOrderMenu;
 
 @Builder
@@ -11,22 +11,19 @@ import yu.cse.odiga.store.domain.TableOrderMenu;
 public class TableOrderMenuHistoryDto {
     private Long tableOrderHistoryId;
     private int totalOrderPrice;
-    private List<TableOrderMenuListDto> tableOrderMenuListDtoList;
+    private List<TableOrderMenuDto> tableOrderMenuListDto;
 
-    public static List<TableOrderMenuListDto> from(List<TableOrderMenu> tableOrderMenuList) {
-        List<TableOrderMenuListDto> tableOrderMenuListDtoList = new ArrayList<>();
-        for (TableOrderMenu tableOrderMenu : tableOrderMenuList) {
-            TableOrderMenuListDto tableOrderMenuDto = TableOrderMenuListDto.builder()
-                    .menuName(tableOrderMenu.getMenu().getMenuName())
-                    .menuCount(tableOrderMenu.getMenuCount())
-                    .menuImageUrl(tableOrderMenu.getMenu().getMenuImageUrl())
-                    .menuTotalPrice(tableOrderMenu.getMenu().getPrice() * tableOrderMenu.getMenuCount())
-                    .build();
-            tableOrderMenuListDtoList.add(tableOrderMenuDto);
-        }
+    public static List<TableOrderMenuDto> fromEntityList(List<TableOrderMenu> tableOrderMenuList) {
+        return tableOrderMenuList.stream()
+                .map(TableOrderMenuDto::from)
+                .toList();
+    }
 
-        return tableOrderMenuListDtoList;
+    public static TableOrderMenuHistoryDto from(TableOrder tableOrder) {
+        return TableOrderMenuHistoryDto.builder()
+                .tableOrderHistoryId(tableOrder.getId())
+                .totalOrderPrice(tableOrder.getTableTotalPrice())
+                .tableOrderMenuListDto(TableOrderMenuHistoryDto.fromEntityList((tableOrder.getTableOrderMenuList())))
+                .build();
     }
 }
-
-
