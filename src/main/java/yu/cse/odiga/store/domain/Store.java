@@ -22,6 +22,7 @@ import lombok.Setter;
 import org.locationtech.jts.geom.Point;
 import yu.cse.odiga.menu.domain.Category;
 import yu.cse.odiga.owner.domain.Owner;
+import yu.cse.odiga.reservation.domain.AvailableReservationTime;
 import yu.cse.odiga.review.domain.Review;
 import yu.cse.odiga.waiting.domain.Waiting;
 
@@ -86,6 +87,9 @@ public class Store {
 
     @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
     private List<Review> reviewList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "availableReservationTime", fetch = FetchType.LAZY)
+    private List<AvailableReservationTime> availableReservationTimeList = new ArrayList<>();
 
     public boolean isNotStoreOwner(Long ownerId) { // 메소드 명 바꿀필요가 있어보임
         return !this.getOwner().getId().equals(ownerId);
