@@ -16,10 +16,11 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ReservationService {
+public class UserReservationService {
     private final ReservationRepository reservationRepository;
     private final StoreRepository storeRepository;
 
+    // 예약하기
     public void registerReservation(CustomUserDetails customUserDetails, Long storeId, ReservationRegisterDto reservationRegisterDto) {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid store ID: " + storeId));
@@ -36,10 +37,12 @@ public class ReservationService {
         reservationRepository.save(reservation);
     }
 
+    // 유저의 예약 목록
     public void userReservationList(CustomUserDetails customUserDetails) {
         reservationRepository.findByUserEmail(customUserDetails.getUsername());
     }
 
+    // 예약 취소하기
     public void deleteReservation(CustomUserDetails customUserDetails, Long reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid reservation ID: " + reservationId));
@@ -47,6 +50,7 @@ public class ReservationService {
         reservationRepository.delete(reservation);
     }
 
+    // 예약 수정하기
     @Transactional
     public void updateReservation(CustomUserDetails customUserDetails, Long reservationId, ReservationRegisterDto reservationRegisterDto) {
         Reservation reservation = reservationRepository.findById(reservationId)
@@ -56,9 +60,4 @@ public class ReservationService {
         reservation.setReservationDateTime(reservationRegisterDto.getReservationDateTime());
     }
 
-    public List<ReservationResponseDto> findByStoreId(Long storeId) {
-        List<ReservationResponseDto> reservationList = reservationRepository.findByStoreId(storeId).stream()
-                .map(ReservationResponseDto::from).toList();
-        return reservationList;
-    }
 }

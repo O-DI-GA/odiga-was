@@ -9,12 +9,13 @@ import java.time.LocalDateTime;
 
 @Builder
 @Getter
-public class AvailableReservationTimeDto {
+public class AvailableReservationTimeResponseDto {
 
-    private Store store;
+    private Long storeId;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
-    LocalDateTime availableReservationTime;
+    private LocalDateTime availableReservationTime;
 
     private boolean isAvailable;
+
 }
