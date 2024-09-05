@@ -3,11 +3,14 @@ package yu.cse.odiga.menu.application;
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
 import yu.cse.odiga.global.S3.S3Util;
 
 @Transactional
@@ -15,26 +18,26 @@ import yu.cse.odiga.global.S3.S3Util;
 @Service
 @RequiredArgsConstructor
 public class MenuImageService {
-    private final S3Util s3Util;
+	private final S3Util s3Util;
 
-    public String upload(MultipartFile multipartFile) throws IOException {
-        String originalFileName = multipartFile.getOriginalFilename();
-        String uuid = UUID.randomUUID().toString();
-        String uniqueFileName = "menuImage/" + uuid + "_" + originalFileName.replaceAll("\\s", "_");
+	public String upload(MultipartFile multipartFile) throws IOException {
+		String originalFileName = multipartFile.getOriginalFilename();
+		String uuid = UUID.randomUUID().toString();
+		String uniqueFileName = "menuImage/" + uuid + "_" + originalFileName.replaceAll("\\s", "_");
 
-        log.info("fileName: " + uniqueFileName);
+		log.info("fileName: " + uniqueFileName);
 
-        File uploadFile = s3Util.convert(multipartFile);
+		File uploadFile = s3Util.convert(multipartFile);
 
-        String uploadImageUrl = s3Util.putS3(uploadFile, uniqueFileName);
-        s3Util.removeNewFile(uploadFile);
+		String uploadImageUrl = s3Util.putS3(uploadFile, uniqueFileName);
+		s3Util.removeNewFile(uploadFile);
 
-        return uploadImageUrl;
-    }
+		return uploadImageUrl;
+	}
 
-    public void updateFile(MultipartFile newFile, String oldFileName) throws IOException {
-        log.info("S3 oldFileName: " + oldFileName);
-        s3Util.deleteFile(oldFileName);
-        upload(newFile);
-    }
+	public void updateFile(MultipartFile newFile, String oldFileName) throws IOException {
+		log.info("S3 oldFileName: " + oldFileName);
+		s3Util.deleteFile(oldFileName);
+		upload(newFile);
+	}
 }

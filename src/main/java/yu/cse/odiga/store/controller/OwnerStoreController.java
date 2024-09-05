@@ -1,14 +1,18 @@
 package yu.cse.odiga.store.controller;
 
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import yu.cse.odiga.global.util.DefaultResponse;
 import yu.cse.odiga.owner.domain.OwnerUserDetails;
 import yu.cse.odiga.store.application.OwnerStoreService;
@@ -19,22 +23,28 @@ import yu.cse.odiga.store.dto.StoreResponseDto;
 @RequiredArgsConstructor
 @RequestMapping("api/v1/owner/store")
 public class OwnerStoreController {
-    private final OwnerStoreService ownerStoreService;
+	private final OwnerStoreService ownerStoreService;
 
-    @PostMapping()
-    public ResponseEntity<?> registerStore(@AuthenticationPrincipal OwnerUserDetails ownerUserDetails,
-                                           @ModelAttribute  // modelattribute로 수정
-                                           StoreRegisterDto storeRegisterDto) {
-        ownerStoreService.storeRegister(ownerUserDetails, storeRegisterDto);
-        return ResponseEntity.status(201).body(new DefaultResponse<>(201, "created store", null));
-    }
+	@PostMapping()
+	public ResponseEntity<?> registerStore(@AuthenticationPrincipal OwnerUserDetails ownerUserDetails,
+		@ModelAttribute  // modelattribute로 수정
+		StoreRegisterDto storeRegisterDto) {
+		ownerStoreService.storeRegister(ownerUserDetails, storeRegisterDto);
+		return ResponseEntity.status(201).body(new DefaultResponse<>(201, "created store", null));
+	}
 
-    @GetMapping()
-    public ResponseEntity<?> findOwnerStores(@AuthenticationPrincipal OwnerUserDetails ownerUserDetails) {
-        List<StoreResponseDto> stores = ownerStoreService.findOwnerStore(ownerUserDetails);
+	@GetMapping()
+	public ResponseEntity<?> findOwnerStores(@AuthenticationPrincipal OwnerUserDetails ownerUserDetails) {
+		List<StoreResponseDto> stores = ownerStoreService.findOwnerStore(ownerUserDetails);
 
-        return ResponseEntity.status(200).body(new DefaultResponse<>(200, "find stores", stores));
-    }
+		return ResponseEntity.status(200).body(new DefaultResponse<>(200, "find stores", stores));
+	}
 
+	@GetMapping("{storeId}")
+	public ResponseEntity<?> storeDetails(@PathVariable Long storeId) {
+
+		return ResponseEntity.status(200).body(new DefaultResponse<>(200, "store deails", null));
+
+	}
 
 }

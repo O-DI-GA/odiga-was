@@ -37,8 +37,6 @@ public class SecurityConfig {
                                                JwtTokenProvider jwtTokenProvider,
                                                @Qualifier("userAuthenticationProvider") AuthenticationProvider authenticationProvider,
                                                CustomUserDetailsService customUserDetailsService) throws Exception {
-        System.out.println("userFilterChain");
-
         http
                 .securityMatcher("/api/v1/user/**")
 
@@ -72,8 +70,6 @@ public class SecurityConfig {
                                                 JwtTokenProvider jwtTokenProvider,
                                                 @Qualifier("ownerAuthenticationProvider") AuthenticationProvider authenticationProvider,
                                                 OwnerUserDetailsService ownerUserDetailsService) throws Exception {
-        System.out.println("ownerFilterChain");
-
         http
                 .securityMatcher("/api/v1/owner/**")
 
