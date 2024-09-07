@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 public class AvailableReservationTimeDto {
 
-    private Store store;
+    private Long storeId;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
     LocalDateTime availableReservationTime;

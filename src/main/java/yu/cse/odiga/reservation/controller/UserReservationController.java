@@ -8,9 +8,6 @@ import yu.cse.odiga.auth.domain.CustomUserDetails;
 import yu.cse.odiga.global.util.DefaultResponse;
 import yu.cse.odiga.reservation.application.UserReservationService;
 import yu.cse.odiga.reservation.dto.ReservationRegisterDto;
-import yu.cse.odiga.reservation.dto.ReservationResponseDto;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/user/reservation")
