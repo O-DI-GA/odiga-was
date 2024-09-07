@@ -70,6 +70,14 @@ public class OwnerReservationService {
 
     }
 
+    //예약 가능 시간 삭제
+    public void deleteAvailableReservationTime(OwnerUserDetails ownerUserDetails, Long availableReservationTimeId) {
+        AvailableReservationTime availableReservationTime = availableReservationTimeRepository.findById(availableReservationTimeId)
+                .orElseThrow(() -> new BusinessLogicException("Invalid available reservation time: " + availableReservationTimeId, HttpStatus.BAD_REQUEST.value()));
+
+        availableReservationTimeRepository.delete(availableReservationTime);
+    }
+
     // 예약 가능 on/off
     @Transactional
     public void toggleAvailableReservationTime(OwnerUserDetails ownerUserDetails, Long availableReservationTimeId) {
@@ -79,7 +87,8 @@ public class OwnerReservationService {
         availableReservationTime.setAvailable(!availableReservationTime.isAvailable());
     }
 
-    public List<ReservationResponseDto> findByStoreId(Long storeId) {
+    // 가게 예약 목록
+    public List<ReservationResponseDto> findByStoreId(OwnerUserDetails ownerUserDetails, Long storeId) {
         List<ReservationResponseDto> reservationList = reservationRepository.findByStoreId(storeId).stream()
                 .map(ReservationResponseDto::from).toList();
         return reservationList;

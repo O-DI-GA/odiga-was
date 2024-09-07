@@ -35,6 +35,14 @@ public class OwnerReservationController {
         return ResponseEntity.status(201).body(new DefaultResponse<>(201, "get availableReservationTimes", ownerReservationService.getAvailableReservationTimes(ownerUserDetails, storeId)));
     }
 
+    // 예약 가능 시간 삭제
+    @DeleteMapping("availableReservationTime/{availableReservationTimeId}")
+    public ResponseEntity<?> deleteAvailableReservationTime(@PathVariable Long availableReservationTimeId,
+                                                            @AuthenticationPrincipal OwnerUserDetails ownerUserDetails) {
+        ownerReservationService.deleteAvailableReservationTime(ownerUserDetails, availableReservationTimeId);
+        return ResponseEntity.status(201).body(new DefaultResponse<>(201, "delete availableReservationTime", null));
+    }
+
     // 예약 가능 전환
     @PostMapping("toggleAvailableReservationTime/{availableReservationTimeId}")
     public ResponseEntity<?> toggleAvailableReservationTime(@PathVariable Long availableReservationTimeId,
@@ -45,8 +53,9 @@ public class OwnerReservationController {
 
     // 가게 예약 목록
     @GetMapping("/{storeId}")
-    public ResponseEntity<?> findByStoreId(@PathVariable Long storeId) {
-        List<ReservationResponseDto> reservationList =  ownerReservationService.findByStoreId(storeId);
+    public ResponseEntity<?> findByStoreId(@PathVariable Long storeId,
+                                           @AuthenticationPrincipal OwnerUserDetails ownerUserDetails) {
+        List<ReservationResponseDto> reservationList =  ownerReservationService.findByStoreId(ownerUserDetails, storeId);
         return ResponseEntity.status(201).body(new DefaultResponse<>(201, "reservationList find by storeId", reservationList));
     }
 }
