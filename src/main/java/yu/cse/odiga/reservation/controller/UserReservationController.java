@@ -19,6 +19,7 @@ public class UserReservationController {
 
     private final UserReservationService userReservationService;
 
+    // 예약하기
     @PostMapping("/{storeId}")
     public ResponseEntity<?> registerReservation(@PathVariable Long storeId,
                                                  @AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -27,6 +28,14 @@ public class UserReservationController {
         return ResponseEntity.status(201).body(new DefaultResponse<>(201, "create reservation", null));
     }
 
+    // 예약 목록
+    @GetMapping
+    public ResponseEntity<?> getReservation(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return ResponseEntity.status(201).body(new DefaultResponse<>(201, "user reservation list",
+                userReservationService.userReservationList(customUserDetails)));
+    }
+
+    // 예약 취소
     @DeleteMapping("/{reservationId}")
     public ResponseEntity<?> deleteReservation(@PathVariable Long reservationId,
                                                @AuthenticationPrincipal CustomUserDetails customUserDetails) {
@@ -34,7 +43,8 @@ public class UserReservationController {
         return ResponseEntity.status(201).body(new DefaultResponse<>(201,"delete reservation", null));
     }
 
-    @PutMapping("/{reservationId}")
+    // 예약 수정정
+   @PutMapping("/{reservationId}")
     public ResponseEntity<?> updateReservation(@PathVariable Long reservationId,
                                                @AuthenticationPrincipal CustomUserDetails customUserDetails,
                                                @RequestBody ReservationRegisterDto reservationRegisterDto) {

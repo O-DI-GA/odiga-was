@@ -19,6 +19,7 @@ public class OwnerReservationController {
 
     private final OwnerReservationService ownerReservationService;
 
+    // 예약 가능 시간 등록
     @PostMapping("{storeId}")
     public ResponseEntity<?> registerAvailableReservationTime(@PathVariable Long storeId,
                                                  @AuthenticationPrincipal OwnerUserDetails ownerUserDetails,
@@ -27,13 +28,14 @@ public class OwnerReservationController {
         return ResponseEntity.status(201).body(new DefaultResponse<>(201, "register availableReservationTime", null));
     }
 
-    @GetMapping("{storeId}")
+    // 예약 가능 시간 목록
+    @GetMapping("{storeId}/availableReservationTime")
     public ResponseEntity<?> getAvailableReservationTime(@PathVariable Long storeId,
                                                          @AuthenticationPrincipal OwnerUserDetails ownerUserDetails) {
         return ResponseEntity.status(201).body(new DefaultResponse<>(201, "get availableReservationTimes", ownerReservationService.getAvailableReservationTimes(ownerUserDetails, storeId)));
     }
 
-
+    // 예약 가능 전환
     @PostMapping("toggleAvailableReservationTime/{availableReservationTimeId}")
     public ResponseEntity<?> toggleAvailableReservationTime(@PathVariable Long availableReservationTimeId,
                                                             @AuthenticationPrincipal OwnerUserDetails ownerUserDetails) {
@@ -41,6 +43,7 @@ public class OwnerReservationController {
         return ResponseEntity.status(201).body(new DefaultResponse<>(201, "toggle availableReservationTime available", null));
     }
 
+    // 가게 예약 목록
     @GetMapping("/{storeId}")
     public ResponseEntity<?> findByStoreId(@PathVariable Long storeId) {
         List<ReservationResponseDto> reservationList =  ownerReservationService.findByStoreId(storeId);

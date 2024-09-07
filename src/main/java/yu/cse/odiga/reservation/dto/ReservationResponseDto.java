@@ -13,14 +13,14 @@ import java.time.LocalDateTime;
 public final class ReservationResponseDto {
     private final User user; // dto로 변환
     private final Store store; //
-    private final LocalDateTime reservationDate;
+    private final LocalDateTime availableReservationDateTime; // 이름 좀 이상한데...
     private final int peopleCount;
 
     public static ReservationResponseDto from(Reservation reservation) {
         return ReservationResponseDto.builder()
                 .user(reservation.getUser())
                 .store(reservation.getStore())
-                .reservationDate(reservation.getReservationDateTime())
+                .availableReservationDateTime(reservation.getReservationDateTime())
                 .peopleCount(reservation.getPeopleCount())
                 .build();
     }

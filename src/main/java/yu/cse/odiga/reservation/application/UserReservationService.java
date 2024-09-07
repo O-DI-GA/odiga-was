@@ -12,6 +12,7 @@ import yu.cse.odiga.reservation.dto.ReservationResponseDto;
 import yu.cse.odiga.store.dao.StoreRepository;
 import yu.cse.odiga.store.domain.Store;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -38,8 +39,26 @@ public class UserReservationService {
     }
 
     // 유저의 예약 목록
-    public void userReservationList(CustomUserDetails customUserDetails) {
-        reservationRepository.findByUserEmail(customUserDetails.getUsername());
+    public List<ReservationResponseDto> userReservationList(CustomUserDetails customUserDetails) {
+
+//        List<ReservationResponseDto> reservationResponseDtoList = reservationRepository.findByUserEmail(customUserDetails.getUsername()).stream()
+//                .map(ReservationResponseDto::from).toList();
+
+        List<Reservation> reservationList = reservationRepository.findByUserEmail(customUserDetails.getUsername());
+
+        List<ReservationResponseDto> reservationResponseDtoList = new ArrayList<>();
+
+        for (Reservation reservation : reservationList) {
+            ReservationResponseDto reservationResponseDto = ReservationResponseDto.builder()
+                    .user(reservation.getUser())
+                    .store(reservation.getStore())
+                    .availableReservationDateTime(reservation.getReservationDateTime())
+                    .peopleCount(reservation.getPeopleCount())
+                    .build();
+            reservationResponseDtoList.add(reservationResponseDto);
+        }
+
+        return reservationResponseDtoList;
     }
 
     // 예약 취소하기

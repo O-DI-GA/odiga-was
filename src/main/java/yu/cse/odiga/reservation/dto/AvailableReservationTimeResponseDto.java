@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 @Getter
 public class AvailableReservationTimeResponseDto {
 
+    private Long id;
+
     private Long storeId;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
