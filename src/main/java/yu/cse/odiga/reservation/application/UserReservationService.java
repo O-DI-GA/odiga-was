@@ -50,9 +50,9 @@ public class UserReservationService {
 
         for (Reservation reservation : reservationList) {
             ReservationResponseDto reservationResponseDto = ReservationResponseDto.builder()
-                    .user(reservation.getUser())
-                    .store(reservation.getStore())
-                    .availableReservationDateTime(reservation.getReservationDateTime())
+                    .userId(reservation.getUser().getId())
+                    .storeId(reservation.getStore().getId())
+                    .reservationDateTime(reservation.getReservationDateTime())
                     .peopleCount(reservation.getPeopleCount())
                     .build();
             reservationResponseDtoList.add(reservationResponseDto);

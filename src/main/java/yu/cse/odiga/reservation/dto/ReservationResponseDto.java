@@ -11,16 +11,16 @@ import java.time.LocalDateTime;
 @Builder
 @Getter
 public final class ReservationResponseDto {
-    private final User user; // dto로 변환
-    private final Store store; //
-    private final LocalDateTime availableReservationDateTime; // 이름 좀 이상한데...
+    private final Long userId; // dto로 변환
+    private final Long storeId; //
+    private final LocalDateTime reservationDateTime; // 이름 좀 이상한데...
     private final int peopleCount;
 
     public static ReservationResponseDto from(Reservation reservation) {
         return ReservationResponseDto.builder()
-                .user(reservation.getUser())
-                .store(reservation.getStore())
-                .availableReservationDateTime(reservation.getReservationDateTime())
+                .userId(reservation.getUser().getId())
+                .storeId(reservation.getStore().getId())
+                .reservationDateTime(reservation.getReservationDateTime())
                 .peopleCount(reservation.getPeopleCount())
                 .build();
     }

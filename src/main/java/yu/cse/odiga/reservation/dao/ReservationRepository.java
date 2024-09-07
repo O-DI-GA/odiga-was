@@ -10,8 +10,6 @@ import java.util.Optional;
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
-    List<Reservation> findByUserId(Long userId);
-
     List<Reservation> findByUserEmail(String userEmail);
 
     List<Reservation> findByStoreId(Long storeId);
