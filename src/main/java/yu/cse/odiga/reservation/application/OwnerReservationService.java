@@ -84,4 +84,13 @@ public class OwnerReservationService {
                 .map(ReservationResponseDto::from).toList();
         return reservationList;
     }
+
+    // 예약 가능 시간 수정하기
+    @Transactional
+    public void updateAvailableReservation(OwnerUserDetails ownerUserDetails, Long availableReservationTimeId, AvailableReservationTimeDto availableReservationTimeDto) {
+        AvailableReservationTime availableReservationTime = availableReservationTimeRepository.findById(availableReservationTimeId)
+                .orElseThrow(() -> new BusinessLogicException("Invalid availableReservationTime ID: " + availableReservationTimeId, HttpStatus.BAD_REQUEST.value()));
+
+        availableReservationTime.setAvailableReservationTime(availableReservationTimeDto.getAvailableReservationTime());
+    }
 }

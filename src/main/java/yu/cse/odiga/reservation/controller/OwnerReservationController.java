@@ -43,6 +43,15 @@ public class OwnerReservationController {
         return ResponseEntity.status(201).body(new DefaultResponse<>(201, "toggle availableReservationTime available", null));
     }
 
+    // 예약 가능 시간 수정
+    @PutMapping("{storeId}/availableReservationTime/{availableReservationTimeId}")
+    public ResponseEntity<?> updateAvailableReservation(@PathVariable Long availableReservationTimeId,
+                                                        @AuthenticationPrincipal OwnerUserDetails ownerUserDetails,
+                                                        @RequestBody AvailableReservationTimeDto availableReservationTimeDto) {
+        ownerReservationService.updateAvailableReservation(ownerUserDetails, availableReservationTimeId, availableReservationTimeDto);
+        return ResponseEntity.status(201).body(new DefaultResponse<>(201,"update availableReservation", null));
+    }
+
     // 가게 예약 목록
     @GetMapping("/{storeId}")
     public ResponseEntity<?> findByStoreId(@PathVariable Long storeId) {
