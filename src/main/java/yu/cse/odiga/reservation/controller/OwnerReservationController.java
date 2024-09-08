@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import yu.cse.odiga.auth.domain.CustomUserDetails;
 import yu.cse.odiga.global.util.DefaultResponse;
 import yu.cse.odiga.owner.domain.OwnerUserDetails;
 import yu.cse.odiga.reservation.application.OwnerReservationService;
 import yu.cse.odiga.reservation.dto.AvailableReservationTimeDto;
+import yu.cse.odiga.reservation.dto.ReservationRegisterDto;
 import yu.cse.odiga.reservation.dto.ReservationResponseDto;
 
 import java.util.List;
@@ -67,4 +69,22 @@ public class OwnerReservationController {
         List<ReservationResponseDto> reservationList =  ownerReservationService.findByStoreId(ownerUserDetails, storeId);
         return ResponseEntity.status(201).body(new DefaultResponse<>(201, "reservationList find by storeId", reservationList));
     }
+
+    // 예약 취소
+    @DeleteMapping("/{reservationId}")
+    public ResponseEntity<?> deleteReservation(@PathVariable Long reservationId,
+                                               @AuthenticationPrincipal OwnerUserDetails ownerUserDetails) {
+        ownerReservationService.deleteReservation(ownerUserDetails, reservationId);
+        return ResponseEntity.status(201).body(new DefaultResponse<>(201,"delete reservation", null));
+    }
+
+    // 예약 수정
+    @PutMapping("/{reservationId}")
+    public ResponseEntity<?> updateReservation(@PathVariable Long reservationId,
+                                               @AuthenticationPrincipal OwnerUserDetails ownerUserDetails,
+                                               @RequestBody ReservationRegisterDto reservationRegisterDto) {
+        ownerReservationService.updateReservation(ownerUserDetails, reservationId, reservationRegisterDto);
+        return ResponseEntity.status(201).body(new DefaultResponse<>(201,"update reservation", null));
+    }
+
 }

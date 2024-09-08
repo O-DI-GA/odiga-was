@@ -40,7 +40,7 @@ public class UserReservationController {
         return ResponseEntity.status(201).body(new DefaultResponse<>(201,"delete reservation", null));
     }
 
-    // 예약 수정정
+    // 예약 수정
    @PutMapping("/{reservationId}")
     public ResponseEntity<?> updateReservation(@PathVariable Long reservationId,
                                                @AuthenticationPrincipal CustomUserDetails customUserDetails,
