@@ -3,7 +3,6 @@ package yu.cse.odiga.reservation.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
-import yu.cse.odiga.store.domain.Store;
 
 import java.time.LocalDateTime;
 

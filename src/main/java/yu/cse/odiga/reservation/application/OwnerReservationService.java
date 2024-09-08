@@ -4,13 +4,16 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import yu.cse.odiga.auth.domain.CustomUserDetails;
 import yu.cse.odiga.global.exception.BusinessLogicException;
 import yu.cse.odiga.owner.domain.OwnerUserDetails;
 import yu.cse.odiga.reservation.dao.AvailableReservationTimeRepository;
 import yu.cse.odiga.reservation.dao.ReservationRepository;
 import yu.cse.odiga.reservation.domain.AvailableReservationTime;
+import yu.cse.odiga.reservation.domain.Reservation;
 import yu.cse.odiga.reservation.dto.AvailableReservationTimeDto;
 import yu.cse.odiga.reservation.dto.AvailableReservationTimeResponseDto;
+import yu.cse.odiga.reservation.dto.ReservationRegisterDto;
 import yu.cse.odiga.reservation.dto.ReservationResponseDto;
 import yu.cse.odiga.store.dao.StoreRepository;
 import yu.cse.odiga.store.domain.Store;
@@ -101,5 +104,23 @@ public class OwnerReservationService {
                 .orElseThrow(() -> new BusinessLogicException("Invalid availableReservationTime ID: " + availableReservationTimeId, HttpStatus.BAD_REQUEST.value()));
 
         availableReservationTime.setAvailableReservationTime(availableReservationTimeDto.getAvailableReservationTime());
+    }
+
+    // 예약 취소하기
+    public void deleteReservation(OwnerUserDetails ownerUserDetails, Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid reservation ID: " + reservationId));
+
+        reservationRepository.delete(reservation);
+    }
+
+    // 예약 수정하기
+    @Transactional
+    public void updateReservation(OwnerUserDetails ownerUserDetails, Long reservationId, ReservationRegisterDto reservationRegisterDto) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new IllegalArgumentException("invalid reservation ID: " + reservationId));
+
+        reservation.setPeopleCount(reservationRegisterDto.getPeopleCount());
+        reservation.setReservationDateTime(reservationRegisterDto.getReservationDateTime());
     }
 }
