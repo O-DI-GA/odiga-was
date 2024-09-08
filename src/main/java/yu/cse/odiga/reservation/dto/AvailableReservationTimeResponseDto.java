@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 public class AvailableReservationTimeResponseDto {
 
-    private Long id;
+    private Long availableReservationTimeId;
 
     private Long storeId;
 

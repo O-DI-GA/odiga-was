@@ -60,7 +60,7 @@ public class OwnerReservationService {
 
         for(AvailableReservationTime availableReservationTime : availableReservationTimeList) {
             AvailableReservationTimeResponseDto availableReservationTimeResponseDto = AvailableReservationTimeResponseDto.builder()
-                    .id(availableReservationTime.getId())
+                    .availableReservationTimeId(availableReservationTime.getId())
                     .storeId(storeId)
                     .availableReservationTime(availableReservationTime.getAvailableReservationTime())
                     .isAvailable(availableReservationTime.isAvailable())
