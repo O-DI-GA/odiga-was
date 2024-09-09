@@ -25,6 +25,8 @@ public class OwnerStoreService {
 	private final StoreRepository storeRepository;
 	private final StoreImageService storeImageService;
 
+	//  TODO : Owner 웹 사이트에서 store 정보를 알 수 있어야함.
+
 	@Transactional
 	public void storeRegister(OwnerUserDetails ownerUserDetails,
 		StoreRegisterDto storeRegisterDto) {

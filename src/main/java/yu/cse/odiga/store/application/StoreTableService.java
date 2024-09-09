@@ -30,7 +30,15 @@ public class StoreTableService {
 		Store store = storeRepository.findById(storeId)
 			.orElseThrow(() -> new BusinessLogicException("올바른 접근이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
 
-		if (tableRegisterDto.getTableNumber() >= store.getTableCount()) {
+		List<StoreTable> storeTables = store.getTables();
+
+		for (StoreTable storeTable : storeTables) {
+			if (storeTable.getTableNumber() == tableRegisterDto.getTableNumber()) {
+				throw new BusinessLogicException("이미 존재 하는 테이블 번호 입니다.", HttpStatus.BAD_REQUEST.value());
+			}
+		}
+
+		if (tableRegisterDto.getTableNumber() > store.getTableCount()) {
 			throw new BusinessLogicException("최대 테이블 수 를 초과하였습니다.", HttpStatus.BAD_REQUEST.value());
 		}
 
@@ -50,14 +58,22 @@ public class StoreTableService {
 		Store store = storeRepository.findById(storeId)
 			.orElseThrow(() -> new BusinessLogicException("올바른 접근이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
 
-		if (tableRegisterDto.getTableNumber() >= store.getTableCount()) {
+		if (tableRegisterDto.getTableNumber() > store.getTableCount()) {
 			throw new BusinessLogicException("최대 테이블 수 를 초과하였습니다.", HttpStatus.BAD_REQUEST.value());
 		}
 
-		StoreTable storeTable = storeTableRepository.findById(storeTableId)
+		StoreTable table = storeTableRepository.findById(storeTableId)
 			.orElseThrow(() -> new BusinessLogicException("올바른 접근이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
 
-		storeTable.updateStoreTable(tableRegisterDto);
+		// List<StoreTable> storeTables = store.getTables();
+		//
+		// for (StoreTable storeTable : storeTables) {
+		// 	if (storeTable.getTableNumber() == tableRegisterDto.getTableNumber()) {
+		// 		throw new BusinessLogicException("이미 존재 하는 테이블 번호 입니다.", HttpStatus.BAD_REQUEST.value());
+		// 	}
+		// }
+
+		table.updateStoreTable(tableRegisterDto);
 	}
 
 	public List<StoreTableResponseDto> findAllStoreTablesByStoreId(Long storeId) {
