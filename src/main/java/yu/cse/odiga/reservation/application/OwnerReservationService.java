@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import yu.cse.odiga.auth.domain.CustomUserDetails;
 import yu.cse.odiga.global.exception.BusinessLogicException;
 import yu.cse.odiga.owner.domain.OwnerUserDetails;
 import yu.cse.odiga.reservation.dao.AvailableReservationTimeRepository;

@@ -11,5 +11,7 @@ public class MenuRegisterDto {
     private int price;
     private String caption;
     private MultipartFile menuImage;
-    private String category;
+
+    // Menu 수정용 필드
+    private Long categoryId;
 }

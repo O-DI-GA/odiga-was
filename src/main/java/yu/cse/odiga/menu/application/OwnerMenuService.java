@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,7 @@ public class OwnerMenuService {
 	private final CategoryRepository categoryRepository;
 	private final MenuImageService menuImageService;
 
+	@Transactional
 	public void categoryRegister(OwnerUserDetails ownerUserDetails, Long storeId, CategoryDto categoryDto) {
 
 		Store store = getValidateStore(storeId, ownerUserDetails.getOwner().getId());
@@ -42,8 +44,50 @@ public class OwnerMenuService {
 		categoryRepository.save(category);
 	}
 
+
+	public List<CategoryDto> findAllCategoryByStoreId(OwnerUserDetails ownerUserDetails, Long storeId) {
+		Store store = storeRepository.findById(storeId)
+				.orElseThrow(
+						() -> new BusinessLogicException("존재하지 않는 가게 입니다. : " + storeId, HttpStatus.BAD_REQUEST.value()));
+
+		if (store.isNotStoreOwner(ownerUserDetails.getOwner().getId())) {
+			throw new BusinessLogicException("올바르지 않은 접근 입니다.", HttpStatus.BAD_REQUEST.value());
+		}
+
+		List<Category> categories = store.getCategories();
+		List<CategoryDto> responseCategories = new ArrayList<>();
+
+		for (Category category : categories) {
+			CategoryDto categoryDto = CategoryDto.builder()
+					.categoryId((category.getId()))
+					.name(category.getName())
+					.build();
+
+			responseCategories.add(categoryDto);
+		}
+
+		return responseCategories;
+	}
+
+	@Transactional
+	public void updateCategory(OwnerUserDetails ownerUserDetails, Long categoryId, CategoryDto categoryDto) {
+		Category category = categoryRepository.findById(categoryId)
+				.orElseThrow(() -> new IllegalArgumentException(("Invalid categoryId: " + categoryId)));
+
+		category.setName(categoryDto.getName());
+	}
+
+	@Transactional
+	public void deleteCategory(OwnerUserDetails ownerUserDetails, Long categoryId) {
+		Category category = categoryRepository.findById(categoryId)
+				.orElseThrow(() -> new IllegalArgumentException(("Invalid categoryId: " + categoryId)));
+
+		categoryRepository.delete(category);
+	}
+
+	@Transactional
 	public void menuRegister(OwnerUserDetails ownerUserDetails, Long storeId, Long categoryId,
-		MenuRegisterDto menuRegisterDto) throws IOException {
+							 MenuRegisterDto menuRegisterDto) throws IOException {
 
 		getValidateStore(storeId, ownerUserDetails.getOwner().getId());
 
@@ -62,30 +106,6 @@ public class OwnerMenuService {
 
 	}
 
-	public List<CategoryDto> findAllCategoryByStoreId(OwnerUserDetails ownerUserDetails, Long storeId) {
-		Store store = storeRepository.findById(storeId)
-			.orElseThrow(
-				() -> new BusinessLogicException("존재하지 않는 가게 입니다. : " + storeId, HttpStatus.BAD_REQUEST.value()));
-
-		if (store.isNotStoreOwner(ownerUserDetails.getOwner().getId())) {
-			throw new BusinessLogicException("올바르지 않은 접근 입니다.", HttpStatus.BAD_REQUEST.value());
-		}
-
-		List<Category> categories = store.getCategories();
-		List<CategoryDto> responseCategories = new ArrayList<>();
-
-		for (Category category : categories) {
-			CategoryDto categoryDto = CategoryDto.builder()
-				.categoryId((category.getId()))
-				.name(category.getName())
-				.build();
-
-			responseCategories.add(categoryDto);
-		}
-
-		return responseCategories;
-	}
-
 	public List<MenuResponseDto> findMenu(OwnerUserDetails ownerUserDetails, Long storeId, Long categoryId) {
 
 		getValidateStore(storeId, ownerUserDetails.getOwner().getId());
@@ -98,17 +118,51 @@ public class OwnerMenuService {
 
 		for (Menu menu : storeMenus) {
 			MenuResponseDto menuResponseDto = MenuResponseDto.builder()
-				.menuName(menu.getMenuName())
-				.price(menu.getPrice())
-				.caption(menu.getCaption())
-				.menuImage(menu.getMenuImageUrl())
-				.category(menu.getCategory())
-				.build();
+					.menuId(menu.getId())
+					.menuName(menu.getMenuName())
+					.price(menu.getPrice())
+					.caption(menu.getCaption())
+					.menuImage(menu.getMenuImageUrl())
+					.category(menu.getCategory())
+					.build();
 
 			responseMenus.add(menuResponseDto);
 		}
 
 		return responseMenus;
+	}
+
+	@Transactional
+	public void updateMenu(OwnerUserDetails ownerUserDetails, Long storeId, Long categoryId, Long menuId,
+						   MenuRegisterDto menuRegisterDto) throws IOException {
+
+		Category category = categoryRepository.findByStoreIdAndId(storeId, menuRegisterDto.getCategoryId())
+				.orElseThrow(() -> new IllegalArgumentException("Invalid categoryId: " + menuRegisterDto.getCategoryId()));
+
+		Menu menu = menuRepository.findByCategoryIdAndId(categoryId, menuId)
+				.orElseThrow(() -> new IllegalArgumentException("Invalid menuId: " + menuId));
+
+		menu.setMenuName(menuRegisterDto.getMenuName());
+		menu.setPrice(menuRegisterDto.getPrice());
+		menu.setCaption(menuRegisterDto.getCaption());
+
+		if (menuRegisterDto.getMenuImage() != null && !menuRegisterDto.getMenuImage().isEmpty()) {
+			String menuImageUrl = menuImageService.upload(menuRegisterDto.getMenuImage());
+			menu.setMenuImageUrl(menuImageUrl);
+		}
+
+		menu.setCategory(category);
+
+		menuRepository.save(menu);
+	}
+
+
+	@Transactional
+	public void deleteMenu(OwnerUserDetails ownerUserDetails, Long categoryId, Long menuId) {
+		Menu menu = menuRepository.findByCategoryIdAndId(categoryId, menuId)
+				.orElseThrow(() -> new IllegalArgumentException(("Invalid menuId: " + menuId)));
+
+		menuRepository.delete(menu);
 	}
 
 	public Store getValidateStore(Long storeId, Long ownerId) {
@@ -122,5 +176,6 @@ public class OwnerMenuService {
 
 		return store;
 	}
+
 
 }
