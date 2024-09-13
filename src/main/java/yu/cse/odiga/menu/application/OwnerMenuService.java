@@ -142,20 +142,21 @@ public class OwnerMenuService {
 		Menu menu = menuRepository.findByCategoryIdAndId(categoryId, menuId)
 				.orElseThrow(() -> new IllegalArgumentException("Invalid menuId: " + menuId));
 
+		if (menuRegisterDto.getMenuImage() != null && !menuRegisterDto.getMenuImage().isEmpty()) {
+			try {
+					String oldFileName = menu.getMenuImageUrl();
+					menu.setMenuImageUrl(menuImageService.updateFile(menuRegisterDto.getMenuImage(), oldFileName));
+			} catch (IOException e) {
+				throw new IllegalArgumentException("파일 업로드에 실패했습니다.");
+			}
+		}
 		menu.setMenuName(menuRegisterDto.getMenuName());
 		menu.setPrice(menuRegisterDto.getPrice());
 		menu.setCaption(menuRegisterDto.getCaption());
-
-		if (menuRegisterDto.getMenuImage() != null && !menuRegisterDto.getMenuImage().isEmpty()) {
-			String menuImageUrl = menuImageService.upload(menuRegisterDto.getMenuImage());
-			menu.setMenuImageUrl(menuImageUrl);
-		}
-
 		menu.setCategory(category);
 
 		menuRepository.save(menu);
 	}
-
 
 	@Transactional
 	public void deleteMenu(OwnerUserDetails ownerUserDetails, Long categoryId, Long menuId) {
@@ -176,6 +177,4 @@ public class OwnerMenuService {
 
 		return store;
 	}
-
-
 }

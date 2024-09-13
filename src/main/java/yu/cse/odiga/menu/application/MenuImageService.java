@@ -12,12 +12,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import yu.cse.odiga.global.S3.S3Util;
+import yu.cse.odiga.menu.domain.Menu;
 
 @Transactional
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class MenuImageService {
+
 	private final S3Util s3Util;
 
 	public String upload(MultipartFile multipartFile) throws IOException {
@@ -25,7 +27,7 @@ public class MenuImageService {
 		String uuid = UUID.randomUUID().toString();
 		String uniqueFileName = "menuImage/" + uuid + "_" + originalFileName.replaceAll("\\s", "_");
 
-		log.info("fileName: " + uniqueFileName);
+		log.info("업로드할 파일경로: " + uniqueFileName);
 
 		File uploadFile = s3Util.convert(multipartFile);
 
@@ -35,9 +37,10 @@ public class MenuImageService {
 		return uploadImageUrl;
 	}
 
-	public void updateFile(MultipartFile newFile, String oldFileName) throws IOException {
-		log.info("S3 oldFileName: " + oldFileName);
-		s3Util.deleteFile(oldFileName);
-		upload(newFile);
+	public String updateFile(MultipartFile newFile, String oldFileName) throws IOException {
+		if (oldFileName != null && !oldFileName.isEmpty()) {
+			s3Util.deleteFile(oldFileName);
+		}
+		return upload(newFile);
 	}
 }

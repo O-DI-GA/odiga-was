@@ -142,9 +142,6 @@ public class StoreService {
                 .build();
     }
 
-
-
-
     public List<StoreImagesDto> findStoreImagesByStoreId(Long storeId) {
         List<StoreImage> storeImages = storeImageRepository.findByStoreId(storeId);
         List<StoreImagesDto> responseStoreImages = new ArrayList<>();
