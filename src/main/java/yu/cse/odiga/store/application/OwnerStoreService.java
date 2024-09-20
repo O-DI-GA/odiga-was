@@ -28,7 +28,7 @@ public class OwnerStoreService {
 	//  TODO : Owner 웹 사이트에서 store 정보를 알 수 있어야함.
 
 	@Transactional
-	public void storeRegister(OwnerUserDetails ownerUserDetails,
+	public void registerStore(OwnerUserDetails ownerUserDetails,
 		StoreRegisterDto storeRegisterDto) {
 
 		GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
@@ -45,11 +45,17 @@ public class OwnerStoreService {
 			.storeCategory(storeRegisterDto.getStoreCategory())
 			.build();
 
-		if (storeRegisterDto.getStoreImage() != null && storeRegisterDto.getStoreTitleImage() != null
-			&& !storeRegisterDto.getStoreImage().isEmpty() && !storeRegisterDto.getStoreTitleImage().isEmpty()) {
+		if (storeRegisterDto.getStoreTitleImage() != null && !storeRegisterDto.getStoreTitleImage().isEmpty()) {
 			try {
-				storeImageService.upload(storeRegisterDto.getStoreTitleImage(), storeRegisterDto.getStoreImage(),
-					store);
+				storeImageService.uploadTitleImage(storeRegisterDto.getStoreTitleImage(), store);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		if (storeRegisterDto.getStoreImage() != null && !storeRegisterDto.getStoreImage().isEmpty()) {
+			try {
+				storeImageService.uploadStoreImage(storeRegisterDto.getStoreImage(), store);
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
@@ -80,4 +86,41 @@ public class OwnerStoreService {
 		return responseStores;
 	}
 
+	@Transactional
+	public void updateStore(OwnerUserDetails ownerUserDetails, Long storeId, StoreRegisterDto storeRegisterDto) {
+
+		GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+		Point location = geometryFactory.createPoint(
+				new Coordinate(storeRegisterDto.getLongitude(), storeRegisterDto.getLatitude()));
+
+
+		Store store = storeRepository.findByOwnerIdAndId(ownerUserDetails.getOwner().getId(), storeId)
+				.orElseThrow(() -> new IllegalArgumentException("Invalid storeId: " + storeId));
+
+		if (storeRegisterDto.getStoreTitleImage() != null && !storeRegisterDto.getStoreTitleImage().isEmpty()) {
+			try {
+				String oldFileName = store.getStoreTitleImage();
+				storeImageService.updateTitleImage(storeRegisterDto.getStoreTitleImage(), oldFileName, store);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		if (storeRegisterDto.getStoreImage() != null && !storeRegisterDto.getStoreImage().isEmpty()) {
+			try {
+				storeImageService.updateStoreImage(storeRegisterDto.getStoreImage(), store);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		store.setStoreName(storeRegisterDto.getStoreName());
+		store.setPhoneNumber(storeRegisterDto.getPhoneNumber());
+		store.setAddress(storeRegisterDto.getAddress());
+		store.setTableCount(storeRegisterDto.getTableCount());
+		store.setLocation(location);
+		store.setStoreCategory(storeRegisterDto.getStoreCategory());
+
+		storeRepository.save(store);
+	}
 }

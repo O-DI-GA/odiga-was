@@ -24,9 +24,8 @@ public class StoreImageService {
 
     private final S3Util s3Util;
     private final StoreImageRepository storeImageRepository;
-    public void upload(MultipartFile titleImageFile, List<MultipartFile> multipartFileList, Store store) throws IOException {
 
-
+    public void uploadTitleImage(MultipartFile titleImageFile, Store store) throws IOException{
         String originalFileName = titleImageFile.getOriginalFilename();
         String uuid = UUID.randomUUID().toString();
         String uniqueFileName = "titleImage/" + uuid + "_" + originalFileName.replaceAll("\\s", "_");
@@ -37,18 +36,19 @@ public class StoreImageService {
         s3Util.removeNewFile(uploadFile);
 
         store.setStoreTitleImage(uploadImageUrl);
-        // 이미지 여러개 받는걸로 수정
+    }
 
+    public void uploadStoreImage(List<MultipartFile> multipartFileList, Store store) throws IOException {
         List<StoreImage> storeImages = new ArrayList<>();
 
         for(MultipartFile multipartFile : multipartFileList){
-            originalFileName = multipartFile.getOriginalFilename();
-            uuid = UUID.randomUUID().toString();
-            uniqueFileName = "storeImage/" + uuid + "_" + originalFileName.replaceAll("\\s", "_");
+            String originalFileName = multipartFile.getOriginalFilename();
+            String uuid = UUID.randomUUID().toString();
+            String uniqueFileName = "storeImage/" + uuid + "_" + originalFileName.replaceAll("\\s", "_");
 
-            uploadFile = s3Util.convert(multipartFile);
+            File uploadFile = s3Util.convert(multipartFile);
 
-            uploadImageUrl = s3Util.putS3(uploadFile, uniqueFileName);
+            String uploadImageUrl = s3Util.putS3(uploadFile, uniqueFileName);
             s3Util.removeNewFile(uploadFile);
 
             StoreImage storeImage = StoreImage.builder()
@@ -63,14 +63,43 @@ public class StoreImageService {
         }
 
         store.setStoreImages(storeImages);
-
+    }
+    public void updateTitleImage(MultipartFile titleImage, String oldFileName, Store store) throws IOException {
+        if (oldFileName != null && !oldFileName.isEmpty()) {
+            s3Util.deleteFile(oldFileName);
+        }
+        uploadTitleImage(titleImage, store);
     }
 
-    public void updateFile(MultipartFile titleImage, List<MultipartFile> newFile, String oldFileName, Store store) throws IOException {
-        // 기존 파일 삭제
-        log.info("S3 oldFileName: " + oldFileName);
-        s3Util.deleteFile(oldFileName);
-        // 새 파일 업로드
-        upload(titleImage, newFile, store);
+    @Transactional
+    public void updateStoreImage(List<MultipartFile> newFileList, Store store) throws IOException {
+        List<StoreImage> originImages = store.getStoreImages();
+
+        for (StoreImage storeImage : originImages) {
+            s3Util.deleteFile(storeImage.getPostImageUrl());
+        }
+
+        originImages.clear();
+
+        List<StoreImage> newStoreImages = new ArrayList<>();
+        for (MultipartFile multipartFile : newFileList) {
+            String originalFileName = multipartFile.getOriginalFilename();
+            String uuid = UUID.randomUUID().toString();
+            String uniqueFileName = "storeImage/" + uuid + "_" + originalFileName.replaceAll("\\s", "_");
+
+            File uploadFile = s3Util.convert(multipartFile);
+            String uploadImageUrl = s3Util.putS3(uploadFile, uniqueFileName);
+            s3Util.removeNewFile(uploadFile);
+
+            StoreImage newStoreImage = StoreImage.builder()
+                    .postImageUrl(uploadImageUrl)
+                    .store(store)
+                    .createDate(LocalDateTime.now())
+                    .build();
+
+            newStoreImages.add(newStoreImage);
+        }
+        originImages.addAll(newStoreImages);
+        storeImageRepository.saveAll(newStoreImages);
     }
 }
