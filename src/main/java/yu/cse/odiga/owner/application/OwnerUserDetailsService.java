@@ -15,7 +15,6 @@ public class OwnerUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        System.out.println("owner service");
         Owner owner = ownerRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("user not found"));
         return new OwnerUserDetails(owner);

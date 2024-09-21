@@ -8,6 +8,7 @@ import yu.cse.odiga.global.util.DefaultResponse;
 import yu.cse.odiga.owner.domain.OwnerUserDetails;
 import yu.cse.odiga.reservation.application.OwnerReservationService;
 import yu.cse.odiga.reservation.dto.AvailableReservationTimeDto;
+import yu.cse.odiga.reservation.dto.AvailableReservationTimeUpdateDto;
 import yu.cse.odiga.reservation.dto.ReservationRegisterDto;
 import yu.cse.odiga.reservation.dto.ReservationResponseDto;
 
@@ -24,8 +25,8 @@ public class OwnerReservationController {
     @PostMapping("{storeId}")
     public ResponseEntity<?> registerAvailableReservationTime(@PathVariable Long storeId,
                                                  @AuthenticationPrincipal OwnerUserDetails ownerUserDetails,
-                                                 @RequestBody List<AvailableReservationTimeDto> availableReservationTimeDtoList) {
-        ownerReservationService.registerAvailableReservationTime(ownerUserDetails, storeId, availableReservationTimeDtoList);
+                                                 @RequestBody AvailableReservationTimeDto availableReservationTimeDto) {
+        ownerReservationService.registerAvailableReservationTime(ownerUserDetails, storeId, availableReservationTimeDto);
         return ResponseEntity.status(201).body(new DefaultResponse<>(201, "register availableReservationTime", null));
     }
 
@@ -53,11 +54,11 @@ public class OwnerReservationController {
     }
 
     // 예약 가능 시간 수정
-    @PutMapping("{storeId}/availableReservationTime/{availableReservationTimeId}")
-    public ResponseEntity<?> updateAvailableReservation(@PathVariable Long availableReservationTimeId,
+    @PutMapping("{storeId}/availableReservationTime")
+    public ResponseEntity<?> updateAvailableReservation(@PathVariable Long storeId,
                                                         @AuthenticationPrincipal OwnerUserDetails ownerUserDetails,
-                                                        @RequestBody AvailableReservationTimeDto availableReservationTimeDto) {
-        ownerReservationService.updateAvailableReservation(ownerUserDetails, availableReservationTimeId, availableReservationTimeDto);
+                                                        @RequestBody AvailableReservationTimeUpdateDto availableReservationTimeUpdateDto) {
+        ownerReservationService.updateAvailableReservationForDay(ownerUserDetails, storeId, availableReservationTimeUpdateDto);
         return ResponseEntity.status(201).body(new DefaultResponse<>(201,"update availableReservation", null));
     }
 

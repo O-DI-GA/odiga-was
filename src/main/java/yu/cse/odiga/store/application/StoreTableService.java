@@ -76,6 +76,17 @@ public class StoreTableService {
 		table.updateStoreTable(tableRegisterDto);
 	}
 
+	@Transactional
+	public void deleteStoreTableByStoreTableId(Long storeId, Long storeTableId) {
+		storeRepository.findById(storeId)
+			.orElseThrow(() -> new BusinessLogicException("올바른 접근이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
+
+		StoreTable table = storeTableRepository.findById(storeTableId)
+			.orElseThrow(() -> new BusinessLogicException("올바른 접근이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
+
+		storeTableRepository.delete(table);
+	}
+
 	public List<StoreTableResponseDto> findAllStoreTablesByStoreId(Long storeId) {
 		List<StoreTable> storeTables = storeTableRepository.findByStoreId(storeId);
 
