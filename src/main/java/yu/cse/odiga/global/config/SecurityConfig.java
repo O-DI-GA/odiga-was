@@ -26,6 +26,7 @@ import yu.cse.odiga.global.handler.UserAuthenticationEntryPoint;
 import yu.cse.odiga.global.jwt.JwtAuthenticationFilter;
 import yu.cse.odiga.global.jwt.JwtExceptionHandlingFilter;
 import yu.cse.odiga.global.jwt.JwtTokenProvider;
+import yu.cse.odiga.global.jwt.UserAccessDeniedHandler;
 import yu.cse.odiga.owner.application.OwnerUserDetailsService;
 import yu.cse.odiga.owner.dao.OwnerRepository;
 
@@ -62,7 +63,8 @@ public class SecurityConfig {
 				sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // session 을 사용하지 않음
 			)
 
-			.exceptionHandling(ex -> ex.authenticationEntryPoint(new UserAuthenticationEntryPoint()))
+			.exceptionHandling(ex -> ex.authenticationEntryPoint(new UserAuthenticationEntryPoint())
+				.accessDeniedHandler(new UserAccessDeniedHandler()))
 
 			.authenticationProvider(authenticationProvider)
 
@@ -99,7 +101,8 @@ public class SecurityConfig {
 				sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // session 을 사용하지 않음
 			)
 
-			.exceptionHandling(ex -> ex.authenticationEntryPoint(new UserAuthenticationEntryPoint()))
+			.exceptionHandling(ex -> ex.authenticationEntryPoint(new UserAuthenticationEntryPoint())
+				.accessDeniedHandler(new UserAccessDeniedHandler()))
 
 			.authenticationProvider(authenticationProvider)
 
