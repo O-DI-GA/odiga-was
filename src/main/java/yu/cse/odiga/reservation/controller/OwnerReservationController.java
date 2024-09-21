@@ -55,11 +55,11 @@ public class OwnerReservationController {
     }
 
     // 예약 가능 시간 수정
-    @PutMapping("{storeId}/availableReservationTime/{availableReservationTimeId}")
-    public ResponseEntity<?> updateAvailableReservation(@PathVariable Long availableReservationTimeId,
+    @PutMapping("{storeId}/availableReservationTime")
+    public ResponseEntity<?> updateAvailableReservation(@PathVariable Long storeId,
                                                         @AuthenticationPrincipal OwnerUserDetails ownerUserDetails,
                                                         @RequestBody AvailableReservationTimeUpdateDto availableReservationTimeUpdateDto) {
-        ownerReservationService.updateAvailableReservation(ownerUserDetails, availableReservationTimeId, availableReservationTimeUpdateDto);
+        ownerReservationService.updateAvailableReservationForDay(ownerUserDetails, storeId, availableReservationTimeUpdateDto);
         return ResponseEntity.status(201).body(new DefaultResponse<>(201,"update availableReservation", null));
     }
 

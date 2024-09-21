@@ -130,12 +130,41 @@ public class OwnerReservationService {
 
     // 예약 가능 시간 수정하기
     @Transactional
-    public void updateAvailableReservation(OwnerUserDetails ownerUserDetails, Long availableReservationTimeId, AvailableReservationTimeUpdateDto availableReservationTimeUpdateDto) {
-        AvailableReservationTime availableReservationTime = availableReservationTimeRepository.findById(availableReservationTimeId)
-                .orElseThrow(() -> new BusinessLogicException("Invalid availableReservationTime ID: " + availableReservationTimeId, HttpStatus.BAD_REQUEST.value()));
+    public void updateAvailableReservationForDay(OwnerUserDetails ownerUserDetails, Long storeId, AvailableReservationTimeUpdateDto availableReservationTimeUpdateDto) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new BusinessLogicException("Invalid store ID: " + storeId, HttpStatus.BAD_REQUEST.value()));
 
-        availableReservationTime.setAvailableReservationTime(availableReservationTimeUpdateDto.getAvailableReservationTime());
+        LocalDateTime startOfDay = availableReservationTimeUpdateDto.getDate().atStartOfDay();
+        LocalDateTime endOfDay = availableReservationTimeUpdateDto.getDate().atTime(LocalTime.MAX);
+
+        List<AvailableReservationTime> availableReservationTimeList = availableReservationTimeRepository.findByStoreIdAndAvailableReservationTimeBetween(storeId, startOfDay, endOfDay);
+
+        if (availableReservationTimeList.isEmpty()) {
+            throw new BusinessLogicException("No available reservation times found for the specified date", HttpStatus.NOT_FOUND.value());
+        }
+
+        // Delete the existing reservation times for that day
+        availableReservationTimeRepository.deleteAll(availableReservationTimeList);
+
+        // Recreate new time slots based on the new interval and time range
+        LocalDateTime currentTime = availableReservationTimeUpdateDto.getDate().atTime(availableReservationTimeUpdateDto.getNewStartTime());
+        LocalDateTime endTime = availableReservationTimeUpdateDto.getDate().atTime(availableReservationTimeUpdateDto.getNewEndTime());
+
+        List<AvailableReservationTime> updatedAvailableReservationTimeList = new ArrayList<>();
+
+        while (currentTime.isBefore(endTime) || currentTime.equals(endTime)) {
+            AvailableReservationTime availableReservationTime = AvailableReservationTime.builder()
+                    .availableReservationTime(currentTime)
+                    .isAvailable(availableReservationTimeUpdateDto.isAvailable())
+                    .store(store)
+                    .build();
+            updatedAvailableReservationTimeList.add(availableReservationTime);
+            currentTime = currentTime.plusMinutes(availableReservationTimeUpdateDto.getIntervalMinutes());
+        }
+
+        availableReservationTimeRepository.saveAll(updatedAvailableReservationTimeList);
     }
+
 
     // 예약 취소하기
     public void deleteReservation(OwnerUserDetails ownerUserDetails, Long reservationId) {
