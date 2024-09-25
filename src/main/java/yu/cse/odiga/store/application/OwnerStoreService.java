@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import yu.cse.odiga.owner.domain.OwnerUserDetails;
 import yu.cse.odiga.store.dao.StoreRepository;
 import yu.cse.odiga.store.domain.Store;
+import yu.cse.odiga.store.domain.StoreImage;
+import yu.cse.odiga.store.dto.OwnerStoreDetailDTO;
 import yu.cse.odiga.store.dto.StoreRegisterDto;
 import yu.cse.odiga.store.dto.StoreResponseDto;
 
@@ -84,6 +86,31 @@ public class OwnerStoreService {
 		}
 
 		return responseStores;
+	}
+
+	public OwnerStoreDetailDTO findOwnerStoreDetail(OwnerUserDetails ownerUserDetails, Long storeId) {
+
+		Store store = storeRepository.findByOwnerIdAndId(ownerUserDetails.getOwner().getId(), storeId)
+				.orElseThrow(() -> new IllegalArgumentException("Invalid storeId: " + storeId));
+
+		List<String> storeImageUrls = new ArrayList<>();
+		for (StoreImage storeImage : store.getStoreImages()) {
+			storeImageUrls.add(storeImage.getPostImageUrl());
+		}
+
+		return OwnerStoreDetailDTO.builder()
+				.storeId(store.getId())
+				.storeName(store.getStoreName())
+				.phoneNumber(store.getPhoneNumber())
+				.address(store.getAddress())
+				.tableCount(store.getTableCount())
+				.storeTitleImage(store.getStoreTitleImage())
+				.storeImage(storeImageUrls)
+				.latitude(store.getLocation().getY())
+				.longitude(store.getLocation().getX())
+				.reviewCount(store.getReviewCount())
+				.storeCategory(store.getStoreCategory())
+				.build();
 	}
 
 	@Transactional

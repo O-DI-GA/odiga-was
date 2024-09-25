@@ -36,8 +36,9 @@ public class OwnerStoreController {
 	}
 
 	@GetMapping("{storeId}")
-	public ResponseEntity<?> storeDetails(@PathVariable Long storeId) {
-		return ResponseEntity.status(200).body(new DefaultResponse<>(200, "store details", null));
+	public ResponseEntity<?> findOwnerStoreDetail(@AuthenticationPrincipal OwnerUserDetails ownerUserDetails,
+										  @PathVariable Long storeId) {
+		return ResponseEntity.status(200).body(new DefaultResponse<>(201, "store details", ownerStoreService.findOwnerStoreDetail(ownerUserDetails, storeId)));
 
 	}
 	@PutMapping("{storeId}")
