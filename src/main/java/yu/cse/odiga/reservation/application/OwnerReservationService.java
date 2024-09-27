@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import yu.cse.odiga.auth.domain.CustomUserDetails;
 import yu.cse.odiga.global.exception.BusinessLogicException;
 import yu.cse.odiga.owner.domain.OwnerUserDetails;
 import yu.cse.odiga.reservation.dao.AvailableReservationTimeRepository;
@@ -15,10 +14,9 @@ import yu.cse.odiga.reservation.dto.*;
 import yu.cse.odiga.store.dao.StoreRepository;
 import yu.cse.odiga.store.domain.Store;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.*;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,24 +33,59 @@ public class OwnerReservationService {
 
         List<AvailableReservationTime> availableReservationTimeList = new ArrayList<>();
 
-        // For each month schedule
+        Map<Integer, Set<LocalDateTime>> existingTimesMap = new HashMap<>();
+
         for (AvailableReservationTimeDto.MonthSchedule monthSchedule : availableReservationTimeDto.getSchedules()) {
             int month = monthSchedule.getMonth();
+            int year = monthSchedule.getYear();
+            YearMonth yearMonth = YearMonth.of(year, month);
+            LocalDate startDate = yearMonth.atDay(1);
+            LocalDate endDate = yearMonth.atEndOfMonth();
 
-            // For each day schedule within the month
+            if (!existingTimesMap.containsKey(month)) {
+                LocalDateTime monthStartDateTime = startDate.atStartOfDay();
+                LocalDateTime monthEndDateTime = endDate.atTime(23, 59, 59);
+
+                List<AvailableReservationTime> existingTimes = availableReservationTimeRepository.findByStoreIdAndAvailableReservationTimeBetween(
+                        storeId, monthStartDateTime, monthEndDateTime);
+
+                Set<LocalDateTime> existingTimeSet = existingTimes.stream()
+                        .map(AvailableReservationTime::getAvailableReservationTime)
+                        .collect(Collectors.toSet());
+
+                existingTimesMap.put(month, existingTimeSet);
+            }
+
+            Set<LocalDateTime> existingTimeSet = existingTimesMap.get(month);
+
             for (AvailableReservationTimeDto.DaySchedule schedule : monthSchedule.getDaySchedules()) {
-                LocalDateTime currentTime = getNextDateForMonthAndDayOfWeek(month, schedule.getDayOfWeek(), schedule.getStartTime());
-                LocalDateTime endTime = getNextDateForMonthAndDayOfWeek(month, schedule.getDayOfWeek(), schedule.getEndTime());
+                DayOfWeek dayOfWeek = DayOfWeek.valueOf(schedule.getDayOfWeek().toUpperCase());
+                LocalTime startTime = schedule.getStartTime();
+                LocalTime endTime = schedule.getEndTime();
+                int intervalMinutes = schedule.getIntervalMinutes();
 
-                // Register time slots in intervals
-                while (currentTime.isBefore(endTime) || currentTime.equals(endTime)) {
-                    AvailableReservationTime availableReservationTime = AvailableReservationTime.builder()
-                            .availableReservationTime(currentTime)
-                            .isAvailable(true)
-                            .store(store)
-                            .build();
-                    availableReservationTimeList.add(availableReservationTime);
-                    currentTime = currentTime.plusMinutes(schedule.getIntervalMinutes());
+                for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+                    if (date.getDayOfWeek() == dayOfWeek) {
+                        LocalDateTime slotStartTime = date.atTime(startTime);
+                        LocalDateTime slotEndTime = date.atTime(endTime);
+
+//                        // Adjust slotStartTime to be in the future if needed
+//                        if (slotStartTime.isBefore(LocalDateTime.now())) {
+//                            continue; // 과거 시간은 스킵
+//                        }
+
+                        while (!slotStartTime.isAfter(slotEndTime)) {
+                            if (!existingTimeSet.contains(slotStartTime)) {
+                                AvailableReservationTime availableReservationTime = AvailableReservationTime.builder()
+                                        .availableReservationTime(slotStartTime)
+                                        .isAvailable(true)
+                                        .store(store)
+                                        .build();
+                                availableReservationTimeList.add(availableReservationTime);
+                            }
+                            slotStartTime = slotStartTime.plusMinutes(intervalMinutes);
+                        }
+                    }
                 }
             }
         }
@@ -60,25 +93,6 @@ public class OwnerReservationService {
         store.setAvailableReservationTimeList(availableReservationTimeList);
         availableReservationTimeRepository.saveAll(availableReservationTimeList);
     }
-
-    // Helper method to get the next date for a specific month and day of the week
-    private LocalDateTime getNextDateForMonthAndDayOfWeek(int month, String dayOfWeek, LocalTime time) {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime date = now.withMonth(month)
-                .with(java.time.DayOfWeek.valueOf(dayOfWeek.toUpperCase()))
-                .withHour(time.getHour())
-                .withMinute(time.getMinute())
-                .withSecond(0)
-                .withNano(0);
-
-        // If the calculated date is in the past, move to the next occurrence
-        if (date.isBefore(now)) {
-            date = date.plusWeeks(1);
-        }
-
-        return date;
-    }
-
 
     // 예약 가능 시간 목록
     public List<AvailableReservationTimeResponseDto> getAvailableReservationTimes(OwnerUserDetails ownerUserDetails, Long storeId) {
@@ -139,6 +153,10 @@ public class OwnerReservationService {
 
         List<AvailableReservationTime> availableReservationTimeList = availableReservationTimeRepository.findByStoreIdAndAvailableReservationTimeBetween(storeId, startOfDay, endOfDay);
 
+        System.out.println(startOfDay);
+        System.out.println(endOfDay);
+        System.out.println(availableReservationTimeList);
+
         if (availableReservationTimeList.isEmpty()) {
             throw new BusinessLogicException("No available reservation times found for the specified date", HttpStatus.NOT_FOUND.value());
         }
@@ -147,19 +165,19 @@ public class OwnerReservationService {
         availableReservationTimeRepository.deleteAll(availableReservationTimeList);
 
         // Recreate new time slots based on the new interval and time range
-        LocalDateTime currentTime = availableReservationTimeUpdateDto.getDate().atTime(availableReservationTimeUpdateDto.getNewStartTime());
+        LocalDateTime startTime = availableReservationTimeUpdateDto.getDate().atTime(availableReservationTimeUpdateDto.getNewStartTime());
         LocalDateTime endTime = availableReservationTimeUpdateDto.getDate().atTime(availableReservationTimeUpdateDto.getNewEndTime());
 
         List<AvailableReservationTime> updatedAvailableReservationTimeList = new ArrayList<>();
 
-        while (currentTime.isBefore(endTime) || currentTime.equals(endTime)) {
+        while (startTime.isBefore(endTime) || startTime.equals(endTime)) {
             AvailableReservationTime availableReservationTime = AvailableReservationTime.builder()
-                    .availableReservationTime(currentTime)
+                    .availableReservationTime(startTime)
                     .isAvailable(availableReservationTimeUpdateDto.isAvailable())
                     .store(store)
                     .build();
             updatedAvailableReservationTimeList.add(availableReservationTime);
-            currentTime = currentTime.plusMinutes(availableReservationTimeUpdateDto.getIntervalMinutes());
+            startTime = startTime.plusMinutes(availableReservationTimeUpdateDto.getIntervalMinutes());
         }
 
         availableReservationTimeRepository.saveAll(updatedAvailableReservationTimeList);
