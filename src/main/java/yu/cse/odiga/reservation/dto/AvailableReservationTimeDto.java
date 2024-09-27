@@ -20,6 +20,7 @@ public class AvailableReservationTimeDto {
     @Builder
     @AllArgsConstructor
     public static class MonthSchedule {
+        private int year;
         private int month; // Month as an integer (1 for January, 2 for February, etc.)
         private List<DaySchedule> daySchedules;
     }
