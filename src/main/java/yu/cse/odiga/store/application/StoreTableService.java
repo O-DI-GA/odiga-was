@@ -47,6 +47,7 @@ public class StoreTableService {
 			.store(store)
 			.maxSeatCount(tableRegisterDto.getMaxSeatCount())
 			.tableStatus(TableStatus.EMPTY)
+			.isPlaced(false)
 			.build();
 
 		return new CreateStoreTableResponseDto(storeTableRepository.save(storeTable).getId());
@@ -95,4 +96,25 @@ public class StoreTableService {
 			.toList();
 	}
 
+	@Transactional
+	public void togglePlaced(Long storeId, int tableNumber) {
+		storeRepository.findById(storeId)
+				.orElseThrow(() -> new BusinessLogicException("올바른 접근이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
+
+		StoreTable table = storeTableRepository.findByStoreIdAndTableNumber(storeId, tableNumber)
+				.orElseThrow(() -> new BusinessLogicException("올바른 접근이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
+
+		table.togglePlaced();
+	}
+
+	@Transactional
+	public boolean isPlaceable(Long storeId, int tableNumber) {
+		storeRepository.findById(storeId)
+				.orElseThrow(() -> new BusinessLogicException("올바른 접근이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
+
+		StoreTable table = storeTableRepository.findByStoreIdAndTableNumber(storeId, tableNumber)
+				.orElseThrow(() -> new BusinessLogicException("올바른 접근이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
+
+		return !table.isPlaced();
+	}
 }

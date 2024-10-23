@@ -56,4 +56,19 @@ public class StoreTableController {
 		return ResponseEntity.status(HttpStatus.NO_CONTENT)
 			.body(new DefaultResponse<>(204, "delete store table ", null));
 	}
+
+	@PutMapping("togglePlaced/{tableNumber}")
+	public ResponseEntity<?> togglePlaced(@PathVariable Long storeId, @PathVariable int tableNumber) {
+
+		storeTableService.togglePlaced(storeId, tableNumber);
+
+		return ResponseEntity.status(HttpStatus.OK).body(new DefaultResponse<>(200, "update store table placed status", null));
+	}
+
+	@GetMapping("isPlaceable/{tableNumber}")
+	public ResponseEntity<?> isPlaceableStoreTable(@PathVariable Long storeId, @PathVariable int tableNumber) {
+		return ResponseEntity.status(HttpStatus.OK).body(
+				new DefaultResponse<>(200, "get store table is placeable", storeTableService.isPlaceable(storeId, tableNumber))
+		);
+	}
 }

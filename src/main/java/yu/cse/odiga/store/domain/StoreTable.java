@@ -34,6 +34,8 @@ public class StoreTable {
 
 	private int maxSeatCount;
 
+	private boolean isPlaced;
+
 	@ManyToOne
 	@JoinColumn(name = "storeId")
 	private Store store;
@@ -63,5 +65,9 @@ public class StoreTable {
 	public void updateStoreTable(TableRegisterDto tableRegisterDto) {
 		this.tableNumber = tableRegisterDto.getTableNumber();
 		this.maxSeatCount = tableRegisterDto.getMaxSeatCount();
+	}
+
+	public void togglePlaced() {
+		this.isPlaced = !this.isPlaced;
 	}
 }
