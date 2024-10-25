@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class TableRegisterDto {
+public class StoreTableRegisterDto {
     private int tableNumber;
     private int maxSeatCount;
 }

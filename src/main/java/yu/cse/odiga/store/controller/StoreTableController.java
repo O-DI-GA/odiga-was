@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import yu.cse.odiga.global.util.DefaultResponse;
 import yu.cse.odiga.store.application.StoreTableService;
-import yu.cse.odiga.store.dto.TableRegisterDto;
+import yu.cse.odiga.store.dto.StoreTableRegisterDto;
 
 @RestController
 @RequestMapping("api/v1/owner/store/{storeId}/tables")
@@ -33,18 +33,18 @@ public class StoreTableController {
 
 	@PostMapping
 	public ResponseEntity<?> creatStoreTable(@PathVariable Long storeId,
-		@RequestBody TableRegisterDto tableRegisterDto) {
+		@RequestBody StoreTableRegisterDto storeTableRegisterDto) {
 
 		return ResponseEntity.status(HttpStatus.CREATED)
 			.body(new DefaultResponse<>(201, "create store table",
-				storeTableService.createStoreTable(storeId, tableRegisterDto)));
+				storeTableService.createStoreTable(storeId, storeTableRegisterDto)));
 	}
 
 	@PutMapping("{storeTableId}")
 	public ResponseEntity<?> updateStoreTable(@PathVariable Long storeId, @PathVariable Long storeTableId,
-		@RequestBody TableRegisterDto tableRegisterDto) {
+		@RequestBody StoreTableRegisterDto storeTableRegisterDto) {
 
-		storeTableService.updateStoreTable(storeId, storeTableId, tableRegisterDto);
+		storeTableService.updateStoreTable(storeId, storeTableId, storeTableRegisterDto);
 		return ResponseEntity.status(HttpStatus.OK).body(new DefaultResponse<>(200, "update store table", null));
 	}
 

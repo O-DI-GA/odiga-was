@@ -3,12 +3,11 @@ package yu.cse.odiga.store.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import yu.cse.odiga.global.util.DefaultResponse;
 import yu.cse.odiga.store.application.TableOrderService;
+import yu.cse.odiga.store.dto.TableOrderMenuDto;
+import yu.cse.odiga.store.dto.TableOrderRegisterDto;
 
 @RestController
 @RequestMapping("api/v1/table/{storeId}/order")
@@ -16,11 +15,22 @@ import yu.cse.odiga.store.application.TableOrderService;
 public class TableOrderController {
     private final TableOrderService tableOrderService;
 
+    @PostMapping("{storeTableNumber}")
+    public ResponseEntity<?> registerTableOrderList(@PathVariable Long storeId, @PathVariable int storeTableNumber, @RequestBody TableOrderRegisterDto tableOrderRegisterDto) {
+        tableOrderService.registerTableOrderList(storeId, storeTableNumber, tableOrderRegisterDto);
+        return ResponseEntity.status(201).body(new DefaultResponse<>(201, "Register Table order history",  null));
+    }
 
-    @GetMapping("{tableNumber}")
-    public ResponseEntity<?> findTableOrderHistory(@PathVariable Long storeId, @PathVariable int tableNumber) {
-        return ResponseEntity.status(HttpStatus.OK).body(new DefaultResponse<>(200, "Table order history",
-                tableOrderService.findTableOrderList(storeId, tableNumber)));
+    @GetMapping("{storeTableNumber}")
+    public ResponseEntity<?> getTableOrderList(@PathVariable Long storeId, @PathVariable int storeTableNumber) {
+        return ResponseEntity.status(201).body(new DefaultResponse<>(201, "Table order history",
+                tableOrderService.getTableOrderList(storeId, storeTableNumber)));
+    }
+
+    @GetMapping("{storeTableNumber}/{tableOrderId}")
+    public ResponseEntity<?> getTableOrderListDetail(@PathVariable Long storeId, @PathVariable int storeTableNumber, @PathVariable Long tableOrderId) {
+        return ResponseEntity.status(201).body(new DefaultResponse<>(201, "Table order history",
+                tableOrderService.getTableOrderListDetail(storeId, storeTableNumber, tableOrderId)));
     }
 
     //TODO : 나중에 payments로 옮겨야함

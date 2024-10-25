@@ -15,7 +15,7 @@ import yu.cse.odiga.store.domain.Store;
 import yu.cse.odiga.store.domain.StoreTable;
 import yu.cse.odiga.store.dto.CreateStoreTableResponseDto;
 import yu.cse.odiga.store.dto.StoreTableResponseDto;
-import yu.cse.odiga.store.dto.TableRegisterDto;
+import yu.cse.odiga.store.dto.StoreTableRegisterDto;
 import yu.cse.odiga.store.type.TableStatus;
 
 @Service
@@ -25,7 +25,7 @@ public class StoreTableService {
 	private final StoreRepository storeRepository;
 
 	@Transactional
-	public CreateStoreTableResponseDto createStoreTable(Long storeId, TableRegisterDto tableRegisterDto) {
+	public CreateStoreTableResponseDto createStoreTable(Long storeId, StoreTableRegisterDto storeTableRegisterDto) {
 
 		Store store = storeRepository.findById(storeId)
 			.orElseThrow(() -> new BusinessLogicException("올바른 접근이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
@@ -33,19 +33,19 @@ public class StoreTableService {
 		List<StoreTable> storeTables = store.getTables();
 
 		for (StoreTable storeTable : storeTables) {
-			if (storeTable.getTableNumber() == tableRegisterDto.getTableNumber()) {
+			if (storeTable.getTableNumber() == storeTableRegisterDto.getTableNumber()) {
 				throw new BusinessLogicException("이미 존재 하는 테이블 번호 입니다.", HttpStatus.BAD_REQUEST.value());
 			}
 		}
 
-		if (tableRegisterDto.getTableNumber() > store.getTableCount()) {
+		if (storeTableRegisterDto.getTableNumber() > store.getTableCount()) {
 			throw new BusinessLogicException("최대 테이블 수 를 초과하였습니다.", HttpStatus.BAD_REQUEST.value());
 		}
 
 		StoreTable storeTable = StoreTable.builder()
-			.tableNumber(tableRegisterDto.getTableNumber())
+			.tableNumber(storeTableRegisterDto.getTableNumber())
 			.store(store)
-			.maxSeatCount(tableRegisterDto.getMaxSeatCount())
+			.maxSeatCount(storeTableRegisterDto.getMaxSeatCount())
 			.tableStatus(TableStatus.EMPTY)
 			.isPlaced(false)
 			.build();
@@ -54,12 +54,12 @@ public class StoreTableService {
 	}
 
 	@Transactional
-	public void updateStoreTable(Long storeId, Long storeTableId, TableRegisterDto tableRegisterDto) {
+	public void updateStoreTable(Long storeId, Long storeTableId, StoreTableRegisterDto storeTableRegisterDto) {
 
 		Store store = storeRepository.findById(storeId)
 			.orElseThrow(() -> new BusinessLogicException("올바른 접근이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
 
-		if (tableRegisterDto.getTableNumber() > store.getTableCount()) {
+		if (storeTableRegisterDto.getTableNumber() > store.getTableCount()) {
 			throw new BusinessLogicException("최대 테이블 수 를 초과하였습니다.", HttpStatus.BAD_REQUEST.value());
 		}
 
@@ -74,7 +74,7 @@ public class StoreTableService {
 		// 	}
 		// }
 
-		table.updateStoreTable(tableRegisterDto);
+		table.updateStoreTable(storeTableRegisterDto);
 	}
 
 	@Transactional
