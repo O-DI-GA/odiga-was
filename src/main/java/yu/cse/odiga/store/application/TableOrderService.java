@@ -2,13 +2,22 @@ package yu.cse.odiga.store.application;
 
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import yu.cse.odiga.menu.dao.MenuRepository;
+import yu.cse.odiga.menu.domain.Menu;
 import yu.cse.odiga.store.dao.StoreTableRepository;
+import yu.cse.odiga.store.dao.TableOrderMenuRepository;
 import yu.cse.odiga.store.dao.TableOrderRepository;
 import yu.cse.odiga.store.domain.StoreTable;
 import yu.cse.odiga.store.domain.TableOrder;
+import yu.cse.odiga.store.domain.TableOrderMenu;
+import yu.cse.odiga.store.dto.TableOrderHistoryDto;
 import yu.cse.odiga.store.dto.TableOrderMenuHistoryDto;
+import yu.cse.odiga.store.dto.TableOrderMenuforRegister;
+import yu.cse.odiga.store.dto.TableOrderRegisterDto;
 import yu.cse.odiga.store.type.PaymentStatus;
 
 @Service
@@ -16,24 +25,49 @@ import yu.cse.odiga.store.type.PaymentStatus;
 public class TableOrderService {
     private final TableOrderRepository tableOrderRepository;
     private final StoreTableRepository storeTableRepository;
+    private final TableOrderMenuRepository tableOrderMenuRepository;
+    private final MenuRepository menuRepository;
 
     @Transactional
-    public void createTableOrder(Long storeTableId) { // 테이블이 비어 있을 경우 이걸로 생성 해야함.
-        StoreTable storeTable = storeTableRepository.findById(storeTableId)
-                .orElseThrow(() -> new IllegalStateException("존재 하지 않는 store table id 입니다."));
+    public void registerTableOrderList(Long storeId, int storeTableNumber, TableOrderRegisterDto tableOrderRegisterDto) {
 
-        TableOrder tableOrder = TableOrder.builder()
+        StoreTable storeTable = storeTableRepository.findByStoreIdAndTableNumber(storeId, storeTableNumber)
+                .orElseThrow(() -> new IllegalStateException("존재하지 않는 store table id 입니다."));
+
+        List<TableOrderMenuforRegister> requestMenus = tableOrderRegisterDto.getTableOrderMenuforRegisters();
+
+        if (storeTable.isTableEmpty()) {
+            storeTable.changeTableStatusToInUse();
+            storeTable.setTableOrderList(new ArrayList<>());
+        }
+
+        TableOrder newTableOrder = TableOrder.builder()
                 .paymentStatus(PaymentStatus.PENDING)
-                .tableOrderMenuList(new ArrayList<>())
                 .storeTable(storeTable)
+                .tableOrderMenuList(new ArrayList<>())
                 .build();
 
-        tableOrderRepository.save(tableOrder);
-        storeTable.addNewTableOrder(tableOrder);
-        storeTable.changeTableStatusToInUse();
-        // TODO : table order id return 필요
-    }
+        storeTable.addNewTableOrder(newTableOrder);
+        tableOrderRepository.save(newTableOrder);
 
+        for (TableOrderMenuforRegister menuDto : requestMenus) {
+            Menu menu = menuRepository.findByCategory_Store_IdAndMenuName(storeId, menuDto.getMenuName())
+                    .orElseThrow(() -> new IllegalStateException("존재하지 않는 메뉴입니다: " + menuDto.getMenuName()));
+
+            TableOrderMenu tableOrderMenu = TableOrderMenu.builder()
+                    .menu(menu)
+                    .menuCount(menuDto.getMenuCount())
+                    .tableOrder(newTableOrder) // 새로 생성된 주문 내역에 추가
+                    .build();
+
+            newTableOrder.getTableOrderMenuList().add(tableOrderMenu);
+
+            tableOrderMenuRepository.save(tableOrderMenu);
+        }
+
+        storeTableRepository.save(storeTable);
+    }
+    // TODO : table order id return 필요
     public void checkEmptyTableByStoreTableId(Long storeTableId) {
         StoreTable storeTable = storeTableRepository.findById(storeTableId)
                 .orElseThrow(() -> new IllegalStateException("존재 하지 않는 store table id 입니다."));
@@ -51,10 +85,23 @@ public class TableOrderService {
 
     }
 
-    public TableOrderMenuHistoryDto findTableOrderList(Long storeId, int tableNumber) { // 곧 삭제할 코드
-        TableOrder tableOrder = tableOrderRepository.findByStoreTable_StoreIdAndStoreTable_TableNumber(
-                storeId, tableNumber).orElseThrow();
-        
+    public TableOrderHistoryDto getTableOrderList(Long storeId, int storeTableNumber) {
+        StoreTable storeTable = storeTableRepository.findByStoreIdAndTableNumber(storeId, storeTableNumber)
+                .orElseThrow(() -> new IllegalStateException("해당 테이블이 존재하지 않습니다."));
+
+        List<TableOrder> tableOrders = storeTable.getTableOrderList();
+
+        if (tableOrders.isEmpty()) {
+            throw new IllegalStateException("해당 테이블에 주문 내역이 존재하지 않습니다.");
+        }
+
+        return TableOrderHistoryDto.from(tableOrders);
+    }
+
+    public TableOrderMenuHistoryDto getTableOrderListDetail(Long storeId, int storeTableNumber, Long tableOrderId) {
+        TableOrder tableOrder = tableOrderRepository.findByStoreTable_Store_IdAndStoreTable_TableNumberAndId(
+                storeId, storeTableNumber, tableOrderId).orElseThrow();
+
         return TableOrderMenuHistoryDto.from(tableOrder);
     }
 
