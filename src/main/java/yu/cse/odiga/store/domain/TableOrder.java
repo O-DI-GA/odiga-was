@@ -27,7 +27,8 @@ import yu.cse.odiga.store.type.PaymentStatus;
 @Setter
 @NoArgsConstructor
 public class TableOrder {
-
+// 손님이있는 테이블의 주문내역
+    // 주문하기 주문내역 , wating메뉴 리스트 참고
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

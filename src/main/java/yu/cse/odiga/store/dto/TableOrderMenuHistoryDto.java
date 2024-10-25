@@ -10,7 +10,7 @@ import yu.cse.odiga.store.domain.TableOrderMenu;
 @Getter
 public class TableOrderMenuHistoryDto {
     private Long tableOrderHistoryId;
-    private int totalOrderPrice;
+    private int totalTableOrderPrice;
     private List<TableOrderMenuDto> tableOrderMenuListDto;
 
     public static List<TableOrderMenuDto> fromEntityList(List<TableOrderMenu> tableOrderMenuList) {
@@ -22,7 +22,7 @@ public class TableOrderMenuHistoryDto {
     public static TableOrderMenuHistoryDto from(TableOrder tableOrder) {
         return TableOrderMenuHistoryDto.builder()
                 .tableOrderHistoryId(tableOrder.getId())
-                .totalOrderPrice(tableOrder.getTableTotalPrice())
+                .totalTableOrderPrice(tableOrder.getTableTotalPrice())
                 .tableOrderMenuListDto(TableOrderMenuHistoryDto.fromEntityList((tableOrder.getTableOrderMenuList())))
                 .build();
     }

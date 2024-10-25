@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import yu.cse.odiga.store.domain.Store;
 import yu.cse.odiga.store.domain.StoreTable;
+import yu.cse.odiga.store.domain.TableOrder;
 import yu.cse.odiga.store.type.TableStatus;
 
 public interface StoreTableRepository extends JpaRepository<StoreTable, Long> {

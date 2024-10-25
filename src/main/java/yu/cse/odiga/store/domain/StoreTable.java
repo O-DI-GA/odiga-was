@@ -13,15 +13,13 @@ import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import yu.cse.odiga.store.dto.TableRegisterDto;
+import lombok.*;
+import yu.cse.odiga.store.dto.StoreTableRegisterDto;
 import yu.cse.odiga.store.type.TableStatus;
 
 @Entity
 @Builder
+@Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -62,9 +60,9 @@ public class StoreTable {
 		this.tableStatus = TableStatus.EMPTY;
 	}
 
-	public void updateStoreTable(TableRegisterDto tableRegisterDto) {
-		this.tableNumber = tableRegisterDto.getTableNumber();
-		this.maxSeatCount = tableRegisterDto.getMaxSeatCount();
+	public void updateStoreTable(StoreTableRegisterDto storeTableRegisterDto) {
+		this.tableNumber = storeTableRegisterDto.getTableNumber();
+		this.maxSeatCount = storeTableRegisterDto.getMaxSeatCount();
 	}
 
 	public void togglePlaced() {
