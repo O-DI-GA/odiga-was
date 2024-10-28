@@ -27,12 +27,6 @@ public class TableOrderController {
                 tableOrderService.getTableOrderList(storeId, storeTableNumber)));
     }
 
-    @GetMapping("{storeTableNumber}/{tableOrderId}")
-    public ResponseEntity<?> getTableOrderListDetail(@PathVariable Long storeId, @PathVariable int storeTableNumber, @PathVariable Long tableOrderId) {
-        return ResponseEntity.status(201).body(new DefaultResponse<>(201, "TableOrder history",
-                tableOrderService.getTableOrderListDetail(storeId, storeTableNumber, tableOrderId)));
-    }
-
     //TODO : 나중에 payments로 옮겨야함
     @GetMapping("{tableOrderId}/payment")
     public ResponseEntity<?> findTableOrderHistoryById(@PathVariable Long storeId,
