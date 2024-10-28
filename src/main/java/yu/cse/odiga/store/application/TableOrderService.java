@@ -41,32 +41,45 @@ public class TableOrderService {
             storeTable.setTableOrderList(new ArrayList<>());
         }
 
-        TableOrder newTableOrder = TableOrder.builder()
-                .paymentStatus(PaymentStatus.PENDING)
-                .storeTable(storeTable)
-                .tableOrderMenuList(new ArrayList<>())
-                .build();
-
-        storeTable.addNewTableOrder(newTableOrder);
-        tableOrderRepository.save(newTableOrder);
+        TableOrder currentTableOrder = storeTable.getTableOrderList().stream()
+                .filter(order -> order.getPaymentStatus() == PaymentStatus.PENDING)
+                .findFirst()
+                .orElseGet(() -> {
+                    TableOrder newTableOrder = TableOrder.builder()
+                            .paymentStatus(PaymentStatus.PENDING)
+                            .storeTable(storeTable)
+                            .tableOrderMenuList(new ArrayList<>())
+                            .build();
+                    storeTable.addNewTableOrder(newTableOrder);
+                    tableOrderRepository.save(newTableOrder);
+                    return newTableOrder;
+                });
 
         for (TableOrderMenuforRegister menuDto : requestMenus) {
             Menu menu = menuRepository.findByCategory_Store_IdAndMenuName(storeId, menuDto.getMenuName())
                     .orElseThrow(() -> new IllegalStateException("존재하지 않는 메뉴입니다: " + menuDto.getMenuName()));
 
-            TableOrderMenu tableOrderMenu = TableOrderMenu.builder()
-                    .menu(menu)
-                    .menuCount(menuDto.getMenuCount())
-                    .tableOrder(newTableOrder) // 새로 생성된 주문 내역에 추가
-                    .build();
+            TableOrderMenu existingTableOrderMenu = currentTableOrder.getTableOrderMenuList().stream()
+                    .filter(orderMenu -> orderMenu.getMenu().equals(menu))
+                    .findFirst()
+                    .orElse(null);
 
-            newTableOrder.getTableOrderMenuList().add(tableOrderMenu);
-
-            tableOrderMenuRepository.save(tableOrderMenu);
+            if (existingTableOrderMenu != null) {
+                existingTableOrderMenu.setMenuCount(existingTableOrderMenu.getMenuCount() + menuDto.getMenuCount());
+            } else {
+                TableOrderMenu newTableOrderMenu = TableOrderMenu.builder()
+                        .menu(menu)
+                        .menuCount(menuDto.getMenuCount())
+                        .tableOrder(currentTableOrder)
+                        .build();
+                currentTableOrder.getTableOrderMenuList().add(newTableOrderMenu);
+                tableOrderMenuRepository.save(newTableOrderMenu);
+            }
         }
 
         storeTableRepository.save(storeTable);
     }
+
     // TODO : table order id return 필요
     public void checkEmptyTableByStoreTableId(Long storeTableId) {
         StoreTable storeTable = storeTableRepository.findById(storeTableId)
