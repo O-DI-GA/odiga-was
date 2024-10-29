@@ -32,14 +32,14 @@ jobs:
           echo "${{ secrets.APPLICATION }}" > ./application.yml
           echo "${{ secrets.APPLICATION_DEV }}" > ./application-dev.yml
           echo "${{ secrets.APPLICATION_LOCAL }}" > ./application-local.yml
-          mkdir ./fcm
-        shell: bash
-
-      - name: Create Json
-        uses: jsdaniell/create-json@v1.2.2
-        with:
-          name: "./src/main/resources/fcm/fcmKey.json"
-          json: ${{ secrets.FCM_KEY_JSON }}
+      #          mkdir ./fcm
+      #        shell: bash
+      #
+      #      - name: Create Json
+      #        uses: jsdaniell/create-json@v1.2.2
+      #        with:
+      #          name: "./src/main/resources/fcm/fcmKey.json"
+      #          json: ${{ secrets.FCM_KEY_JSON }}
 
       # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
       # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
