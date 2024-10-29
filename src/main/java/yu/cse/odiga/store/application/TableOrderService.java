@@ -81,6 +81,7 @@ public class TableOrderService {
         }
 
         storeTableRepository.save(storeTable);
+
     }
 
     // TODO : table order id return 필요
