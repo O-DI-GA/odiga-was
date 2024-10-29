@@ -92,11 +92,11 @@ public class TableOrderService {
 	public TableOrderMenuHistoryDto getInSueTableOrderListByStoreIdAndTableNumber(Long storeId, int storeTableNumber) {
 		StoreTable storeTable = storeTableRepository.findByStoreIdAndTableNumberAndTableStatus(storeId,
 				storeTableNumber, TableStatus.INUSE)
-			.orElseThrow(() -> new BusinessLogicException("해당 테이블이 존재하지 않습니다.", HttpStatus.BAD_REQUEST.value()));
+			.orElseThrow(() -> new BusinessLogicException("사용중인 테이블이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
 
 		TableOrder tableOrder = tableOrderRepository.findByStoreTableIdAndPaymentStatus(storeTable.getId(),
 				PaymentStatus.PENDING)
-			.orElseThrow(() -> new BusinessLogicException("주문 내역이 존재 하지 않습니다.", HttpStatus.BAD_REQUEST.value()));
+			.orElseThrow(() -> new BusinessLogicException("사용중인 테이블이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
 
 		return TableOrderMenuHistoryDto.from(tableOrder);
 	}

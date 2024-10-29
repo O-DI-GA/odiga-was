@@ -13,7 +13,7 @@ public class TableOrderMenuHistoryDto {
 	private Long tableOrderHistoryId;
 	private int totalTableOrderPrice;
 	private int tableNumber;
-	private List<TableOrderMenuDto> tableOrderMenuListDto;
+	private List<TableOrderMenuDto> tableOrderMenus;
 
 	public static List<TableOrderMenuDto> fromEntityList(List<TableOrderMenu> tableOrderMenuList) {
 		return tableOrderMenuList.stream()
@@ -26,7 +26,7 @@ public class TableOrderMenuHistoryDto {
 			.tableOrderHistoryId(tableOrder.getId())
 			.tableNumber(tableOrder.getStoreTable().getTableNumber())
 			.totalTableOrderPrice(tableOrder.getTableTotalPrice())
-			.tableOrderMenuListDto(TableOrderMenuHistoryDto.fromEntityList((tableOrder.getTableOrderMenuList())))
+			.tableOrderMenus(TableOrderMenuHistoryDto.fromEntityList((tableOrder.getTableOrderMenuList())))
 			.build();
 	}
 }
