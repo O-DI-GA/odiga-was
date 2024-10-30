@@ -25,6 +25,7 @@ public class PaymentService {
         TableOrder tableOrder = tableOrderRepository.findById(tableOrderId).orElseThrow();
         // TODO : 추후 실제 결제 로직 구현 필요
         tableOrder.completeOrder();
+
         User user = userRepository.findByEmail(customUserDetails.getUsername()).orElseThrow();
         useHistoryService.saveUseHistory(user, tableOrder);
     }
