@@ -6,8 +6,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
+
 import yu.cse.odiga.global.util.DefaultResponse;
 import yu.cse.odiga.store.application.TableOrderService;
+import yu.cse.odiga.store.dto.CallStaffRequestDto;
 import yu.cse.odiga.store.dto.TableOrderMenuDto;
 import yu.cse.odiga.store.dto.TableOrderRegisterDto;
 
@@ -19,7 +22,7 @@ public class TableOrderController {
 
 	@PostMapping("{storeTableNumber}")
 	public ResponseEntity<?> registerTableOrderList(@PathVariable Long storeId, @PathVariable int storeTableNumber,
-		@RequestBody TableOrderRegisterDto tableOrderRegisterDto) {
+		@RequestBody TableOrderRegisterDto tableOrderRegisterDto) throws FirebaseMessagingException {
 		tableOrderService.registerTableOrderList(storeId, storeTableNumber, tableOrderRegisterDto);
 		return ResponseEntity.status(201).body(new DefaultResponse<>(201, "Register Table order history", null));
 	}
@@ -34,6 +37,14 @@ public class TableOrderController {
 	public ResponseEntity<?> getAllTableOrderList(@PathVariable Long storeId) {
 		return ResponseEntity.status(201).body(new DefaultResponse<>(201, "StoreTable order history",
 			tableOrderService.getAllInuseTableOrderList(storeId)));
+	}
+
+	@PostMapping("call")
+	public ResponseEntity<?> callStaff(@PathVariable Long storeId,
+		@RequestBody CallStaffRequestDto callStaffRequestDto) throws FirebaseMessagingException {
+
+		tableOrderService.callStaff(storeId, callStaffRequestDto);
+		return ResponseEntity.ok().body(new DefaultResponse<>(200, "직원 호출을 성공 했습니다.", null));
 	}
 
 	//TODO : 나중에 payments로 옮겨야함
