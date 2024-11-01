@@ -151,7 +151,7 @@ public class TableOrderService {
 		String storeFcmToken = store.getPosDeviceFcmToken();
 
 		PosCallFcmResponse posFCMResponse = new PosCallFcmResponse(callStaffRequestDto.getTableNumber(),
-			callStaffRequestDto.getNeedName());
+			callStaffRequestDto.getCallMessage());
 
 		fcmUtil.sendMessage(storeFcmToken, posFCMResponse, "call");
 
