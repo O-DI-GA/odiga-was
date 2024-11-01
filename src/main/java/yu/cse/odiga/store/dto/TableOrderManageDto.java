@@ -9,6 +9,6 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-public class TableOrderRegisterDto {
-    private List<TableOrderMenuforRegister> tableOrderMenuforRegisters;
+public class TableOrderManageDto {
+    private List<TableOrderMenuforManage> tableOrderMenuforManages;
 }

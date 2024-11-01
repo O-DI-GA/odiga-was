@@ -3,7 +3,6 @@ package yu.cse.odiga.store.application;
 import jakarta.transaction.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -25,13 +24,8 @@ import yu.cse.odiga.store.domain.Store;
 import yu.cse.odiga.store.domain.StoreTable;
 import yu.cse.odiga.store.domain.TableOrder;
 import yu.cse.odiga.store.domain.TableOrderMenu;
-import yu.cse.odiga.store.dto.CallStaffRequestDto;
-import yu.cse.odiga.store.dto.PosCallFcmResponse;
+import yu.cse.odiga.store.dto.*;
 
-import yu.cse.odiga.store.dto.PosOrderFcmResponse;
-import yu.cse.odiga.store.dto.TableOrderMenuHistoryDto;
-import yu.cse.odiga.store.dto.TableOrderMenuforRegister;
-import yu.cse.odiga.store.dto.TableOrderRegisterDto;
 import yu.cse.odiga.store.type.PaymentStatus;
 import yu.cse.odiga.store.type.TableStatus;
 
@@ -47,13 +41,13 @@ public class TableOrderService {
 
 	@Transactional
 	public void registerTableOrderList(Long storeId, int storeTableNumber,
-		TableOrderRegisterDto tableOrderRegisterDto) throws FirebaseMessagingException {
+		TableOrderManageDto tableOrderManageDto) throws FirebaseMessagingException {
 
 		StoreTable storeTable = storeTableRepository.findByStoreIdAndTableNumber(storeId, storeTableNumber)
 			.orElseThrow(
 				() -> new BusinessLogicException("존재하지 않는 store table id 입니다.", HttpStatus.BAD_REQUEST.value()));
 
-		List<TableOrderMenuforRegister> requestMenus = tableOrderRegisterDto.getTableOrderMenuforRegisters();
+		List<TableOrderMenuforManage> requestMenus = tableOrderManageDto.getTableOrderMenuforManages();
 
 		if (storeTable.isTableEmpty()) {
 			storeTable.changeTableStatusToInUse();
@@ -74,7 +68,7 @@ public class TableOrderService {
 				return newTableOrder;
 			});
 
-		for (TableOrderMenuforRegister menuDto : requestMenus) {
+		for (TableOrderMenuforManage menuDto : requestMenus) {
 			Menu menu = menuRepository.findByCategory_Store_IdAndMenuName(storeId, menuDto.getMenuName())
 				.orElseThrow(() -> new BusinessLogicException("존재하지 않는 메뉴입니다: " + menuDto.getMenuName(),
 					HttpStatus.BAD_REQUEST.value()));
@@ -102,7 +96,7 @@ public class TableOrderService {
 		String storeFcmToken = store.getPosDeviceFcmToken();
 
 		PosOrderFcmResponse posFCMResponse = new PosOrderFcmResponse(storeTableNumber,
-			tableOrderRegisterDto.getTableOrderMenuforRegisters());
+		tableOrderManageDto.getTableOrderMenuforManages());
 
 		fcmUtil.sendMessage(storeFcmToken, posFCMResponse, "order");
 		storeTableRepository.save(storeTable);
@@ -155,5 +149,44 @@ public class TableOrderService {
 
 		fcmUtil.sendMessage(storeFcmToken, posFCMResponse, "call");
 
+	}
+
+	@Transactional
+	public void cancelTableOrderList(Long storeId, int storeTableNumber,
+									 TableOrderManageDto tableOrderManageDto) {
+
+		StoreTable storeTable = storeTableRepository.findByStoreIdAndTableNumber(storeId, storeTableNumber)
+				.orElseThrow(
+						() -> new BusinessLogicException("존재하지 않는 store table id 입니다.", HttpStatus.BAD_REQUEST.value()));
+
+		TableOrder currentTableOrder = storeTable.getTableOrderList().stream()
+				.filter(order -> order.getPaymentStatus() == PaymentStatus.PENDING)
+				.findFirst()
+				.orElseThrow(() -> new BusinessLogicException("현재 대기 중인 주문이 없습니다.", HttpStatus.BAD_REQUEST.value()));
+
+		List<TableOrderMenuforManage> cancelMenus = tableOrderManageDto.getTableOrderMenuforManages();
+
+		for (TableOrderMenuforManage cancelMenuDto : cancelMenus) {
+			Menu menu = menuRepository.findByCategory_Store_IdAndMenuName(storeId, cancelMenuDto.getMenuName())
+					.orElseThrow(() -> new BusinessLogicException("존재하지 않는 메뉴입니다: " + cancelMenuDto.getMenuName(),
+							HttpStatus.BAD_REQUEST.value()));
+
+			TableOrderMenu existingTableOrderMenu = currentTableOrder.getTableOrderMenuList().stream()
+					.filter(orderMenu -> orderMenu.getMenu().equals(menu))
+					.findFirst()
+					.orElseThrow(() -> new BusinessLogicException("취소하려는 메뉴가 현재 주문에 포함되어 있지 않습니다: " + cancelMenuDto.getMenuName(),
+							HttpStatus.BAD_REQUEST.value()));
+
+			int updatedCount = existingTableOrderMenu.getMenuCount() - cancelMenuDto.getMenuCount();
+
+			if (updatedCount > 0) {
+				existingTableOrderMenu.setMenuCount(updatedCount);
+			} else {
+				currentTableOrder.getTableOrderMenuList().remove(existingTableOrderMenu);
+				tableOrderMenuRepository.delete(existingTableOrderMenu);
+			}
+		}
+
+		storeTableRepository.save(storeTable);
 	}
 }

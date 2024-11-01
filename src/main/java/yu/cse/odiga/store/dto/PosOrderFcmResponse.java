@@ -9,5 +9,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class PosOrderFcmResponse {
 	private final int tableNumber;
-	private final List<TableOrderMenuforRegister> data;
+	private final List<TableOrderMenuforManage> data;
 }

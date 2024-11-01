@@ -11,8 +11,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import yu.cse.odiga.global.util.DefaultResponse;
 import yu.cse.odiga.store.application.TableOrderService;
 import yu.cse.odiga.store.dto.CallStaffRequestDto;
-import yu.cse.odiga.store.dto.TableOrderMenuDto;
-import yu.cse.odiga.store.dto.TableOrderRegisterDto;
+import yu.cse.odiga.store.dto.TableOrderManageDto;
 
 @RestController
 @RequestMapping("api/v1/table/{storeId}/order")
@@ -22,8 +21,8 @@ public class TableOrderController {
 
 	@PostMapping("{storeTableNumber}")
 	public ResponseEntity<?> registerTableOrderList(@PathVariable Long storeId, @PathVariable int storeTableNumber,
-		@RequestBody TableOrderRegisterDto tableOrderRegisterDto) throws FirebaseMessagingException {
-		tableOrderService.registerTableOrderList(storeId, storeTableNumber, tableOrderRegisterDto);
+		@RequestBody TableOrderManageDto tableOrderManageDto) throws FirebaseMessagingException {
+		tableOrderService.registerTableOrderList(storeId, storeTableNumber, tableOrderManageDto);
 		return ResponseEntity.status(201).body(new DefaultResponse<>(201, "Register Table order history", null));
 	}
 
@@ -31,6 +30,13 @@ public class TableOrderController {
 	public ResponseEntity<?> getTableOrderList(@PathVariable Long storeId, @PathVariable int storeTableNumber) {
 		return ResponseEntity.status(201).body(new DefaultResponse<>(201, "StoreTable order history",
 			tableOrderService.getInSueTableOrderListByStoreIdAndTableNumber(storeId, storeTableNumber)));
+	}
+
+	@DeleteMapping("{storeTableNumber}")
+	public ResponseEntity<?> deleteTableOrderList(@PathVariable Long storeId, @PathVariable int storeTableNumber,
+												  @RequestBody TableOrderManageDto tableOrderManageDto) throws FirebaseMessagingException {
+		tableOrderService.cancelTableOrderList(storeId, storeTableNumber, tableOrderManageDto);
+		return ResponseEntity.status(201).body(new DefaultResponse<>(201, "Delete Table order history", null));
 	}
 
 	@GetMapping
@@ -46,6 +52,7 @@ public class TableOrderController {
 		tableOrderService.callStaff(storeId, callStaffRequestDto);
 		return ResponseEntity.ok().body(new DefaultResponse<>(200, "직원 호출을 성공 했습니다.", null));
 	}
+
 
 	//TODO : 나중에 payments로 옮겨야함
 	@GetMapping("{tableOrderId}/payment")
