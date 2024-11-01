@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
 import com.google.gson.Gson;
 
 import lombok.RequiredArgsConstructor;

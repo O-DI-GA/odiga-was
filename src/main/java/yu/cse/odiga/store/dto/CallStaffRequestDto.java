@@ -8,5 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CallStaffRequestDto {
-	private String needName;
+	private String callMessage;
+	private int tableNumber;
 }

@@ -26,6 +26,9 @@ import yu.cse.odiga.store.domain.StoreTable;
 import yu.cse.odiga.store.domain.TableOrder;
 import yu.cse.odiga.store.domain.TableOrderMenu;
 import yu.cse.odiga.store.dto.CallStaffRequestDto;
+import yu.cse.odiga.store.dto.PosCallFcmResponse;
+
+import yu.cse.odiga.store.dto.PosOrderFcmResponse;
 import yu.cse.odiga.store.dto.TableOrderMenuHistoryDto;
 import yu.cse.odiga.store.dto.TableOrderMenuforRegister;
 import yu.cse.odiga.store.dto.TableOrderRegisterDto;
@@ -98,7 +101,10 @@ public class TableOrderService {
 
 		String storeFcmToken = store.getPosDeviceFcmToken();
 
-		fcmUtil.sendMessage(storeFcmToken, tableOrderRegisterDto.getTableOrderMenuforRegisters(), "order");
+		PosOrderFcmResponse posFCMResponse = new PosOrderFcmResponse(storeTableNumber,
+			tableOrderRegisterDto.getTableOrderMenuforRegisters());
+
+		fcmUtil.sendMessage(storeFcmToken, posFCMResponse, "order");
 		storeTableRepository.save(storeTable);
 	}
 
@@ -144,7 +150,10 @@ public class TableOrderService {
 
 		String storeFcmToken = store.getPosDeviceFcmToken();
 
-		fcmUtil.sendMessage(storeFcmToken, callStaffRequestDto.getNeedName(), "call");
+		PosCallFcmResponse posFCMResponse = new PosCallFcmResponse(callStaffRequestDto.getTableNumber(),
+			callStaffRequestDto.getNeedName());
+
+		fcmUtil.sendMessage(storeFcmToken, posFCMResponse, "call");
 
 	}
 }
