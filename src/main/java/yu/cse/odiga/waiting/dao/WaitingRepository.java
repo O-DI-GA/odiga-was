@@ -30,5 +30,4 @@ public interface WaitingRepository extends JpaRepository<Waiting, Long> {
 
     Optional<Waiting> findByStoreIdAndWaitingNumber(Long storeId, int waitingNumber);
 
-
 }
