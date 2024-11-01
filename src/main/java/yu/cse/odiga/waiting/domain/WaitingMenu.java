@@ -1,5 +1,6 @@
 package yu.cse.odiga.waiting.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,7 +25,9 @@ public class WaitingMenu {
 
     @JoinColumn
     @ManyToOne
+    @JsonIgnore
     private Waiting waiting;
+
     @ManyToOne
     private Menu menu;
 
