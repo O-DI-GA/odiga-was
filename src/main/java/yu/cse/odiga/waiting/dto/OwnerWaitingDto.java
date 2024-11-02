@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 public class OwnerWaitingDto {
     private Long waitingId;
+    private String userName;
     private int waitingNumber;
     private int peopleCount;
 }
