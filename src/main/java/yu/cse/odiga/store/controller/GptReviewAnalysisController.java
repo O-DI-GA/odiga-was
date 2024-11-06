@@ -19,6 +19,6 @@ public class GptReviewAnalysisController {
     public ResponseEntity<?> getReviewAnalysis(@PathVariable Long storeId) {
 
         return ResponseEntity.ok().body(
-                new DefaultResponse<>(200, "리뷰 분석을 성공적으로 완료 했습니다", gptReviewAnalysisService.getReviewAnalysisByStoreId(storeId)));
+                new DefaultResponse<>(200, "리뷰 분석을 성공적으로 완료했습니다", gptReviewAnalysisService.getReviewAnalysisByStoreId(storeId)));
     }
 }
