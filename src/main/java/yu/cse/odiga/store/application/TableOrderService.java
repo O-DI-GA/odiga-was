@@ -1,131 +1,192 @@
 package yu.cse.odiga.store.application;
 
 import jakarta.transaction.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import com.google.firebase.messaging.FirebaseMessagingException;
+
+import yu.cse.odiga.global.exception.BusinessLogicException;
+import yu.cse.odiga.global.util.FCMUtil;
 import yu.cse.odiga.menu.dao.MenuRepository;
 import yu.cse.odiga.menu.domain.Menu;
+import yu.cse.odiga.store.dao.StoreRepository;
 import yu.cse.odiga.store.dao.StoreTableRepository;
 import yu.cse.odiga.store.dao.TableOrderMenuRepository;
 import yu.cse.odiga.store.dao.TableOrderRepository;
+import yu.cse.odiga.store.domain.Store;
 import yu.cse.odiga.store.domain.StoreTable;
 import yu.cse.odiga.store.domain.TableOrder;
 import yu.cse.odiga.store.domain.TableOrderMenu;
-import yu.cse.odiga.store.dto.TableOrderHistoryDto;
-import yu.cse.odiga.store.dto.TableOrderMenuHistoryDto;
-import yu.cse.odiga.store.dto.TableOrderMenuforRegister;
-import yu.cse.odiga.store.dto.TableOrderRegisterDto;
+import yu.cse.odiga.store.dto.*;
+
 import yu.cse.odiga.store.type.PaymentStatus;
+import yu.cse.odiga.store.type.TableStatus;
 
 @Service
 @RequiredArgsConstructor
 public class TableOrderService {
-    private final TableOrderRepository tableOrderRepository;
-    private final StoreTableRepository storeTableRepository;
-    private final TableOrderMenuRepository tableOrderMenuRepository;
-    private final MenuRepository menuRepository;
+	private final TableOrderRepository tableOrderRepository;
+	private final StoreTableRepository storeTableRepository;
+	private final TableOrderMenuRepository tableOrderMenuRepository;
+	private final MenuRepository menuRepository;
+	private final StoreRepository storeRepository;
+	private final FCMUtil fcmUtil;
 
-    @Transactional
-    public void registerTableOrderList(Long storeId, int storeTableNumber, TableOrderRegisterDto tableOrderRegisterDto) {
+	@Transactional
+	public void registerTableOrderList(Long storeId, int storeTableNumber,
+		TableOrderManageDto tableOrderManageDto) throws FirebaseMessagingException {
 
-        StoreTable storeTable = storeTableRepository.findByStoreIdAndTableNumber(storeId, storeTableNumber)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 store table id 입니다."));
+		StoreTable storeTable = storeTableRepository.findByStoreIdAndTableNumber(storeId, storeTableNumber)
+			.orElseThrow(
+				() -> new BusinessLogicException("존재하지 않는 store table id 입니다.", HttpStatus.BAD_REQUEST.value()));
 
-        List<TableOrderMenuforRegister> requestMenus = tableOrderRegisterDto.getTableOrderMenuforRegisters();
+		List<TableOrderMenuforManage> requestMenus = tableOrderManageDto.getTableOrderMenuforManages();
 
-        if (storeTable.isTableEmpty()) {
-            storeTable.changeTableStatusToInUse();
-            storeTable.setTableOrderList(new ArrayList<>());
-        }
+		if (storeTable.isTableEmpty()) {
+			storeTable.changeTableStatusToInUse();
+			storeTable.setTableOrderList(new ArrayList<>());
+		}
 
-        TableOrder currentTableOrder = storeTable.getTableOrderList().stream()
-                .filter(order -> order.getPaymentStatus() == PaymentStatus.PENDING)
-                .findFirst()
-                .orElseGet(() -> {
-                    TableOrder newTableOrder = TableOrder.builder()
-                            .paymentStatus(PaymentStatus.PENDING)
-                            .storeTable(storeTable)
-                            .tableOrderMenuList(new ArrayList<>())
-                            .build();
-                    storeTable.addNewTableOrder(newTableOrder);
-                    tableOrderRepository.save(newTableOrder);
-                    return newTableOrder;
-                });
+		TableOrder currentTableOrder = storeTable.getTableOrderList().stream()
+			.filter(order -> order.getPaymentStatus() == PaymentStatus.PENDING)
+			.findFirst()
+			.orElseGet(() -> {
+				TableOrder newTableOrder = TableOrder.builder()
+					.paymentStatus(PaymentStatus.PENDING)
+					.storeTable(storeTable)
+					.tableOrderMenuList(new ArrayList<>())
+					.build();
+				storeTable.addNewTableOrder(newTableOrder);
+				tableOrderRepository.save(newTableOrder);
+				return newTableOrder;
+			});
 
-        for (TableOrderMenuforRegister menuDto : requestMenus) {
-            Menu menu = menuRepository.findByCategory_Store_IdAndMenuName(storeId, menuDto.getMenuName())
-                    .orElseThrow(() -> new IllegalStateException("존재하지 않는 메뉴입니다: " + menuDto.getMenuName()));
+		for (TableOrderMenuforManage menuDto : requestMenus) {
+			Menu menu = menuRepository.findByCategory_Store_IdAndMenuName(storeId, menuDto.getMenuName())
+				.orElseThrow(() -> new BusinessLogicException("존재하지 않는 메뉴입니다: " + menuDto.getMenuName(),
+					HttpStatus.BAD_REQUEST.value()));
 
-            TableOrderMenu existingTableOrderMenu = currentTableOrder.getTableOrderMenuList().stream()
-                    .filter(orderMenu -> orderMenu.getMenu().equals(menu))
-                    .findFirst()
-                    .orElse(null);
+			TableOrderMenu existingTableOrderMenu = currentTableOrder.getTableOrderMenuList().stream()
+				.filter(orderMenu -> orderMenu.getMenu().equals(menu))
+				.findFirst()
+				.orElse(null);
 
-            if (existingTableOrderMenu != null) {
-                existingTableOrderMenu.setMenuCount(existingTableOrderMenu.getMenuCount() + menuDto.getMenuCount());
-            } else {
-                TableOrderMenu newTableOrderMenu = TableOrderMenu.builder()
-                        .menu(menu)
-                        .menuCount(menuDto.getMenuCount())
-                        .tableOrder(currentTableOrder)
-                        .build();
-                currentTableOrder.getTableOrderMenuList().add(newTableOrderMenu);
-                tableOrderMenuRepository.save(newTableOrderMenu);
-            }
-        }
+			if (existingTableOrderMenu != null) {
+				existingTableOrderMenu.setMenuCount(existingTableOrderMenu.getMenuCount() + menuDto.getMenuCount());
+			} else {
+				TableOrderMenu newTableOrderMenu = TableOrderMenu.builder()
+					.menu(menu)
+					.menuCount(menuDto.getMenuCount())
+					.tableOrder(currentTableOrder)
+					.build();
+				currentTableOrder.getTableOrderMenuList().add(newTableOrderMenu);
+				tableOrderMenuRepository.save(newTableOrderMenu);
+			}
+		}
+		Store store = storeRepository.findById(storeId).orElseThrow(
+			() -> new BusinessLogicException("존재하지 않는 Store Id 입니다.", HttpStatus.BAD_REQUEST.value()));
 
-        storeTableRepository.save(storeTable);
+		String storeFcmToken = store.getPosDeviceFcmToken();
 
-    }
+		PosOrderFcmResponse posFCMResponse = new PosOrderFcmResponse(storeTableNumber,
+		tableOrderManageDto.getTableOrderMenuforManages());
 
-    // TODO : table order id return 필요
-    public void checkEmptyTableByStoreTableId(Long storeTableId) {
-        StoreTable storeTable = storeTableRepository.findById(storeTableId)
-                .orElseThrow(() -> new IllegalStateException("존재 하지 않는 store table id 입니다."));
+		fcmUtil.sendMessage(storeFcmToken, posFCMResponse, "order");
+		storeTableRepository.save(storeTable);
+	}
 
-        if (storeTable.isTableEmpty()) {
-            // return true;
-        }
-        // return false;
-    }
+	public TableOrderMenuHistoryDto getInSueTableOrderListByStoreIdAndTableNumber(Long storeId, int storeTableNumber) {
+		StoreTable storeTable = storeTableRepository.findByStoreIdAndTableNumberAndTableStatus(storeId,
+				storeTableNumber, TableStatus.INUSE)
+			.orElseThrow(() -> new BusinessLogicException("사용중인 테이블이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
 
-    public void orderMenuByTableOrderId(Long tableOrderId) {
-        TableOrder tableOrder = tableOrderRepository.findById(tableOrderId)
-                .orElseThrow(() -> new IllegalStateException("존재 하지 않는 table order id 입니다."));
-        // 메뉴들 받아서 TableOrderMenu 만들고 추가
+		TableOrder tableOrder = tableOrderRepository.findByStoreTableIdAndPaymentStatus(storeTable.getId(),
+				PaymentStatus.PENDING)
+			.orElseThrow(() -> new BusinessLogicException("사용중인 테이블이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
 
-    }
+		return TableOrderMenuHistoryDto.from(tableOrder);
+	}
 
-    public TableOrderHistoryDto getTableOrderList(Long storeId, int storeTableNumber) {
-        StoreTable storeTable = storeTableRepository.findByStoreIdAndTableNumber(storeId, storeTableNumber)
-                .orElseThrow(() -> new IllegalStateException("해당 테이블이 존재하지 않습니다."));
+	public List<TableOrderMenuHistoryDto> getAllInuseTableOrderList(Long storeId) {
+		List<StoreTable> storeTables = storeTableRepository.findByStoreIdAndTableStatus(storeId, TableStatus.INUSE);
 
-        List<TableOrder> tableOrders = storeTable.getTableOrderList();
+		List<TableOrder> tableOrderList = new ArrayList<>();
 
-        if (tableOrders.isEmpty()) {
-            throw new IllegalStateException("해당 테이블에 주문 내역이 존재하지 않습니다.");
-        }
+		for (StoreTable storeTable : storeTables) {
+			List<TableOrder> tableOrders = storeTable.getTableOrderList();
+			for (TableOrder tableOrder : tableOrders) {
+				if (tableOrder.getPaymentStatus().equals(PaymentStatus.PENDING)) {
+					tableOrderList.add(tableOrder);
+					break;
+				}
+			}
+		}
 
-        return TableOrderHistoryDto.from(tableOrders);
-    }
+		return tableOrderList.stream()
+			.map(TableOrderMenuHistoryDto::from).toList();
+	}
 
-    public TableOrderMenuHistoryDto getTableOrderListDetail(Long storeId, int storeTableNumber, Long tableOrderId) {
-        TableOrder tableOrder = tableOrderRepository.findByStoreTable_Store_IdAndStoreTable_TableNumberAndId(
-                storeId, storeTableNumber, tableOrderId).orElseThrow();
+	public TableOrderMenuHistoryDto findByTableOrderHistoryByTableOrderId(Long tableOrderId) {
+		TableOrder tableOrder = tableOrderRepository.findById(tableOrderId).orElseThrow();
+		return TableOrderMenuHistoryDto.from(tableOrder);
+	}
 
-        return TableOrderMenuHistoryDto.from(tableOrder);
-    }
+	public void callStaff(Long storeId, CallStaffRequestDto callStaffRequestDto) throws FirebaseMessagingException {
+		Store store = storeRepository.findById(storeId).orElseThrow(
+			() -> new BusinessLogicException("존재하지 않는 Store Id 입니다.", HttpStatus.BAD_REQUEST.value()));
 
-    public TableOrderMenuHistoryDto findTableOrderHistoryByTableId(Long storeTableId) {
-        // 상태가 결제아직 안한 상태만 불러와야함
-        return null;
-    }
+		String storeFcmToken = store.getPosDeviceFcmToken();
 
-    public TableOrderMenuHistoryDto findByTableOrderHistoryByTableOrderId(Long tableOrderId) {
-        TableOrder tableOrder = tableOrderRepository.findById(tableOrderId).orElseThrow();
-        return TableOrderMenuHistoryDto.from(tableOrder);
-    }
+		PosCallFcmResponse posFCMResponse = new PosCallFcmResponse(callStaffRequestDto.getTableNumber(),
+			callStaffRequestDto.getCallMessage());
+
+		fcmUtil.sendMessage(storeFcmToken, posFCMResponse, "call");
+
+	}
+
+	@Transactional
+	public void cancelTableOrderList(Long storeId, int storeTableNumber,
+									 TableOrderManageDto tableOrderManageDto) {
+
+		StoreTable storeTable = storeTableRepository.findByStoreIdAndTableNumber(storeId, storeTableNumber)
+				.orElseThrow(
+						() -> new BusinessLogicException("존재하지 않는 store table id 입니다.", HttpStatus.BAD_REQUEST.value()));
+
+		TableOrder currentTableOrder = storeTable.getTableOrderList().stream()
+				.filter(order -> order.getPaymentStatus() == PaymentStatus.PENDING)
+				.findFirst()
+				.orElseThrow(() -> new BusinessLogicException("현재 대기 중인 주문이 없습니다.", HttpStatus.BAD_REQUEST.value()));
+
+		List<TableOrderMenuforManage> cancelMenus = tableOrderManageDto.getTableOrderMenuforManages();
+
+		for (TableOrderMenuforManage cancelMenuDto : cancelMenus) {
+			Menu menu = menuRepository.findByCategory_Store_IdAndMenuName(storeId, cancelMenuDto.getMenuName())
+					.orElseThrow(() -> new BusinessLogicException("존재하지 않는 메뉴입니다: " + cancelMenuDto.getMenuName(),
+							HttpStatus.BAD_REQUEST.value()));
+
+			TableOrderMenu existingTableOrderMenu = currentTableOrder.getTableOrderMenuList().stream()
+					.filter(orderMenu -> orderMenu.getMenu().equals(menu))
+					.findFirst()
+					.orElseThrow(() -> new BusinessLogicException("취소하려는 메뉴가 현재 주문에 포함되어 있지 않습니다: " + cancelMenuDto.getMenuName(),
+							HttpStatus.BAD_REQUEST.value()));
+
+			int updatedCount = existingTableOrderMenu.getMenuCount() - cancelMenuDto.getMenuCount();
+
+			if (updatedCount > 0) {
+				existingTableOrderMenu.setMenuCount(updatedCount);
+			} else {
+				currentTableOrder.getTableOrderMenuList().remove(existingTableOrderMenu);
+				tableOrderMenuRepository.delete(existingTableOrderMenu);
+			}
+		}
+
+		storeTableRepository.save(storeTable);
+	}
 }

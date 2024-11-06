@@ -1,6 +1,5 @@
 package yu.cse.odiga.store.domain;
 
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -11,8 +10,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,33 +28,34 @@ import yu.cse.odiga.store.type.PaymentStatus;
 @Setter
 @NoArgsConstructor
 public class TableOrder {
-// 손님이있는 테이블의 주문내역
-    // 주문하기 주문내역 , wating메뉴 리스트 참고
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	// 손님이있는 테이블의 주문내역
+	// 주문하기 주문내역 , wating메뉴 리스트 참고
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private PaymentStatus paymentStatus;
+	@Enumerated(EnumType.STRING)
+	private PaymentStatus paymentStatus;
 
-    @ManyToOne
-    @JoinColumn(name = "storeTableId")
-    private StoreTable storeTable;
+	@ManyToOne
+	@JoinColumn(name = "storeTableId")
+	private StoreTable storeTable;
 
-    @OneToMany(mappedBy = "tableOrder", fetch = FetchType.LAZY)
-    private List<TableOrderMenu> tableOrderMenuList = new ArrayList<>();
+	@OneToMany(mappedBy = "tableOrder", fetch = FetchType.LAZY)
+	private List<TableOrderMenu> tableOrderMenuList = new ArrayList<>();
 
-    public void completeOrder() {
-        storeTable.changeTableStatusToEmpty();
-    }
+	public void completeOrder() {
+		storeTable.changeTableStatusToEmpty();
+		this.paymentStatus = PaymentStatus.COMPLETE;
+	}
 
-    public Store getStore() {
-        return storeTable.getStore();
-    }
+	public Store getStore() {
+		return storeTable.getStore();
+	}
 
-    public int getTableTotalPrice() {
-        return tableOrderMenuList.stream()
-                .mapToInt(orderMenu -> orderMenu.getMenu().getPrice() * orderMenu.getMenuCount())
-                .sum();
-    }
+	public int getTableTotalPrice() {
+		return tableOrderMenuList.stream()
+			.mapToInt(orderMenu -> orderMenu.getMenu().getPrice() * orderMenu.getMenuCount())
+			.sum();
+	}
 }
