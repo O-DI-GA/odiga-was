@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LikeResponseDto {
-    private Long storeId;
-    private String storeName;
-    private String address;
-    private String phoneNumber;
-    private String storeTitleImageUrl;
-    private String storeCategory;
+	private Long storeId;
+	private String storeName;
+	private String address;
+	private String phoneNumber;
+	private String storeTitleImageUrl;
+	private String storeCategory;
 }

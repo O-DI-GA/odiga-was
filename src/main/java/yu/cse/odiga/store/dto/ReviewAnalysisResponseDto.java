@@ -6,5 +6,5 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ReviewAnalysisResponseDto {
-    private String content;
+	private String content;
 }
