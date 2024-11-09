@@ -1,11 +1,13 @@
 package yu.cse.odiga.store.dto;
 
+import org.locationtech.jts.geom.Point;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.locationtech.jts.geom.Point;
 
 @JsonIgnoreProperties({"location"})
 @Builder
@@ -13,11 +15,11 @@ import org.locationtech.jts.geom.Point;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StoreResponseDto {
-    private Long storeId;
-    private String storeName;
-    private String address;
-    private Point location;
-    private String phoneNumber;
-    private int reviewCount;
-    private String storeCategory;
+	private Long storeId;
+	private String storeName;
+	private String address;
+	private Point location;
+	private String phoneNumber;
+	private int reviewCount;
+	private String storeCategory;
 }

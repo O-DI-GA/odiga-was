@@ -4,15 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import yu.cse.odiga.global.S3.S3Util;
-import yu.cse.odiga.menu.domain.Menu;
 
 @Transactional
 @Slf4j
