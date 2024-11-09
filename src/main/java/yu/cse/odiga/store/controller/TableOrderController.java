@@ -46,7 +46,7 @@ public class TableOrderController {
 
 	@GetMapping
 	public ResponseEntity<?> getAllTableOrderList(@PathVariable Long storeId) {
-		return ResponseEntity.status(201).body(new DefaultResponse<>(201, "StoreTable order history",
+		return ResponseEntity.status(200).body(new DefaultResponse<>(200, "StoreTable order history",
 			tableOrderService.getAllInuseTableOrderList(storeId)));
 	}
 
