@@ -105,6 +105,9 @@ public class TableOrderService {
 	}
 
 	public TableOrderMenuHistoryDto getInSueTableOrderListByStoreIdAndTableNumber(Long storeId, int storeTableNumber) {
+		Store store = storeRepository.findById(storeId)
+			.orElseThrow(() -> new BusinessLogicException("올바른 가게 ID가 아닙니다.", HttpStatus.BAD_REQUEST.value()));
+
 		StoreTable storeTable = storeTableRepository.findByStoreIdAndTableNumberAndTableStatus(storeId,
 				storeTableNumber, TableStatus.INUSE)
 			.orElseThrow(() -> new BusinessLogicException("사용중인 테이블이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
@@ -113,7 +116,7 @@ public class TableOrderService {
 				PaymentStatus.PENDING)
 			.orElseThrow(() -> new BusinessLogicException("사용중인 테이블이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
 
-		return TableOrderMenuHistoryDto.from(tableOrder);
+		return TableOrderMenuHistoryDto.of(tableOrder, store);
 	}
 
 	public List<TableOrderMenuHistoryDto> getAllInuseTableOrderList(Long storeId) {
