@@ -2,6 +2,7 @@ package yu.cse.odiga.store.application;
 
 import jakarta.transaction.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 
 import yu.cse.odiga.global.exception.BusinessLogicException;
 import yu.cse.odiga.global.util.FCMUtil;
+import yu.cse.odiga.history.application.VisitCountService;
 import yu.cse.odiga.menu.dao.MenuRepository;
 import yu.cse.odiga.menu.domain.Menu;
 import yu.cse.odiga.store.dao.StoreRepository;
@@ -38,6 +40,7 @@ public class TableOrderService {
 	private final MenuRepository menuRepository;
 	private final StoreRepository storeRepository;
 	private final FCMUtil fcmUtil;
+	private final VisitCountService visitCountService;
 
 	@Transactional
 	public void registerTableOrderList(Long storeId, int storeTableNumber,
@@ -52,6 +55,7 @@ public class TableOrderService {
 		if (storeTable.isTableEmpty()) {
 			storeTable.changeTableStatusToInUse();
 			storeTable.setTableOrderList(new ArrayList<>());
+			visitCountService.incrementVisitCount(storeId, LocalDateTime.now().getHour());
 		}
 
 		TableOrder currentTableOrder = storeTable.getTableOrderList().stream()
