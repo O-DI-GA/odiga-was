@@ -46,6 +46,7 @@ public class TableOrder {
 	public void completeOrder() {
 		storeTable.changeTableStatusToEmpty();
 		this.paymentStatus = PaymentStatus.COMPLETE;
+		// storeTable.getTableOrderList().clear();
 	}
 
 	public Store getStore() {

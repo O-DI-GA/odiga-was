@@ -20,7 +20,6 @@ import yu.cse.odiga.menu.domain.Menu;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HistoryMenu {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
