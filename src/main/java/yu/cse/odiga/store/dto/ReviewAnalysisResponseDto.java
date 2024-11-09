@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class CreateStoreTableResponseDto {
-	private Long storeTableId;
+public class ReviewAnalysisResponseDto {
+	private String content;
 }

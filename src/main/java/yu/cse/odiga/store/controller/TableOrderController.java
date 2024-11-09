@@ -1,13 +1,18 @@
 package yu.cse.odiga.store.controller;
 
-import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 
+import lombok.RequiredArgsConstructor;
 import yu.cse.odiga.global.util.DefaultResponse;
 import yu.cse.odiga.store.application.TableOrderService;
 import yu.cse.odiga.store.dto.CallStaffRequestDto;
@@ -34,7 +39,7 @@ public class TableOrderController {
 
 	@DeleteMapping("{storeTableNumber}")
 	public ResponseEntity<?> deleteTableOrderList(@PathVariable Long storeId, @PathVariable int storeTableNumber,
-												  @RequestBody TableOrderManageDto tableOrderManageDto) throws FirebaseMessagingException {
+		@RequestBody TableOrderManageDto tableOrderManageDto) throws FirebaseMessagingException {
 		tableOrderService.cancelTableOrderList(storeId, storeTableNumber, tableOrderManageDto);
 		return ResponseEntity.status(201).body(new DefaultResponse<>(201, "Delete Table order history", null));
 	}
@@ -52,7 +57,6 @@ public class TableOrderController {
 		tableOrderService.callStaff(storeId, callStaffRequestDto);
 		return ResponseEntity.ok().body(new DefaultResponse<>(200, "직원 호출을 성공 했습니다.", null));
 	}
-
 
 	//TODO : 나중에 payments로 옮겨야함
 	@GetMapping("{tableOrderId}/payment")

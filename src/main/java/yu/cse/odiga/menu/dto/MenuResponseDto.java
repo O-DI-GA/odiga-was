@@ -11,10 +11,10 @@ import yu.cse.odiga.menu.domain.Category;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MenuResponseDto {
-    private Long menuId;
-    private String menuName;
-    private int price;
-    private String caption;
-    private String menuImage;
-    private Category category;
+	private Long menuId;
+	private String menuName;
+	private int price;
+	private String caption;
+	private String menuImage;
+	private Category category;
 }
