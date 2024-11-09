@@ -15,5 +15,5 @@ public class ReservationRegisterDto {
     LocalDateTime reservationDateTime;
 
     private int peopleCount;
-    
+
 }

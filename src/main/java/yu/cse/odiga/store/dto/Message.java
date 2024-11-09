@@ -4,14 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
-@Setter
 @Builder
-public class TableOrderMenuforManage {
-	private String menuName;
-	private int menuCount;
+public class Message {
+	private String role;
+	private String content;
 }

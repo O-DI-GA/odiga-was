@@ -5,9 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import yu.cse.odiga.store.domain.Store;
 import yu.cse.odiga.store.domain.StoreTable;
-import yu.cse.odiga.store.domain.TableOrder;
 import yu.cse.odiga.store.type.TableStatus;
 
 public interface StoreTableRepository extends JpaRepository<StoreTable, Long> {
@@ -20,6 +18,7 @@ public interface StoreTableRepository extends JpaRepository<StoreTable, Long> {
 
 	Optional<StoreTable> findByStoreIdAndTableNumber(Long storeId, int tableNumber);
 
-	Optional<StoreTable> findByStoreIdAndTableNumberAndTableStatus(Long storeId, int tableNumber, TableStatus tableStatus);
+	Optional<StoreTable> findByStoreIdAndTableNumberAndTableStatus(Long storeId, int tableNumber,
+		TableStatus tableStatus);
 
 }
