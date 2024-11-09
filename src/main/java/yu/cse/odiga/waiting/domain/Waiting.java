@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import yu.cse.odiga.auth.domain.User;
+import yu.cse.odiga.global.type.BaseEntity;
 import yu.cse.odiga.store.domain.Store;
 import yu.cse.odiga.waiting.type.WaitingStatus;
 
@@ -26,7 +27,7 @@ import yu.cse.odiga.waiting.type.WaitingStatus;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Waiting {
+public class Waiting extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

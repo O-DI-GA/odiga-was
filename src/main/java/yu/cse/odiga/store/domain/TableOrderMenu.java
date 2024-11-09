@@ -6,7 +6,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import yu.cse.odiga.menu.domain.Menu;
 
 @Entity
@@ -17,15 +21,15 @@ import yu.cse.odiga.menu.domain.Menu;
 @NoArgsConstructor
 public class TableOrderMenu {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @ManyToOne
-    private Menu menu;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	@ManyToOne
+	private Menu menu;
 
-    private int menuCount;
+	private int menuCount;
 
-    @ManyToOne
-    @JoinColumn(name = "tableOrderId")
-    private TableOrder tableOrder;
+	@ManyToOne
+	@JoinColumn(name = "tableOrderId")
+	private TableOrder tableOrder;
 }

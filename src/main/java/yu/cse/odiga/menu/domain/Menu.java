@@ -20,23 +20,23 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Menu {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Column
-    private String menuName;
+	@Column
+	private String menuName;
 
-    @Column
-    private int price;
+	@Column
+	private int price;
 
-    @Column
-    private String caption;
+	@Column
+	private String caption;
 
-    @Column
-    private String menuImageUrl;
+	@Column
+	private String menuImageUrl;
 
-    @ManyToOne
-    @JoinColumn
-    private Category category;
+	@ManyToOne
+	@JoinColumn
+	private Category category;
 }

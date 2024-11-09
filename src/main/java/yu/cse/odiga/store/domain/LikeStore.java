@@ -1,6 +1,7 @@
 package yu.cse.odiga.store.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,18 +22,18 @@ import yu.cse.odiga.auth.domain.User;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LikeStore {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name = "userId")
-    private User user;
+	@ManyToOne
+	@JsonIgnore
+	@JoinColumn(name = "userId")
+	private User user;
 
-    @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name = "storeId")
-    private Store store;
+	@ManyToOne
+	@JsonIgnore
+	@JoinColumn(name = "storeId")
+	private Store store;
 
 }

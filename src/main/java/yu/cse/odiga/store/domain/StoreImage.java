@@ -1,13 +1,15 @@
 package yu.cse.odiga.store.domain;
 
+import java.time.LocalDateTime;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,16 +22,16 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class StoreImage{
-    @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Long id;
-    private String postImageUrl;
+public class StoreImage {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	private String postImageUrl;
 
-    @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name = "storeId")
-    private Store store;
+	@ManyToOne
+	@JsonIgnore
+	@JoinColumn(name = "storeId")
+	private Store store;
 
-    private LocalDateTime createDate;
+	private LocalDateTime createDate;
 }

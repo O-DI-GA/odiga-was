@@ -2,20 +2,19 @@ package yu.cse.odiga.store.application;
 
 import java.util.List;
 
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import yu.cse.odiga.global.exception.BusinessLogicException;
 import yu.cse.odiga.store.dao.StoreRepository;
 import yu.cse.odiga.store.dao.StoreTableRepository;
 import yu.cse.odiga.store.domain.Store;
 import yu.cse.odiga.store.domain.StoreTable;
 import yu.cse.odiga.store.dto.CreateStoreTableResponseDto;
-import yu.cse.odiga.store.dto.StoreTableResponseDto;
 import yu.cse.odiga.store.dto.StoreTableRegisterDto;
+import yu.cse.odiga.store.dto.StoreTableResponseDto;
 import yu.cse.odiga.store.type.TableStatus;
 
 @Service
@@ -99,10 +98,10 @@ public class StoreTableService {
 	@Transactional
 	public void togglePlaced(Long storeId, int tableNumber) {
 		storeRepository.findById(storeId)
-				.orElseThrow(() -> new BusinessLogicException("올바른 접근이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
+			.orElseThrow(() -> new BusinessLogicException("올바른 접근이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
 
 		StoreTable table = storeTableRepository.findByStoreIdAndTableNumber(storeId, tableNumber)
-				.orElseThrow(() -> new BusinessLogicException("올바른 접근이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
+			.orElseThrow(() -> new BusinessLogicException("올바른 접근이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
 
 		table.togglePlaced();
 	}
@@ -110,10 +109,10 @@ public class StoreTableService {
 	@Transactional
 	public boolean isPlaceable(Long storeId, int tableNumber) {
 		storeRepository.findById(storeId)
-				.orElseThrow(() -> new BusinessLogicException("올바른 접근이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
+			.orElseThrow(() -> new BusinessLogicException("올바른 접근이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
 
 		StoreTable table = storeTableRepository.findByStoreIdAndTableNumber(storeId, tableNumber)
-				.orElseThrow(() -> new BusinessLogicException("올바른 접근이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
+			.orElseThrow(() -> new BusinessLogicException("올바른 접근이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
 
 		return !table.isPlaced();
 	}
