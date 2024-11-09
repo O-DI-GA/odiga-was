@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import yu.cse.odiga.global.exception.BusinessLogicException;
 import yu.cse.odiga.history.dao.ReservationHistoryRepository;
 import yu.cse.odiga.history.dto.ReservationHistoryDto;
+import yu.cse.odiga.owner.domain.OwnerUserDetails;
 
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 public class    ReservationHistoryService {
     private final ReservationHistoryRepository reservationRepository;
 
-    public Map<String, List<ReservationHistoryDto>> getYearlyReservationCounts(Long storeId) {
+    public Map<String, List<ReservationHistoryDto>> getYearlyReservationCounts(Long storeId, OwnerUserDetails ownerUserDetails) {
         var reservations = reservationRepository.findByStoreId(storeId)
                 .orElseThrow(() -> new BusinessLogicException("존재하지 않는 storeId 입니다.", HttpStatus.BAD_REQUEST.value()));
 

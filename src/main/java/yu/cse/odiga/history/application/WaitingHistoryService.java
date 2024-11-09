@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import yu.cse.odiga.global.exception.BusinessLogicException;
 import yu.cse.odiga.history.dao.WaitingHistoryRepository;
 import yu.cse.odiga.history.dto.WaitingHistoryDto;
+import yu.cse.odiga.owner.domain.OwnerUserDetails;
 import yu.cse.odiga.waiting.domain.Waiting;
 
 @Service
@@ -21,7 +22,7 @@ import yu.cse.odiga.waiting.domain.Waiting;
 public class WaitingHistoryService {
     private final WaitingHistoryRepository waitingHistoryRepository;
 
-    public Map<String, List<WaitingHistoryDto>> getMonthlyHourlyAverageWaitingCounts(Long storeId) {
+    public Map<String, List<WaitingHistoryDto>> getMonthlyHourlyAverageWaitingCounts(Long storeId, OwnerUserDetails ownerUserDetails) {
         List<Waiting> waitings = waitingHistoryRepository.findByStoreId(storeId)
                 .orElseThrow(() -> new BusinessLogicException("존재하지 않는 storeId 입니다.", HttpStatus.BAD_REQUEST.value()));
 
@@ -52,7 +53,7 @@ public class WaitingHistoryService {
                 ));
     }
 
-    public List<WaitingHistoryDto> getTodayHourlyWaitingCounts(Long storeId) {
+    public List<WaitingHistoryDto> getTodayHourlyWaitingCounts(Long storeId, OwnerUserDetails ownerUserDetails) {
         List<Waiting> waitings = waitingHistoryRepository.findByStoreId(storeId)
                 .orElseThrow(() -> new BusinessLogicException("존재하지 않는 storeId 입니다.", HttpStatus.BAD_REQUEST.value()));
 

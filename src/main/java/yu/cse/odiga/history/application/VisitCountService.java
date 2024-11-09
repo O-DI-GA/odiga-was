@@ -9,6 +9,7 @@ import yu.cse.odiga.history.dao.VisitCountRepository;
 import yu.cse.odiga.history.domain.VisitCount;
 import yu.cse.odiga.history.dto.DayVisitCountDto;
 import yu.cse.odiga.history.dto.HourlyVisitCountDto;
+import yu.cse.odiga.owner.domain.OwnerUserDetails;
 import yu.cse.odiga.store.dao.StoreRepository;
 import yu.cse.odiga.store.domain.Store;
 
@@ -47,7 +48,7 @@ public class VisitCountService {
         visitCountRepository.save(visitCount);
     }
 
-    public Map<String, List<HourlyVisitCountDto>> getMonthlyHourlyVisitCounts(Long storeId) {
+    public Map<String, List<HourlyVisitCountDto>> getMonthlyHourlyVisitCounts(Long storeId, OwnerUserDetails ownerUserDetails) {
         List<VisitCount> visitCounts = visitCountRepository.findByStore_Id(storeId);
 
         return visitCounts.stream().collect(Collectors.groupingBy(
@@ -59,7 +60,7 @@ public class VisitCountService {
         ));
     }
 
-    public Map<String, List<DayVisitCountDto>> getMonthlyDayVisitCounts(Long storeId) {
+    public Map<String, List<DayVisitCountDto>> getMonthlyDayVisitCounts(Long storeId, OwnerUserDetails ownerUserDetails) {
         List<VisitCount> visitCounts = visitCountRepository.findByStore_Id(storeId);
 
         return visitCounts.stream().collect(Collectors.groupingBy(
