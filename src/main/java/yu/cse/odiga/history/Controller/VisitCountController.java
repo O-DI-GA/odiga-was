@@ -14,7 +14,7 @@ import yu.cse.odiga.owner.domain.OwnerUserDetails;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v1/owner/store/{storeId}")
+@RequestMapping("api/v1/owner/store/{storeId}/analysis")
 public class VisitCountController {
 
     private final VisitCountService visitCountService;

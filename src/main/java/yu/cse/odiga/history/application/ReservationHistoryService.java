@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class    ReservationHistoryService {
+public class ReservationHistoryService {
     private final ReservationHistoryRepository reservationRepository;
 
     public Map<String, List<ReservationHistoryDto>> getYearlyReservationCounts(Long storeId, OwnerUserDetails ownerUserDetails) {

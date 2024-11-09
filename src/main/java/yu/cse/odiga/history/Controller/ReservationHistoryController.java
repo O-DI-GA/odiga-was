@@ -12,7 +12,7 @@ import yu.cse.odiga.history.application.ReservationHistoryService;
 import yu.cse.odiga.owner.domain.OwnerUserDetails;
 
 @RestController
-@RequestMapping("api/v1/owner/store/{storeId}")
+@RequestMapping("api/v1/owner/store/{storeId}/analysis")
 @RequiredArgsConstructor
 public class ReservationHistoryController {
     private final ReservationHistoryService reservationService;
