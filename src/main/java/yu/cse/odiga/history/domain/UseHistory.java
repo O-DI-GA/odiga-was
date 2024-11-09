@@ -31,7 +31,7 @@ public class UseHistory extends BaseEntity {
 
     private int paymentAmount;
 
-    @OneToMany
+    @OneToMany(mappedBy = "history")
     private List<HistoryMenu> historyMenus;
 
     @ManyToOne

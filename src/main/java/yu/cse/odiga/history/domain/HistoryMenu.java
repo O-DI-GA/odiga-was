@@ -1,18 +1,14 @@
 package yu.cse.odiga.history.domain;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import yu.cse.odiga.menu.domain.Menu;
+
+import java.util.List;
 
 @Entity
 @Builder
@@ -25,12 +21,11 @@ public class HistoryMenu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    private Menu menu;
+    private Long menuId;
 
     private int menuCount;
 
     @ManyToOne
-    @JoinColumn(name = "useHistoryId")
+    @JoinColumn
     private UseHistory history;
 }

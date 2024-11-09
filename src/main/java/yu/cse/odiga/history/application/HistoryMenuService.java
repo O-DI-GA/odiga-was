@@ -1,7 +1,6 @@
 package yu.cse.odiga.history.application;
 
 
-import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +8,8 @@ import org.springframework.stereotype.Service;
 import yu.cse.odiga.history.dao.HistoryMenuRepository;
 import yu.cse.odiga.history.domain.HistoryMenu;
 import yu.cse.odiga.history.domain.UseHistory;
-import yu.cse.odiga.store.domain.TableOrder;
+import yu.cse.odiga.history.dto.StatisticsRequestDto;
+import yu.cse.odiga.history.dto.StatisticsResponseDto;
 import yu.cse.odiga.store.domain.TableOrderMenu;
 
 @Service
@@ -23,7 +23,7 @@ public class HistoryMenuService {
 
         for (TableOrderMenu tableOrderMenu : orderMenus) {
             HistoryMenu historyMenu = HistoryMenu.builder()
-                    .menu(tableOrderMenu.getMenu())
+                    .menuId(tableOrderMenu.getMenu().getId())
                     .menuCount(tableOrderMenu.getMenuCount())
                     .history(useHistory)
                     .build();
@@ -31,5 +31,15 @@ public class HistoryMenuService {
             historyMenuList.add(historyMenu);
         }
         return historyMenuList;
+    }
+
+    public List<StatisticsResponseDto> getMenuSalesStatistics(Long storeId, StatisticsRequestDto statisticsRequestDto) {
+        return historyMenuRepository.getMenuSalesStatisticsByStoreIdAndDateRange(
+                storeId, statisticsRequestDto.getStartDate(), statisticsRequestDto.getEndDate());
+    }
+
+    public List<StatisticsResponseDto> getCategorySalesStatistics(Long storeId, StatisticsRequestDto statisticsRequestDto) {
+        return historyMenuRepository.getCategorySalesStatisticsByStoreIdAndDateRange(
+                storeId, statisticsRequestDto.getStartDate(), statisticsRequestDto.getEndDate());
     }
 }
