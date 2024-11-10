@@ -1,5 +1,6 @@
 package yu.cse.odiga.store.application;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import yu.cse.odiga.global.exception.BusinessLogicException;
 import yu.cse.odiga.global.util.FCMUtil;
+import yu.cse.odiga.history.application.VisitCountService;
 import yu.cse.odiga.menu.dao.MenuRepository;
 import yu.cse.odiga.menu.domain.Menu;
 import yu.cse.odiga.store.dao.StoreRepository;
@@ -41,6 +43,8 @@ public class TableOrderService {
 	private final StoreRepository storeRepository;
 	private final FCMUtil fcmUtil;
 
+	private final VisitCountService visitCountService;
+
 	@Transactional
 	public void registerTableOrderList(Long storeId, int storeTableNumber,
 		TableOrderManageDto tableOrderManageDto) throws FirebaseMessagingException {
@@ -54,6 +58,7 @@ public class TableOrderService {
 		if (storeTable.isTableEmpty()) {
 			storeTable.changeTableStatusToInUse();
 			storeTable.setTableOrderList(new ArrayList<>());
+			visitCountService.incrementVisitCount(storeId, LocalDateTime.now().getHour());
 		}
 
 		TableOrder currentTableOrder = storeTable.getTableOrderList().stream()
@@ -95,12 +100,12 @@ public class TableOrderService {
 		Store store = storeRepository.findById(storeId).orElseThrow(
 			() -> new BusinessLogicException("존재하지 않는 Store Id 입니다.", HttpStatus.BAD_REQUEST.value()));
 
-		String storeFcmToken = store.getPosDeviceFcmToken();
-
-		PosOrderFcmResponse posFCMResponse = new PosOrderFcmResponse(storeTableNumber,
-			tableOrderManageDto.getTableOrderMenuforManages());
-
-		fcmUtil.sendMessage(storeFcmToken, posFCMResponse, "order");
+//		String storeFcmToken = store.getPosDeviceFcmToken();
+//
+//		PosOrderFcmResponse posFCMResponse = new PosOrderFcmResponse(storeTableNumber,
+//			tableOrderManageDto.getTableOrderMenuforManages());
+//
+//		fcmUtil.sendMessage(storeFcmToken, posFCMResponse, "order");
 		storeTableRepository.save(storeTable);
 	}
 
