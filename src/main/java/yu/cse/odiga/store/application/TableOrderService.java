@@ -29,6 +29,7 @@ import yu.cse.odiga.store.dto.PosCallFcmResponse;
 import yu.cse.odiga.store.dto.PosOrderFcmResponse;
 import yu.cse.odiga.store.dto.TableOrderManageDto;
 import yu.cse.odiga.store.dto.TableOrderMenuHistoryDto;
+import yu.cse.odiga.store.dto.TableOrderMenuHistoryListDto;
 import yu.cse.odiga.store.dto.TableOrderMenuforManage;
 import yu.cse.odiga.store.type.PaymentStatus;
 import yu.cse.odiga.store.type.TableStatus;
@@ -100,16 +101,19 @@ public class TableOrderService {
 		Store store = storeRepository.findById(storeId).orElseThrow(
 			() -> new BusinessLogicException("존재하지 않는 Store Id 입니다.", HttpStatus.BAD_REQUEST.value()));
 
-//		String storeFcmToken = store.getPosDeviceFcmToken();
-//
-//		PosOrderFcmResponse posFCMResponse = new PosOrderFcmResponse(storeTableNumber,
-//			tableOrderManageDto.getTableOrderMenuforManages());
-//
-//		fcmUtil.sendMessage(storeFcmToken, posFCMResponse, "order");
+		String storeFcmToken = store.getPosDeviceFcmToken();
+
+		PosOrderFcmResponse posFCMResponse = new PosOrderFcmResponse(storeTableNumber,
+			tableOrderManageDto.getTableOrderMenuforManages());
+
+		fcmUtil.sendMessage(storeFcmToken, posFCMResponse, "order");
 		storeTableRepository.save(storeTable);
 	}
 
 	public TableOrderMenuHistoryDto getInSueTableOrderListByStoreIdAndTableNumber(Long storeId, int storeTableNumber) {
+		Store store = storeRepository.findById(storeId)
+			.orElseThrow(() -> new BusinessLogicException("올바른 가게 ID가 아닙니다.", HttpStatus.BAD_REQUEST.value()));
+
 		StoreTable storeTable = storeTableRepository.findByStoreIdAndTableNumberAndTableStatus(storeId,
 				storeTableNumber, TableStatus.INUSE)
 			.orElseThrow(() -> new BusinessLogicException("사용중인 테이블이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
@@ -121,7 +125,7 @@ public class TableOrderService {
 		return TableOrderMenuHistoryDto.from(tableOrder);
 	}
 
-	public List<TableOrderMenuHistoryDto> getAllInuseTableOrderList(Long storeId) {
+	public TableOrderMenuHistoryListDto getAllInuseTableOrderList(Long storeId) {
 		List<StoreTable> storeTables = storeTableRepository.findByStoreIdAndTableStatus(storeId, TableStatus.INUSE);
 
 		List<TableOrder> tableOrderList = new ArrayList<>();
@@ -136,8 +140,11 @@ public class TableOrderService {
 			}
 		}
 
-		return tableOrderList.stream()
-			.map(TableOrderMenuHistoryDto::from).toList();
+		Store store = storeRepository.findById(storeId).orElseThrow(
+			() -> new BusinessLogicException("존재하지 않는 Store Id 입니다.", HttpStatus.BAD_REQUEST.value()));
+
+		return new TableOrderMenuHistoryListDto(store.getTables().size(), tableOrderList.stream()
+			.map(TableOrderMenuHistoryDto::from).toList());
 	}
 
 	public TableOrderMenuHistoryDto findByTableOrderHistoryByTableOrderId(Long tableOrderId) {
