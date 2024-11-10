@@ -12,7 +12,7 @@ import yu.cse.odiga.store.application.GptReviewAnalysisService;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("api/v1/owner/store/{storeId}")
+@RequestMapping("api/v1/owner/store/{storeId}/analysis")
 public class GptReviewAnalysisController {
 	private final GptReviewAnalysisService gptReviewAnalysisService;
 
