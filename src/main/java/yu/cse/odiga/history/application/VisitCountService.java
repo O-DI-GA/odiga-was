@@ -51,24 +51,49 @@ public class VisitCountService {
     public Map<String, List<HourlyVisitCountDto>> getMonthlyHourlyVisitCounts(Long storeId, OwnerUserDetails ownerUserDetails) {
         List<VisitCount> visitCounts = visitCountRepository.findByStore_Id(storeId);
 
-        return visitCounts.stream().collect(Collectors.groupingBy(
-                vc -> YearMonth.from(vc.getCreatedAt()).toString(),
-                Collectors.mapping(
-                        vc -> new HourlyVisitCountDto(vc.getVisitHour() + ":00", vc.getCount()),
-                        Collectors.toList()
-                )
-        ));
+        return visitCounts.stream()
+                .collect(Collectors.groupingBy(
+                        vc -> YearMonth.from(vc.getCreatedAt()).toString(),
+                        Collectors.collectingAndThen(
+                                Collectors.groupingBy(
+                                        vc -> vc.getVisitHour() + ":00",
+                                        Collectors.summingInt(VisitCount::getCount)
+                                ),
+                                hourlyMap -> hourlyMap.entrySet().stream()
+                                        .map(entry -> new HourlyVisitCountDto(entry.getKey(), entry.getValue()))
+                                        .collect(Collectors.toList())
+                        )
+                ));
     }
 
     public Map<String, List<DayVisitCountDto>> getMonthlyDayVisitCounts(Long storeId, OwnerUserDetails ownerUserDetails) {
         List<VisitCount> visitCounts = visitCountRepository.findByStore_Id(storeId);
 
-        return visitCounts.stream().collect(Collectors.groupingBy(
-                vc -> YearMonth.from(vc.getCreatedAt()).toString(),
-                Collectors.mapping(
-                        vc -> new DayVisitCountDto(vc.getDayOfWeek().name(), vc.getCount()),
-                        Collectors.toList()
-                )
-        ));
+        return visitCounts.stream()
+                .collect(Collectors.groupingBy(
+                        vc -> YearMonth.from(vc.getCreatedAt()).toString(),
+                        Collectors.collectingAndThen(
+                                Collectors.groupingBy(
+                                        vc -> vc.getDayOfWeek().name(),
+                                        Collectors.summingInt(VisitCount::getCount)
+                                ),
+                                dayMap -> dayMap.entrySet().stream()
+                                        .map(entry -> new DayVisitCountDto(entry.getKey(), entry.getValue()))
+                                        .collect(Collectors.toList())
+                        )
+                ));
+    }
+
+    public List<HourlyVisitCountDto> getTodayHourlyVisitCounts(Long storeId, OwnerUserDetails ownerUserDetails) {
+        LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime endOfDay = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59).withNano(999999999);
+
+        List<VisitCount> todayVisitCounts = visitCountRepository.findByStore_IdAndCreatedAtBetween(storeId, startOfDay, endOfDay);
+
+        return todayVisitCounts.stream()
+                .collect(Collectors.groupingBy(VisitCount::getVisitHour, Collectors.summingInt(VisitCount::getCount)))
+                .entrySet().stream()
+                .map(entry -> new HourlyVisitCountDto(entry.getKey() + ":00", entry.getValue()))
+                .collect(Collectors.toList());
     }
 }

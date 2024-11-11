@@ -19,13 +19,18 @@ public class VisitCountController {
 
     private final VisitCountService visitCountService;
 
-    @GetMapping("hour-visit-counts")
+    @GetMapping("monthly-hourly-visit-counts")
     public ResponseEntity<?> getMonthlyHourlyVisitCounts(@PathVariable Long storeId, @AuthenticationPrincipal OwnerUserDetails ownerUserDetails) {
         return ResponseEntity.status(HttpStatus.CREATED).body(new DefaultResponse<>(201, "Monthly Hourly VisitCounts", visitCountService.getMonthlyHourlyVisitCounts(storeId, ownerUserDetails)));
     }
 
-    @GetMapping("day-visit-counts")
+    @GetMapping("monthly-day-visit-counts")
     public ResponseEntity<?> getMonthlyWeeklyVisitCounts(@PathVariable Long storeId, @AuthenticationPrincipal OwnerUserDetails ownerUserDetails) {
         return ResponseEntity.status(HttpStatus.CREATED).body(new DefaultResponse<>(201, "Monthly Day VisitCounts", visitCountService.getMonthlyDayVisitCounts(storeId, ownerUserDetails)));
+    }
+
+    @GetMapping("today-hourly-visit-counts")
+    public ResponseEntity<?> getTodayHourlyVisitCounts(@PathVariable Long storeId, @AuthenticationPrincipal OwnerUserDetails ownerUserDetails) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(new DefaultResponse<>(201, "Today Hourly VisitCounts", visitCountService.getTodayHourlyVisitCounts(storeId, ownerUserDetails)));
     }
 }

@@ -25,7 +25,7 @@ public class WaitingHistoryController {
 
     @GetMapping("today-hourly-waiting-counts")
     public ResponseEntity<?> getTodayHourlyWaitingCounts(@PathVariable Long storeId, @AuthenticationPrincipal OwnerUserDetails ownerUserDetails) {
-        return ResponseEntity.status(201).body(new DefaultResponse<>(201, "Today's Hourly Waiting Counts",
+        return ResponseEntity.status(201).body(new DefaultResponse<>(201, "Today Hourly Waiting Counts",
                 waitingHistoryService.getTodayHourlyWaitingCounts(storeId, ownerUserDetails)));
     }
 }

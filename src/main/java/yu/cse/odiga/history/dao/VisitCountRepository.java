@@ -13,5 +13,7 @@ public interface VisitCountRepository extends JpaRepository<VisitCount, Long> {
     Optional<VisitCount> findByStoreAndVisitHourAndDayOfWeekAndCreatedAtBetween(
             Store store, int visitHour, DayOfWeek dayOfWeek, LocalDateTime start, LocalDateTime end);
 
+    List<VisitCount> findByStore_IdAndCreatedAtBetween(Long storeId, LocalDateTime startOfDay, LocalDateTime endOfDay);
+
     List<VisitCount> findByStore_Id(Long storeId);
 }
