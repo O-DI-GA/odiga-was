@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import lombok.RequiredArgsConstructor;
-
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -13,6 +11,7 @@ import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
 import yu.cse.odiga.owner.domain.OwnerUserDetails;
 import yu.cse.odiga.store.dao.StoreRepository;
 import yu.cse.odiga.store.domain.Store;
@@ -91,7 +90,7 @@ public class OwnerStoreService {
 	public OwnerStoreDetailDTO findOwnerStoreDetail(OwnerUserDetails ownerUserDetails, Long storeId) {
 
 		Store store = storeRepository.findByOwnerIdAndId(ownerUserDetails.getOwner().getId(), storeId)
-				.orElseThrow(() -> new IllegalArgumentException("Invalid storeId: " + storeId));
+			.orElseThrow(() -> new IllegalArgumentException("Invalid storeId: " + storeId));
 
 		List<String> storeImageUrls = new ArrayList<>();
 		for (StoreImage storeImage : store.getStoreImages()) {
@@ -99,18 +98,18 @@ public class OwnerStoreService {
 		}
 
 		return OwnerStoreDetailDTO.builder()
-				.storeId(store.getId())
-				.storeName(store.getStoreName())
-				.phoneNumber(store.getPhoneNumber())
-				.address(store.getAddress())
-				.tableCount(store.getTableCount())
-				.storeTitleImage(store.getStoreTitleImage())
-				.storeImage(storeImageUrls)
-				.latitude(store.getLocation().getY())
-				.longitude(store.getLocation().getX())
-				.reviewCount(store.getReviewCount())
-				.storeCategory(store.getStoreCategory())
-				.build();
+			.storeId(store.getId())
+			.storeName(store.getStoreName())
+			.phoneNumber(store.getPhoneNumber())
+			.address(store.getAddress())
+			.tableCount(store.getTableCount())
+			.storeTitleImage(store.getStoreTitleImage())
+			.storeImage(storeImageUrls)
+			.latitude(store.getLocation().getY())
+			.longitude(store.getLocation().getX())
+			.reviewCount(store.getReviewCount())
+			.storeCategory(store.getStoreCategory())
+			.build();
 	}
 
 	@Transactional
@@ -118,11 +117,10 @@ public class OwnerStoreService {
 
 		GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 		Point location = geometryFactory.createPoint(
-				new Coordinate(storeRegisterDto.getLongitude(), storeRegisterDto.getLatitude()));
-
+			new Coordinate(storeRegisterDto.getLongitude(), storeRegisterDto.getLatitude()));
 
 		Store store = storeRepository.findByOwnerIdAndId(ownerUserDetails.getOwner().getId(), storeId)
-				.orElseThrow(() -> new IllegalArgumentException("Invalid storeId: " + storeId));
+			.orElseThrow(() -> new IllegalArgumentException("Invalid storeId: " + storeId));
 
 		if (storeRegisterDto.getStoreTitleImage() != null && !storeRegisterDto.getStoreTitleImage().isEmpty()) {
 			try {

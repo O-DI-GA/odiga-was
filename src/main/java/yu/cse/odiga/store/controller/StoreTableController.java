@@ -1,7 +1,5 @@
 package yu.cse.odiga.store.controller;
 
-import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
 import yu.cse.odiga.global.util.DefaultResponse;
 import yu.cse.odiga.store.application.StoreTableService;
 import yu.cse.odiga.store.dto.StoreTableRegisterDto;
@@ -62,13 +61,15 @@ public class StoreTableController {
 
 		storeTableService.togglePlaced(storeId, tableNumber);
 
-		return ResponseEntity.status(HttpStatus.OK).body(new DefaultResponse<>(200, "update store table placed status", null));
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(new DefaultResponse<>(200, "update store table placed status", null));
 	}
 
 	@GetMapping("isPlaceable/{tableNumber}")
 	public ResponseEntity<?> isPlaceableStoreTable(@PathVariable Long storeId, @PathVariable int tableNumber) {
 		return ResponseEntity.status(HttpStatus.OK).body(
-				new DefaultResponse<>(200, "get store table is placeable", storeTableService.isPlaceable(storeId, tableNumber))
+			new DefaultResponse<>(200, "get store table is placeable",
+				storeTableService.isPlaceable(storeId, tableNumber))
 		);
 	}
 }
