@@ -75,6 +75,6 @@ public class TableOrderController {
 		@PathVariable Long tableOrderId) {
 		posDevicePaymentService.payInPosDevice(tableOrderId);
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(new DefaultResponse<>(200, "결제가 완료 되었습니다.", null));
+			.body(new DefaultResponse<>(200, "결제가 완료되었습니다.", null));
 	}
 }
