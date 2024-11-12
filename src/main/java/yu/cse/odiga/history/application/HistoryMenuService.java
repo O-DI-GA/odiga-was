@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import yu.cse.odiga.history.dao.HistoryMenuRepository;
 import yu.cse.odiga.history.domain.HistoryMenu;
 import yu.cse.odiga.history.domain.UseHistory;
+import yu.cse.odiga.history.dto.DailySalesStatisticsDto;
+import yu.cse.odiga.history.dto.PopularMenuDto;
 import yu.cse.odiga.history.dto.StatisticsRequestDto;
 import yu.cse.odiga.history.dto.StatisticsResponseDto;
 import yu.cse.odiga.store.domain.TableOrderMenu;
@@ -41,5 +43,14 @@ public class HistoryMenuService {
     public List<StatisticsResponseDto> getCategorySalesStatistics(Long storeId, StatisticsRequestDto statisticsRequestDto) {
         return historyMenuRepository.getCategorySalesStatisticsByStoreIdAndDateRange(
                 storeId, statisticsRequestDto.getStartDate(), statisticsRequestDto.getEndDate());
+    }
+
+    public DailySalesStatisticsDto getTodaySalesStatisticsWithPopularMenu(Long storeId) {
+        return historyMenuRepository.getTodaySalesStatistics(storeId);
+    }
+
+    public PopularMenuDto getTodayPopularMenu(Long storeId) {
+        List<PopularMenuDto> popularMenus = historyMenuRepository.getTodayPopularMenu(storeId);
+        return popularMenus.isEmpty() ? null : popularMenus.get(0); // 가장 인기 있는 메뉴 반환
     }
 }

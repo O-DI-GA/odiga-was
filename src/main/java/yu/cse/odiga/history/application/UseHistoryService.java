@@ -29,6 +29,17 @@ public class UseHistoryService {
         useHistoryRepository.save(useHistory);
     }
 
+    public void saveUseHistoryPayInPosDevice(TableOrder tableOrder) {
+        UseHistory useHistory = UseHistory.builder()
+            .paymentAmount(tableOrder.getTableTotalPrice())
+            .store(tableOrder.getStore())
+            .build();
+
+        List<HistoryMenu> historyMenus = historyMenuService.tableOrderMenusToHistoryMenus(useHistory, tableOrder.getTableOrderMenuList());
+        useHistory.setHistoryMenus(historyMenus);
+        useHistoryRepository.save(useHistory);
+    }
+
     public void findAllUserHistoryByUserId(Long userId) {
         useHistoryRepository.findByUserId(userId);
         // TODO : DTO 변환

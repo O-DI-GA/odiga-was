@@ -4,6 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import yu.cse.odiga.history.domain.HistoryMenu;
+import yu.cse.odiga.history.dto.DailySalesStatisticsDto;
+import yu.cse.odiga.history.dto.PopularMenuDto;
 import yu.cse.odiga.history.dto.StatisticsResponseDto;
 
 import java.time.LocalDateTime;
@@ -34,5 +36,21 @@ public interface HistoryMenuRepository extends JpaRepository<HistoryMenu, Long> 
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate);
 
+    @Query("SELECT new yu.cse.odiga.history.dto.DailySalesStatisticsDto(uh.store.id, SUM(hm.menuCount), SUM(hm.menuCount * mn.price)) " +
+            "FROM HistoryMenu hm " +
+            "JOIN Menu mn ON hm.menuId = mn.id " +
+            "JOIN UseHistory uh ON hm.history.id = uh.id " +
+            "WHERE uh.store.id = :storeId AND CAST(uh.createdAt AS date) = CURRENT_DATE " +
+            "GROUP BY uh.store.id")
+    DailySalesStatisticsDto getTodaySalesStatistics(@Param("storeId") Long storeId);
+
+    @Query("SELECT new yu.cse.odiga.history.dto.PopularMenuDto(mn.menuName, SUM(hm.menuCount)) " +
+            "FROM HistoryMenu hm " +
+            "JOIN Menu mn ON hm.menuId = mn.id " +
+            "JOIN UseHistory uh ON hm.history.id = uh.id " +
+            "WHERE uh.store.id = :storeId AND CAST(uh.createdAt AS date) = CURRENT_DATE " +
+            "GROUP BY mn.menuName " +
+            "ORDER BY SUM(hm.menuCount) DESC")
+    List<PopularMenuDto> getTodayPopularMenu(@Param("storeId") Long storeId);
 
 }

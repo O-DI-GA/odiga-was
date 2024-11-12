@@ -10,15 +10,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import yu.cse.odiga.auth.domain.CustomUserDetails;
 import yu.cse.odiga.global.util.DefaultResponse;
-import yu.cse.odiga.payment.application.PaymentService;
-
+import yu.cse.odiga.payment.application.UserPaymentService;
 
 @RestController
 @RequestMapping("api/v1/user/payments")
 @RequiredArgsConstructor
 public class UserPaymentController {
 
-    private final PaymentService paymentService;
+    private final UserPaymentService paymentService;
 
     @PostMapping
     public ResponseEntity<?> pay(@RequestParam Long tableOrderId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
