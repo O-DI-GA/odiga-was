@@ -14,6 +14,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 
 import lombok.RequiredArgsConstructor;
 import yu.cse.odiga.global.util.DefaultResponse;
+import yu.cse.odiga.payment.application.PosDevicePaymentService;
 import yu.cse.odiga.store.application.TableOrderService;
 import yu.cse.odiga.store.dto.CallStaffRequestDto;
 import yu.cse.odiga.store.dto.TableOrderManageDto;
@@ -23,6 +24,7 @@ import yu.cse.odiga.store.dto.TableOrderManageDto;
 @RequiredArgsConstructor
 public class TableOrderController {
 	private final TableOrderService tableOrderService;
+	private final PosDevicePaymentService posDevicePaymentService;
 
 	@PostMapping("{storeTableNumber}")
 	public ResponseEntity<?> registerTableOrderList(@PathVariable Long storeId, @PathVariable int storeTableNumber,
@@ -67,4 +69,12 @@ public class TableOrderController {
 				tableOrderService.findByTableOrderHistoryByTableOrderId(tableOrderId)));
 	}
 
+	//TODO : 나중에 payments로 옮겨야함
+	@PostMapping("{tableOrderId}/payment")
+	public ResponseEntity<?> payInPosDeviceByTableOrderId(@PathVariable Long storeId,
+		@PathVariable Long tableOrderId) {
+		posDevicePaymentService.payInPosDevice(tableOrderId);
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(new DefaultResponse<>(200, "결제가 완료 되었습니다.", null));
+	}
 }
