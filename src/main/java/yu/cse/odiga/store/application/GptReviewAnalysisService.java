@@ -29,14 +29,21 @@ public class GptReviewAnalysisService {
 	@Value("${openai.api.url}")
 	private String URL;
 
-	private static final String GPT_SYSTEM_CONTENT = """
-		너는 리뷰를 통해서 가게의 개선점을 도출해주는 봇이야.
-		답변은 항상 아래 형식으로 작성해:
-		1. 개선 사항 요약:
-		   - 문제: 문제 요약
-		   - 개선 제안: 제안 내용
-		2. 추가 의견:
-		   - 추가 의견 내용""";
+	private static final String GPT_SYSTEM_CONTENT_TEMPLATE = """
+		## 문제 요약
+		- 고객이 제기한 문제를 간단히 요약합니다.
+		
+		## 문제 해결 방법
+		1. 첫 번째 문제 해결 방법을 명확하게 서술합니다.
+		2. 두 번째 문제 해결 방법을 명확하게 서술합니다.
+		3. 세 번째 문제 해결 방법을 명확하게 서술합니다.
+		
+		## 추가 제안 사항
+		- 문제와 관련된 추가적인 개선 방안을 제안합니다.
+		- 고객의 전반적인 만족도를 높이기 위한 구체적인 제안을 추가합니다.
+		""";
+
+	private static final double GPT_TEMPERATURE = 0.5;
 
 	public ReviewAnalysisResponseDto getReviewAnalysisByStoreId(Long storeId) {
 		List<Review> reviews = reviewRepository.findByStoreId(storeId);
@@ -46,9 +53,11 @@ public class GptReviewAnalysisService {
 		}
 
 		String reviewContent = getAllReviewContents(reviews);
+
 		GPTRequestDto gptRequestDto = GPTRequestDto.builder()
 			.model(GPT_MODEL)
-			.messages(List.of(new Message("system", GPT_SYSTEM_CONTENT), new Message("user", reviewContent)))
+			.temperature(GPT_TEMPERATURE)
+			.messages(List.of(new Message("system", GPT_SYSTEM_CONTENT_TEMPLATE), new Message("user", reviewContent)))
 			.build();
 
 		GPTResponseDto gptResponseDto = restTemplate.postForObject(URL, gptRequestDto, GPTResponseDto.class);
