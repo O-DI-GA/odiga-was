@@ -1,4 +1,4 @@
-package yu.cse.odiga.history.Controller;
+package yu.cse.odiga.history.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
