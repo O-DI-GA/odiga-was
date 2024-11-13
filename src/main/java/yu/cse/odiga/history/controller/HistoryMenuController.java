@@ -8,6 +8,7 @@ import yu.cse.odiga.history.application.HistoryMenuService;
 import yu.cse.odiga.history.dto.DailySalesStatisticsDto;
 import yu.cse.odiga.history.dto.PopularMenuDto;
 import yu.cse.odiga.history.dto.StatisticsRequestDto;
+import yu.cse.odiga.history.dto.TopCategoryDto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -48,4 +49,15 @@ public class HistoryMenuController {
         PopularMenuDto popularMenu = historyMenuService.getTodayPopularMenu(storeId);
         return ResponseEntity.ok(new DefaultResponse<>(200, storeId + " store today-popular-menu", popularMenu));
     }
+
+    @GetMapping("top-categories-analysis")
+    public ResponseEntity<?> getTopCategoriesWithMenuRatios(@PathVariable Long storeId,
+                                                            @RequestParam("startDate") LocalDateTime startDate,
+                                                            @RequestParam("endDate") LocalDateTime endDate) {
+        List<TopCategoryDto> topCategories = historyMenuService.getTopCategoriesWithMenuRatios(storeId, startDate, endDate);
+        return ResponseEntity.status(200)
+                .body(new DefaultResponse<>(200, storeId + " store top-categories-analysis", topCategories));
+    }
+
+
 }

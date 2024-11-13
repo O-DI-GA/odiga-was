@@ -1,19 +1,19 @@
 package yu.cse.odiga.history.application;
 
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import yu.cse.odiga.history.dao.HistoryMenuRepository;
 import yu.cse.odiga.history.domain.HistoryMenu;
 import yu.cse.odiga.history.domain.UseHistory;
-import yu.cse.odiga.history.dto.DailySalesStatisticsDto;
-import yu.cse.odiga.history.dto.PopularMenuDto;
-import yu.cse.odiga.history.dto.StatisticsRequestDto;
-import yu.cse.odiga.history.dto.StatisticsResponseDto;
+import yu.cse.odiga.history.dto.*;
 import yu.cse.odiga.store.domain.TableOrderMenu;
 
 @Service
@@ -53,6 +53,53 @@ public class HistoryMenuService {
 
     public PopularMenuDto getTodayPopularMenu(Long storeId) {
         List<PopularMenuDto> popularMenus = historyMenuRepository.getTodayPopularMenu(storeId);
-        return popularMenus.isEmpty() ? null : popularMenus.get(0); // 가장 인기 있는 메뉴 반환
+        return popularMenus.isEmpty() ? null : popularMenus.get(0);
+    }
+
+    public List<TopCategoryDto> getTopCategoriesWithMenuRatios(Long storeId, LocalDateTime startDate, LocalDateTime endDate) {
+        List<CategorySalesDto> categorySales = historyMenuRepository.getCategorySalesByStoreIdAndDateRange(storeId, startDate, endDate);
+
+        Map<String, Long> categoryTotals = new HashMap<>();
+        Map<String, List<CategorySalesDto>> categoryMenus = new HashMap<>();
+
+        for (CategorySalesDto dto : categorySales) {
+            categoryTotals.put(dto.getCategoryName(), categoryTotals.getOrDefault(dto.getCategoryName(), 0L) + dto.getMenuCount());
+            categoryMenus.computeIfAbsent(dto.getCategoryName(), k -> new ArrayList<>()).add(dto);
+        }
+
+        List<Map.Entry<String, Long>> sortedCategories = categoryTotals.entrySet().stream()
+                .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
+                .limit(2)
+                .collect(Collectors.toList());
+
+        List<TopCategoryDto> result = new ArrayList<>();
+        int rank = 1;
+        for (Map.Entry<String, Long> categoryEntry : sortedCategories) {
+            String category = categoryEntry.getKey();
+            Long totalCategorySales = categoryEntry.getValue();
+
+            List<CategorySalesDto> menus = categoryMenus.get(category);
+
+            menus.sort((a, b) -> b.getMenuCount().compareTo(a.getMenuCount()));
+            List<CategoryMenuDto> topMenus = new ArrayList<>();
+
+            for (int i = 0; i < Math.min(2, menus.size()); i++) {
+                CategorySalesDto menuDto = menus.get(i);
+                int ratio = (int) ((double) menuDto.getMenuCount() / totalCategorySales * 100);
+                topMenus.add(CategoryMenuDto.builder()
+                        .menuName(menuDto.getMenuName())
+                        .totalSalesAmount(menuDto.getMenuCount())
+                        .ratio(ratio)
+                        .build());
+            }
+
+            result.add(TopCategoryDto.builder()
+                    .categoryName(category)
+                    .rank(rank++)
+                    .menus(topMenus)
+                    .build());
+        }
+
+        return result;
     }
 }

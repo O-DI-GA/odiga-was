@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import yu.cse.odiga.history.domain.HistoryMenu;
+import yu.cse.odiga.history.dto.CategorySalesDto;
 import yu.cse.odiga.history.dto.DailySalesStatisticsDto;
 import yu.cse.odiga.history.dto.PopularMenuDto;
 import yu.cse.odiga.history.dto.StatisticsResponseDto;
@@ -53,4 +54,16 @@ public interface HistoryMenuRepository extends JpaRepository<HistoryMenu, Long> 
             "ORDER BY SUM(hm.menuCount) DESC")
     List<PopularMenuDto> getTodayPopularMenu(@Param("storeId") Long storeId);
 
+    @Query("SELECT new yu.cse.odiga.history.dto.CategorySalesDto(c.name, mn.menuName, SUM(hm.menuCount * mn.price)) " +
+            "FROM HistoryMenu hm " +
+            "JOIN Menu mn ON hm.menuId = mn.id " +
+            "JOIN Category c ON mn.category.id = c.id " +
+            "JOIN UseHistory uh ON hm.history.id = uh.id " +
+            "WHERE uh.store.id = :storeId AND uh.createdAt BETWEEN :startDate AND :endDate " +
+            "GROUP BY c.name, mn.menuName " +
+            "ORDER BY c.name, SUM(hm.menuCount) DESC")
+    List<CategorySalesDto> getCategorySalesByStoreIdAndDateRange(
+            @Param("storeId") Long storeId,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate);
 }
