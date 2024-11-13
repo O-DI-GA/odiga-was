@@ -14,5 +14,5 @@ import lombok.NoArgsConstructor;
 public class GPTRequestDto {
 	private String model;
 	private List<Message> messages;
-
+	private double temperature;
 }
