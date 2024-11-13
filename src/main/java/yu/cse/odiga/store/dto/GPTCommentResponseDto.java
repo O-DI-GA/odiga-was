@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ReviewAnalysisResponseDto {
+public class GPTCommentResponseDto {
 	private String content;
 }
