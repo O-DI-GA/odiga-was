@@ -11,10 +11,10 @@ import lombok.RequiredArgsConstructor;
 import yu.cse.odiga.global.exception.BusinessLogicException;
 import yu.cse.odiga.review.dao.ReviewRepository;
 import yu.cse.odiga.review.domain.Review;
+import yu.cse.odiga.store.dto.GPTCommentResponseDto;
 import yu.cse.odiga.store.dto.GPTRequestDto;
 import yu.cse.odiga.store.dto.GPTResponseDto;
 import yu.cse.odiga.store.dto.Message;
-import yu.cse.odiga.store.dto.ReviewAnalysisResponseDto;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +45,7 @@ public class GptReviewAnalysisService {
 
 	private static final double GPT_TEMPERATURE = 0.5;
 
-	public ReviewAnalysisResponseDto getReviewAnalysisByStoreId(Long storeId) {
+	public GPTCommentResponseDto getReviewAnalysisByStoreId(Long storeId) {
 		List<Review> reviews = reviewRepository.findByStoreId(storeId);
 
 		if (reviews.isEmpty()) {
@@ -62,7 +62,7 @@ public class GptReviewAnalysisService {
 
 		GPTResponseDto gptResponseDto = restTemplate.postForObject(URL, gptRequestDto, GPTResponseDto.class);
 
-		return new ReviewAnalysisResponseDto(gptResponseDto.getChoices().get(0).getMessage().getContent());
+		return new GPTCommentResponseDto(gptResponseDto.getChoices().get(0).getMessage().getContent());
 	}
 
 	private String getAllReviewContents(List<Review> reviews) {
