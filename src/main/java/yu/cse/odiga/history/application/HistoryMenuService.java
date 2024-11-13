@@ -1,6 +1,8 @@
 package yu.cse.odiga.history.application;
 
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -35,14 +37,14 @@ public class HistoryMenuService {
         return historyMenuList;
     }
 
-    public List<StatisticsResponseDto> getMenuSalesStatistics(Long storeId, StatisticsRequestDto statisticsRequestDto) {
+    public List<StatisticsResponseDto> getMenuSalesStatistics(Long storeId, LocalDateTime startDate, LocalDateTime endDate) {
         return historyMenuRepository.getMenuSalesStatisticsByStoreIdAndDateRange(
-                storeId, statisticsRequestDto.getStartDate(), statisticsRequestDto.getEndDate());
+                storeId, startDate, endDate);
     }
 
-    public List<StatisticsResponseDto> getCategorySalesStatistics(Long storeId, StatisticsRequestDto statisticsRequestDto) {
+    public List<StatisticsResponseDto> getCategorySalesStatistics(Long storeId, LocalDateTime startDate, LocalDateTime endDate) {
         return historyMenuRepository.getCategorySalesStatisticsByStoreIdAndDateRange(
-                storeId, statisticsRequestDto.getStartDate(), statisticsRequestDto.getEndDate());
+                storeId, startDate, endDate);
     }
 
     public DailySalesStatisticsDto getTodaySalesStatisticsWithPopularMenu(Long storeId) {

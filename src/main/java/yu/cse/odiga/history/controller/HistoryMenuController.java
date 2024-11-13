@@ -9,6 +9,8 @@ import yu.cse.odiga.history.dto.DailySalesStatisticsDto;
 import yu.cse.odiga.history.dto.PopularMenuDto;
 import yu.cse.odiga.history.dto.StatisticsRequestDto;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -20,18 +22,20 @@ public class HistoryMenuController {
 
     @GetMapping("menu-sales-statistics")
     public ResponseEntity<?> getMenuSalesStatistics(@PathVariable Long storeId,
-                                                    @RequestBody StatisticsRequestDto statisticsRequestDto) {
+                                                    @RequestParam("startDate") LocalDateTime startDate,
+                                                    @RequestParam("endDate") LocalDateTime endDate) {
         return ResponseEntity.status(200)
                 .body(new DefaultResponse<>(200, storeId + " store menu-sales-statistics",
-                        historyMenuService.getMenuSalesStatistics(storeId, statisticsRequestDto)));
+                        historyMenuService.getMenuSalesStatistics(storeId, startDate, endDate)));
     }
 
     @GetMapping("category-sales-statistics")
     public ResponseEntity<?> getCategorySalesStatistics(@PathVariable Long storeId,
-                                                    @RequestBody StatisticsRequestDto statisticsRequestDto) {
+                                                        @RequestParam("startDate") LocalDateTime startDate,
+                                                        @RequestParam("endDate") LocalDateTime endDate) {
         return ResponseEntity.status(200)
                 .body(new DefaultResponse<>(200, storeId + " store category-sales-statistics",
-                        historyMenuService.getCategorySalesStatistics(storeId, statisticsRequestDto)));
+                        historyMenuService.getCategorySalesStatistics(storeId,  startDate, endDate)));
     }
     @GetMapping("today-sales-statistics")
     public ResponseEntity<?> getTodaySalesStatisticsWithPopularMenu(@PathVariable Long storeId) {
