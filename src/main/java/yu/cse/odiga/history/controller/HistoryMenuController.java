@@ -5,12 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import yu.cse.odiga.global.util.DefaultResponse;
 import yu.cse.odiga.history.application.HistoryMenuService;
-import yu.cse.odiga.history.dto.DailySalesStatisticsDto;
-import yu.cse.odiga.history.dto.PopularMenuDto;
-import yu.cse.odiga.history.dto.StatisticsRequestDto;
-import yu.cse.odiga.history.dto.TopCategoryDto;
+import yu.cse.odiga.history.dto.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -59,5 +55,12 @@ public class HistoryMenuController {
                 .body(new DefaultResponse<>(200, storeId + " store top-categories-analysis", topCategories));
     }
 
-
+    @GetMapping("monthly-day-waiting-counts")
+    public ResponseEntity<?> getWaitingStatisticsByDayOfWeek(@PathVariable Long storeId,
+                                                             @RequestParam("startDate") LocalDateTime startDate,
+                                                             @RequestParam("endDate") LocalDateTime endDate) {
+        DayWaitingStatisticsDto dayWaitingStats = historyMenuService.getWaitingStatisticsByDayOfWeek(storeId, startDate, endDate);
+        return ResponseEntity.status(200)
+                .body(new DefaultResponse<>(200, storeId + " store top-day-waiting-analysis", dayWaitingStats));
+    }
 }

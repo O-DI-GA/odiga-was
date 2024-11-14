@@ -1,11 +1,7 @@
 package yu.cse.odiga.history.application;
 
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
@@ -15,12 +11,14 @@ import yu.cse.odiga.history.domain.HistoryMenu;
 import yu.cse.odiga.history.domain.UseHistory;
 import yu.cse.odiga.history.dto.*;
 import yu.cse.odiga.store.domain.TableOrderMenu;
+import yu.cse.odiga.waiting.dao.WaitingRepository;
 
 @Service
 @RequiredArgsConstructor
 public class HistoryMenuService {
 
     private final HistoryMenuRepository historyMenuRepository;
+    private final WaitingRepository waitingRepository;
 
     public List<HistoryMenu> tableOrderMenusToHistoryMenus(UseHistory useHistory, List<TableOrderMenu> orderMenus) {
         List<HistoryMenu> historyMenuList = new ArrayList<>();
@@ -101,5 +99,31 @@ public class HistoryMenuService {
         }
 
         return result;
+    }
+
+    public DayWaitingStatisticsDto getWaitingStatisticsByDayOfWeek(Long storeId, LocalDateTime startDate, LocalDateTime endDate) {
+        List<Object[]> dayWaitings = waitingRepository.getWaitingCountByDayOfWeek(storeId, startDate, endDate);
+
+        List<DayWaitingCountDto> dayCounts = dayWaitings.stream()
+                .map(row -> new DayWaitingCountDto((String) row[0], (Long) row[1]))
+                .collect(Collectors.toList());
+
+        List<String> dayOrder = Arrays.asList("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");
+
+        Long maxWaitingCount = dayCounts.stream()
+                .map(DayWaitingCountDto::getWaitingCount)
+                .max(Long::compareTo)
+                .orElse(0L);
+
+        List<String> mostDays = dayCounts.stream()
+                .filter(day -> day.getWaitingCount().equals(maxWaitingCount))
+                .map(DayWaitingCountDto::getDayOfWeek)
+                .sorted(Comparator.comparingInt(dayOrder::indexOf))  // 우선순위 적용
+                .collect(Collectors.toList());
+
+        dayCounts.sort(Comparator.comparing(DayWaitingCountDto::getWaitingCount).reversed()
+                .thenComparing(day -> dayOrder.indexOf(day.getDayOfWeek())));
+
+        return new DayWaitingStatisticsDto(mostDays, dayCounts);
     }
 }
