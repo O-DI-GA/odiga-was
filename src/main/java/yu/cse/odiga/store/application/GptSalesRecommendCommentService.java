@@ -65,6 +65,7 @@ public class GptSalesRecommendCommentService {
 			매출 데이터
 			""" + json + """
 			템플릿을 따라 주세요.
+			중요한 단어에는 blod체로 답변을 해주세요.
 			""" + GPT_SYSTEM_CONTENT;
 
 		GPTRequestDto gptRequestDto = GPTRequestDto.builder()

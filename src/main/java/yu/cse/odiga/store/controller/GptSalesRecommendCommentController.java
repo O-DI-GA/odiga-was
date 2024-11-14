@@ -16,7 +16,7 @@ import yu.cse.odiga.store.application.GptSalesRecommendCommentService;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("api/v1/owner/store/{storeId}/analysis/sales-advice")
-public class GptSalesARecommendCommentController {
+public class GptSalesRecommendCommentController {
 
 	private final GptSalesRecommendCommentService gptSalesRecommendCommentService;
 
