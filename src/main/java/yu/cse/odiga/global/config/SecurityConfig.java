@@ -1,5 +1,7 @@
 package yu.cse.odiga.global.config;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +20,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
 
-import lombok.RequiredArgsConstructor;
 import yu.cse.odiga.auth.application.CustomUserDetailsService;
 import yu.cse.odiga.auth.dao.UserRepository;
 import yu.cse.odiga.global.handler.UserAuthenticationEntryPoint;
@@ -38,26 +39,18 @@ public class SecurityConfig {
 	private final JwtExceptionHandlingFilter jwtExceptionHandlingFilter;
 
 	@Bean
-	public SecurityFilterChain guestFilterChain(HttpSecurity http) throws Exception {
-		http.httpBasic(HttpBasicConfigurer::disable).csrf(CsrfConfigurer::disable)
-
-			.cors(cors -> cors.configurationSource(corsConfigurationSource)); // 전역 CORS 설정 적용
-
-		return http.build();
-	}
-
-	@Bean
-	public SecurityFilterChain userFilterChain(HttpSecurity http, JwtTokenProvider jwtTokenProvider,
+	public SecurityFilterChain userFilterChain(HttpSecurity http,
+		JwtTokenProvider jwtTokenProvider,
 		@Qualifier("userAuthenticationProvider") AuthenticationProvider authenticationProvider,
 		CustomUserDetailsService customUserDetailsService) throws Exception {
-		http.securityMatcher("/api/v1/user/**")
+		http
+			.securityMatcher("/api/v1/user/**")
 
-			.authorizeHttpRequests(auth -> auth.requestMatchers("/api/v1/user/auth/**")
-				.permitAll()
-				.requestMatchers(PathRequest.toH2Console())
-				.permitAll() // 이 설정을 따로 빼줘야할듯
-				.anyRequest()
-				.authenticated())
+			.authorizeHttpRequests(auth -> auth
+				.requestMatchers("/api/v1/user/auth/**").permitAll()
+				.requestMatchers(PathRequest.toH2Console()).permitAll() // 이 설정을 따로 빼줘야할듯
+				.anyRequest().authenticated()
+			)
 			// h2 설정
 			.headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
 
@@ -66,9 +59,8 @@ public class SecurityConfig {
 
 			.cors((cors) -> cors.configurationSource(corsConfigurationSource))
 
-			.sessionManagement(
-				sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-				// session 을 사용하지 않음
+			.sessionManagement(sessionManagement ->
+				sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // session 을 사용하지 않음
 			)
 
 			.exceptionHandling(ex -> ex.authenticationEntryPoint(new UserAuthenticationEntryPoint())
@@ -77,7 +69,7 @@ public class SecurityConfig {
 			.authenticationProvider(authenticationProvider)
 
 			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, customUserDetailsService),
-							 UsernamePasswordAuthenticationFilter.class) // JwtAuthenticationFilter 작동 후 UsernamePasswordAuthenticationFilter 변경
+				UsernamePasswordAuthenticationFilter.class) // JwtAuthenticationFilter 작동 후 UsernamePasswordAuthenticationFilter 변경
 
 			.addFilterBefore(jwtExceptionHandlingFilter, JwtAuthenticationFilter.class);
 
@@ -85,13 +77,17 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public SecurityFilterChain ownerFilterChain(HttpSecurity http, JwtTokenProvider jwtTokenProvider,
+	public SecurityFilterChain ownerFilterChain(HttpSecurity http,
+		JwtTokenProvider jwtTokenProvider,
 		@Qualifier("ownerAuthenticationProvider") AuthenticationProvider authenticationProvider,
 		OwnerUserDetailsService ownerUserDetailsService) throws Exception {
-		http.securityMatcher("/api/v1/owner/**")
+		http
+			.securityMatcher("/api/v1/owner/**")
 
-			.authorizeHttpRequests(
-				auth -> auth.requestMatchers("/api/v1/owner/auth/**").permitAll().anyRequest().authenticated())
+			.authorizeHttpRequests(auth -> auth
+				.requestMatchers("/api/v1/owner/auth/**").permitAll()
+				.anyRequest().authenticated()
+			)
 
 			.headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
 
@@ -101,9 +97,8 @@ public class SecurityConfig {
 
 			.cors((cors) -> cors.configurationSource(corsConfigurationSource))
 
-			.sessionManagement(
-				sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-				// session 을 사용하지 않음
+			.sessionManagement(sessionManagement ->
+				sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // session 을 사용하지 않음
 			)
 
 			.exceptionHandling(ex -> ex.authenticationEntryPoint(new UserAuthenticationEntryPoint())
@@ -112,7 +107,7 @@ public class SecurityConfig {
 			.authenticationProvider(authenticationProvider)
 
 			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, ownerUserDetailsService),
-							 UsernamePasswordAuthenticationFilter.class)
+				UsernamePasswordAuthenticationFilter.class)
 
 			.addFilterBefore(jwtExceptionHandlingFilter, JwtAuthenticationFilter.class);
 
