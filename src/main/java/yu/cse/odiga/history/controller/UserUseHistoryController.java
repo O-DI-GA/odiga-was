@@ -27,6 +27,7 @@ public class UserUseHistoryController {
 										useHistoryService.getUserUseHistory(customUserDetails)));
 	}
 
+	@GetMapping("{historyId}")
 	public ResponseEntity<?> getUserUseHistory(@PathVariable Long historyId,
 		@AuthenticationPrincipal CustomUserDetails customUserDetails) {
 		return ResponseEntity.ok()
