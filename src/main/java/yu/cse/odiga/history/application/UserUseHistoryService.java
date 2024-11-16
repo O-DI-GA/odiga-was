@@ -29,4 +29,18 @@ public class UserUseHistoryService {
 
 		return historyList.stream().map(UseHistoryRequestDto::from).collect(Collectors.toList());
 	}
+
+	public UseHistoryRequestDto getUserUserHistoryByHistoryId(Long historyId, CustomUserDetails userDetails) {
+		User user = userRepository.findByEmail(userDetails.getUsername())
+			.orElseThrow(() -> new BusinessLogicException("올바르지 않은 접근입니다.", HttpStatus.BAD_REQUEST.value()));
+
+		UseHistory useHistory = useHistoryRepository.findById(historyId)
+			.orElseThrow(() -> new BusinessLogicException("올바르지 않은 접근입니다.", HttpStatus.BAD_REQUEST.value()));
+
+		if (!useHistory.getUser().equals(user)) {
+			throw new BusinessLogicException("올바르지 않은 접근입니다.", HttpStatus.BAD_REQUEST.value());
+		}
+
+		return UseHistoryRequestDto.from(useHistory);
+	}
 }
