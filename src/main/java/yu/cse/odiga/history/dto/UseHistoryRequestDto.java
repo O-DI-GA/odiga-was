@@ -45,12 +45,14 @@ public class UseHistoryRequestDto {
 		private String menuName;
 		private int menuPrice;
 		private int menuCount;
+		private String menuImage;
 
 		private static UseHistoryMenuDto from(HistoryMenu historyMenu) {
 			return UseHistoryMenuDto.builder()
 				.menuId(historyMenu.getMenu().getId())
 				.menuName(historyMenu.getMenu().getMenuName())
 				.menuPrice(historyMenu.getMenu().getPrice())
+				.menuImage(historyMenu.getMenu().getMenuImageUrl())
 				.menuCount(historyMenu.getMenuCount())
 				.build();
 		}
