@@ -48,8 +48,10 @@ public class UseHistoryRequestDto {
 
 		private static UseHistoryMenuDto from(HistoryMenu historyMenu) {
 			return UseHistoryMenuDto.builder()
-				.menuId(historyMenu.getMenuId())
-				.menuPrice(historyMenu.getMenuCount())
+				.menuId(historyMenu.getMenu().getId())
+				.menuName(historyMenu.getMenu().getMenuName())
+				.menuPrice(historyMenu.getMenu().getPrice())
+				.menuCount(historyMenu.getMenuCount())
 				.build();
 		}
 	}

@@ -20,7 +20,11 @@ public class HistoryMenu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long menuId;
+    // private Long menuId;
+
+    @ManyToOne
+    @JoinColumn(name = "menu_id", nullable = false)
+    private Menu menu;
 
     private int menuCount;
 

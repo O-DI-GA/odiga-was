@@ -16,7 +16,7 @@ public interface HistoryMenuRepository extends JpaRepository<HistoryMenu, Long> 
     @Query("SELECT new yu.cse.odiga.history.dto.StatisticsResponseDto(mn.menuName, SUM(hm.menuCount), SUM(hm.menuCount * mn.price)) " +
             "FROM HistoryMenu hm " +
             "JOIN UseHistory uh ON hm.history.id = uh.id " +
-            "JOIN Menu mn ON hm.menuId = mn.id " +
+            "JOIN Menu mn ON hm.menu.id = mn.id " +
             "WHERE uh.store.id = :storeId AND uh.createdAt BETWEEN :startDate AND :endDate " +
             "GROUP BY mn.menuName")
     List<StatisticsResponseDto> getMenuSalesStatisticsByStoreIdAndDateRange(
@@ -27,7 +27,7 @@ public interface HistoryMenuRepository extends JpaRepository<HistoryMenu, Long> 
 
     @Query("SELECT new yu.cse.odiga.history.dto.StatisticsResponseDto(c.name, SUM(hm.menuCount), SUM(hm.menuCount * mn.price)) " +
             "FROM HistoryMenu hm " +
-            "JOIN Menu mn ON hm.menuId = mn.id " +
+            "JOIN Menu mn ON hm.menu.id = mn.id " +
             "JOIN Category c ON mn.category.id = c.id " +
             "JOIN UseHistory uh ON hm.history.id = uh.id " +
             "WHERE uh.store.id = :storeId AND uh.createdAt BETWEEN :startDate AND :endDate " +
@@ -39,7 +39,7 @@ public interface HistoryMenuRepository extends JpaRepository<HistoryMenu, Long> 
 
     @Query("SELECT new yu.cse.odiga.history.dto.DailySalesStatisticsDto(uh.store.id, SUM(hm.menuCount), SUM(hm.menuCount * mn.price)) " +
             "FROM HistoryMenu hm " +
-            "JOIN Menu mn ON hm.menuId = mn.id " +
+            "JOIN Menu mn ON hm.menu.id = mn.id " +
             "JOIN UseHistory uh ON hm.history.id = uh.id " +
             "WHERE uh.store.id = :storeId AND CAST(uh.createdAt AS date) = CURRENT_DATE " +
             "GROUP BY uh.store.id")
@@ -47,7 +47,7 @@ public interface HistoryMenuRepository extends JpaRepository<HistoryMenu, Long> 
 
     @Query("SELECT new yu.cse.odiga.history.dto.PopularMenuDto(mn.menuName, SUM(hm.menuCount)) " +
             "FROM HistoryMenu hm " +
-            "JOIN Menu mn ON hm.menuId = mn.id " +
+            "JOIN Menu mn ON hm.menu.id = mn.id " +
             "JOIN UseHistory uh ON hm.history.id = uh.id " +
             "WHERE uh.store.id = :storeId AND CAST(uh.createdAt AS date) = CURRENT_DATE " +
             "GROUP BY mn.menuName " +
@@ -56,7 +56,7 @@ public interface HistoryMenuRepository extends JpaRepository<HistoryMenu, Long> 
 
     @Query("SELECT new yu.cse.odiga.history.dto.CategorySalesDto(c.name, mn.menuName, SUM(hm.menuCount * mn.price)) " +
             "FROM HistoryMenu hm " +
-            "JOIN Menu mn ON hm.menuId = mn.id " +
+            "JOIN Menu mn ON hm.menu.id = mn.id " +
             "JOIN Category c ON mn.category.id = c.id " +
             "JOIN UseHistory uh ON hm.history.id = uh.id " +
             "WHERE uh.store.id = :storeId AND uh.createdAt BETWEEN :startDate AND :endDate " +

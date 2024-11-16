@@ -25,7 +25,7 @@ public class HistoryMenuService {
 
         for (TableOrderMenu tableOrderMenu : orderMenus) {
             HistoryMenu historyMenu = HistoryMenu.builder()
-                    .menuId(tableOrderMenu.getMenu().getId())
+                    .menu(tableOrderMenu.getMenu())
                     .menuCount(tableOrderMenu.getMenuCount())
                     .history(useHistory)
                     .build();
