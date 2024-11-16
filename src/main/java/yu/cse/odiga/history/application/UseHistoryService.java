@@ -39,13 +39,4 @@ public class UseHistoryService {
         useHistory.setHistoryMenus(historyMenus);
         useHistoryRepository.save(useHistory);
     }
-
-    public void findAllUserHistoryByUserId(Long userId) {
-        useHistoryRepository.findByUserId(userId);
-        // TODO : DTO 변환
-    }
-
-    public void findAllStoreUseHistoryByStoreId(Long storeId) {
-
-    }
 }
