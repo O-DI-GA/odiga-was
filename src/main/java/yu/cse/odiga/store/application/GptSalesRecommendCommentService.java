@@ -5,12 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.Gson;
 
 import lombok.RequiredArgsConstructor;
+import yu.cse.odiga.global.exception.BusinessLogicException;
 import yu.cse.odiga.history.dao.HistoryMenuRepository;
 import yu.cse.odiga.history.dto.StatisticsResponseDto;
 import yu.cse.odiga.store.dto.GPTCommentResponseDto;
@@ -49,6 +51,10 @@ public class GptSalesRecommendCommentService {
 		LocalDateTime endTime) {
 		List<StatisticsResponseDto> categoryHistory = historyMenuRepository.getCategorySalesStatisticsByStoreIdAndDateRange(
 			storeId, startDate, endTime);
+
+		if (categoryHistory.isEmpty()) {
+			throw new BusinessLogicException("매출 데이터가 존재 하지 않습니다.", HttpStatus.BAD_REQUEST.value());
+		}
 
 		HashMap<String, Long> requestJsonMap = new HashMap<>();
 
