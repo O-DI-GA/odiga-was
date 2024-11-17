@@ -44,7 +44,8 @@ public class StoreService {
 		List<Store> stores = storeRepository.findAroundStores(point, RANGE_OF_RADIUS);
 		List<StoreMapDto> storeList = new ArrayList<>();
 		for (Store s : stores) {
-			List<Waiting> incompleteWaitings = s.getWaitingList().stream()
+			List<Waiting> incompleteWaitings = s.getWaitingList()
+				.stream()
 				.filter(waiting -> waiting.getWaitingStatus() == WaitingStatus.INCOMPLETE)
 				.toList();
 
@@ -77,17 +78,18 @@ public class StoreService {
 
 		if (SortCondition.STORE_LIKE_COUNT.getValue().equals(orderCondition)) {
 			findStoreByDistance = storeRepository.findStoresRangeAndOrderByLikeCount(point,
-				RANGE_OF_RADIUS);  //반경 700m 거리 안에 있는 가게중에 가장 찜이 많은 가게 10개
+																					 RANGE_OF_RADIUS);  //반경 700m 거리 안에 있는 가게중에 가장 찜이 많은 가게 10개
 		} else if (SortCondition.STORE_REVIEW_COUNT.getValue().equals(orderCondition)) {
 			findStoreByDistance = storeRepository.findStoresRangeAndOrderByReviewCount(point,
-				RANGE_OF_RADIUS);  //반경 700m 거리 안에 있는 가게중에 가장 리뷰가 많은 가게 10개
+																					   RANGE_OF_RADIUS);  //반경 700m 거리 안에 있는 가게중에 가장 리뷰가 많은 가게 10개
 		} else if (SortCondition.STORE_WAITING_COUNT.getValue().equals(orderCondition)) {
 			findStoreByDistance = storeRepository.findStoresRangeAndOrderByWaitingCount(point, RANGE_OF_RADIUS);
 		}
 
 		for (Store store : findStoreByDistance) {
 
-			List<Waiting> incompleteWaitings = store.getWaitingList().stream()
+			List<Waiting> incompleteWaitings = store.getWaitingList()
+				.stream()
 				.filter(waiting -> waiting.getWaitingStatus() == WaitingStatus.INCOMPLETE)
 				.toList();
 
@@ -109,16 +111,7 @@ public class StoreService {
 
 	public StoreDetailDto findByStoreId(Long storeId) {
 		Store store = storeRepository.findById(storeId).orElseThrow();
-
-		//        List<Waiting> incompleteWaitings = store.getWaitingList().stream()
-		//                .filter(waiting -> waiting.getWaitingStatus() == WaitingStatus.INCOMPLETE)
-		//                .toList();
-
-		//        double averageReviewScore = store.getReviewList().stream().mapToInt(Review::getRating).average()
-		//                .orElse(EMPTY_REVIVE_RATING);
-
-		// TODO : 실제 TableStatus 로 다시 로직 짜야함 TableStatus.INUSE 로 필터링 해서
-		//        int emptyTableCount = Math.max(store.getTableCount() - incompleteWaitings.size(), EMPTY_TABLE_COUNT);
+		
 		int emptyTableCount = 0;
 		int waitingCount = 0;
 
@@ -130,10 +123,19 @@ public class StoreService {
 			waitingCount = waitingList.size();
 		}
 
+		int sumReviewsScore = store.getReviewList().stream().mapToInt(r -> r.getRating().getValue()).sum();
+
+		double avgReviewsScore = EMPTY_REVIEW_RATING;
+
+		if (sumReviewsScore != 0) {
+			avgReviewsScore = (double)sumReviewsScore / store.getReviewList().size();
+
+		}
+
 		return StoreDetailDto.builder()
 			.storeName(store.getStoreName())
 			.storeTitleImage(store.getStoreTitleImage())
-			.averageRating(EMPTY_REVIEW_RATING)
+			.averageRating(avgReviewsScore)
 			.likeCount(store.getLikeCount())
 			.address(store.getAddress())
 			.tableCount(store.getTableCount())
@@ -149,9 +151,7 @@ public class StoreService {
 		List<StoreImagesDto> responseStoreImages = new ArrayList<>();
 
 		for (StoreImage si : storeImages) {
-			StoreImagesDto storeImagesDto = StoreImagesDto.builder()
-				.storeImagesUrl(si.getPostImageUrl())
-				.build();
+			StoreImagesDto storeImagesDto = StoreImagesDto.builder().storeImagesUrl(si.getPostImageUrl()).build();
 
 			responseStoreImages.add(storeImagesDto);
 		}
