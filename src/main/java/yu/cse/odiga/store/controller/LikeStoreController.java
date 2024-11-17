@@ -24,16 +24,18 @@ public class LikeStoreController {
 
 	@PostMapping("/{storeId}")
 	public ResponseEntity<?> add(@PathVariable Long storeId,
-		@AuthenticationPrincipal CustomUserDetails customUserDetails) throws Exception {
+								@AuthenticationPrincipal CustomUserDetails customUserDetails) throws Exception {
+		likeStoreService.add(storeId, customUserDetails);
 		return ResponseEntity.status(HttpStatus.CREATED)
-			.body(new DefaultResponse<>(201, "like success", likeStoreService.add(storeId, customUserDetails)));
+			.body(new DefaultResponse<>(201, "like success", null));
 	}
 
 	@DeleteMapping("/{storeId}")
 	public ResponseEntity<?> delete(@PathVariable Long storeId,
-		@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+									@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+		likeStoreService.delete(storeId, customUserDetails);
 		return ResponseEntity.status(HttpStatus.CREATED)
-			.body(new DefaultResponse<>(201, "dislike success", likeStoreService.delete(storeId, customUserDetails)));
+			.body(new DefaultResponse<>(201, "dislike success", null));
 	}
 
 	@GetMapping("/list")

@@ -3,6 +3,7 @@ package yu.cse.odiga.store.application;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import yu.cse.odiga.auth.dao.UserRepository;
 import yu.cse.odiga.auth.domain.CustomUserDetails;
 import yu.cse.odiga.auth.domain.User;
+import yu.cse.odiga.global.exception.BusinessLogicException;
 import yu.cse.odiga.store.dao.LikeStoreRepository;
 import yu.cse.odiga.store.dao.StoreRepository;
 import yu.cse.odiga.store.domain.LikeStore;
@@ -27,7 +29,7 @@ public class LikeStoreService {
 	private final StoreRepository storeRepository;
 
 	@Transactional
-	public Store add(Long storeId, CustomUserDetails customUserDetails) throws Exception {
+	public void add(Long storeId, CustomUserDetails customUserDetails) throws Exception {
 
 		User user = userRepository.findByEmail(customUserDetails.getUsername())
 			.orElseThrow(
@@ -38,7 +40,7 @@ public class LikeStoreService {
 
 		// 이미 좋아요되어있으면 에러 반환
 		if (likeStoreRepository.findByUserAndStore(user, store).isPresent()) {
-			throw new Exception();
+			throw new BusinessLogicException("이미 좋아요 표시가 되어있습니다.", HttpStatus.BAD_REQUEST.value());
 		}
 
 		LikeStore likeStore = LikeStore.builder()
@@ -49,12 +51,10 @@ public class LikeStoreService {
 		likeStoreRepository.save(likeStore);
 
 		store.setLikeCount(store.getLikeCount() + 1);
-
-		return store;
 	}
 
 	@Transactional
-	public Store delete(Long storeId, CustomUserDetails customUserDetails) {
+	public void delete(Long storeId, CustomUserDetails customUserDetails) {
 
 		User user = userRepository.findByEmail(customUserDetails.getUsername())
 			.orElseThrow(
@@ -69,8 +69,6 @@ public class LikeStoreService {
 		likeStoreRepository.delete(likeStore);
 
 		store.setLikeCount(store.getLikeCount() - 1);
-
-		return store;
 	}
 
 	public List<LikeResponseDto> findUserLikedStores(CustomUserDetails customUserDetails) {
