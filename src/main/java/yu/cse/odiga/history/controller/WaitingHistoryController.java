@@ -20,7 +20,7 @@ public class WaitingHistoryController {
     @GetMapping("monthly-hourly-average-waiting-counts")
     public ResponseEntity<?> getMonthlyHourlyAverageWaitingCounts(@PathVariable Long storeId, @AuthenticationPrincipal OwnerUserDetails ownerUserDetails) {
         return ResponseEntity.status(201).body(new DefaultResponse<>(201, "Monthly Hourly Average WaitingCounts",
-                waitingHistoryService.getMonthlyHourlyAverageWaitingCounts(storeId, ownerUserDetails)));
+                waitingHistoryService.getMonthlyHourlyWaitingCounts(storeId, ownerUserDetails)));
     }
 
     @GetMapping("today-hourly-waiting-counts")

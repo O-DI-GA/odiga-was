@@ -22,33 +22,24 @@ import yu.cse.odiga.waiting.domain.Waiting;
 public class WaitingHistoryService {
     private final WaitingHistoryRepository waitingHistoryRepository;
 
-    public Map<String, List<WaitingHistoryDto>> getMonthlyHourlyAverageWaitingCounts(Long storeId, OwnerUserDetails ownerUserDetails) {
+    public Map<String, List<WaitingHistoryDto>> getMonthlyHourlyWaitingCounts(Long storeId, OwnerUserDetails ownerUserDetails) {
         List<Waiting> waitings = waitingHistoryRepository.findByStoreId(storeId)
                 .orElseThrow(() -> new BusinessLogicException("존재하지 않는 storeId 입니다.", HttpStatus.BAD_REQUEST.value()));
 
-        Map<String, Map<String, Double>> monthlyHourlyAverages = waitings.stream()
+        Map<String, Map<String, Long>> monthlyHourlyCounts = waitings.stream()
                 .collect(Collectors.groupingBy(
                         waiting -> YearMonth.from(waiting.getCreatedAt()).toString(),
                         Collectors.groupingBy(
                                 waiting -> waiting.getCreatedAt().toLocalTime().truncatedTo(ChronoUnit.HOURS).toString(),
-                                Collectors.collectingAndThen(
-                                        Collectors.groupingBy(
-                                                waiting -> waiting.getCreatedAt().toLocalDate(),
-                                                Collectors.counting()
-                                        ),
-                                        dateCountMap -> dateCountMap.values().stream()
-                                                .mapToLong(Long::longValue)
-                                                .average()
-                                                .orElse(0.0)
-                                )
+                                Collectors.counting()
                         )
                 ));
 
-        return monthlyHourlyAverages.entrySet().stream()
+        return monthlyHourlyCounts.entrySet().stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         entry -> entry.getValue().entrySet().stream()
-                                .map(hourEntry -> new WaitingHistoryDto(hourEntry.getKey(), hourEntry.getValue()))
+                                .map(hourEntry -> new WaitingHistoryDto(hourEntry.getKey(), (double) hourEntry.getValue()))
                                 .collect(Collectors.toList())
                 ));
     }
