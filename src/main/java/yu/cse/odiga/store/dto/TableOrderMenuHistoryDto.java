@@ -1,5 +1,6 @@
 package yu.cse.odiga.store.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import lombok.Builder;
@@ -16,6 +17,7 @@ public class TableOrderMenuHistoryDto {
 	private int tableNumber;
 	private List<TableOrderMenuDto> tableOrderMenus;
 	private int tableCount;
+	private LocalDateTime visitedAt;
 
 	public static List<TableOrderMenuDto> fromEntityList(List<TableOrderMenu> tableOrderMenuList) {
 		return tableOrderMenuList.stream()
@@ -28,6 +30,7 @@ public class TableOrderMenuHistoryDto {
 			.tableOrderHistoryId(tableOrder.getId())
 			.tableNumber(tableOrder.getStoreTable().getTableNumber())
 			.totalTableOrderPrice(tableOrder.getTableTotalPrice())
+			.visitedAt(tableOrder.getCreatedAt())
 			.tableOrderMenus(TableOrderMenuHistoryDto.fromEntityList((tableOrder.getTableOrderMenuList())))
 			.build();
 	}

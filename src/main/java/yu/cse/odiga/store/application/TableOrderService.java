@@ -62,7 +62,8 @@ public class TableOrderService {
 			visitCountService.incrementVisitCount(storeId, LocalDateTime.now().getHour());
 		}
 
-		TableOrder currentTableOrder = storeTable.getTableOrderList().stream()
+		TableOrder currentTableOrder = storeTable.getTableOrderList()
+			.stream()
 			.filter(order -> order.getPaymentStatus() == PaymentStatus.PENDING)
 			.findFirst()
 			.orElseGet(() -> {
@@ -79,9 +80,10 @@ public class TableOrderService {
 		for (TableOrderMenuforManage menuDto : requestMenus) {
 			Menu menu = menuRepository.findByCategory_Store_IdAndMenuName(storeId, menuDto.getMenuName())
 				.orElseThrow(() -> new BusinessLogicException("존재하지 않는 메뉴입니다: " + menuDto.getMenuName(),
-					HttpStatus.BAD_REQUEST.value()));
+															  HttpStatus.BAD_REQUEST.value()));
 
-			TableOrderMenu existingTableOrderMenu = currentTableOrder.getTableOrderMenuList().stream()
+			TableOrderMenu existingTableOrderMenu = currentTableOrder.getTableOrderMenuList()
+				.stream()
 				.filter(orderMenu -> orderMenu.getMenu().equals(menu))
 				.findFirst()
 				.orElse(null);
@@ -98,13 +100,13 @@ public class TableOrderService {
 				tableOrderMenuRepository.save(newTableOrderMenu);
 			}
 		}
-		Store store = storeRepository.findById(storeId).orElseThrow(
-			() -> new BusinessLogicException("존재하지 않는 Store Id 입니다.", HttpStatus.BAD_REQUEST.value()));
+		Store store = storeRepository.findById(storeId)
+			.orElseThrow(() -> new BusinessLogicException("존재하지 않는 Store Id 입니다.", HttpStatus.BAD_REQUEST.value()));
 
 		String storeFcmToken = store.getPosDeviceFcmToken();
 
 		PosOrderFcmResponse posFCMResponse = new PosOrderFcmResponse(storeTableNumber,
-			tableOrderManageDto.getTableOrderMenuforManages());
+																	 tableOrderManageDto.getTableOrderMenuforManages());
 
 		fcmUtil.sendMessage(storeFcmToken, posFCMResponse, "order");
 		storeTableRepository.save(storeTable);
@@ -115,11 +117,12 @@ public class TableOrderService {
 			.orElseThrow(() -> new BusinessLogicException("올바른 가게 ID가 아닙니다.", HttpStatus.BAD_REQUEST.value()));
 
 		StoreTable storeTable = storeTableRepository.findByStoreIdAndTableNumberAndTableStatus(storeId,
-				storeTableNumber, TableStatus.INUSE)
+																							   storeTableNumber,
+																							   TableStatus.INUSE)
 			.orElseThrow(() -> new BusinessLogicException("사용중인 테이블이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
 
 		TableOrder tableOrder = tableOrderRepository.findByStoreTableIdAndPaymentStatus(storeTable.getId(),
-				PaymentStatus.PENDING)
+																						PaymentStatus.PENDING)
 			.orElseThrow(() -> new BusinessLogicException("사용중인 테이블이 아닙니다.", HttpStatus.BAD_REQUEST.value()));
 
 		return TableOrderMenuHistoryDto.from(tableOrder);
@@ -140,11 +143,11 @@ public class TableOrderService {
 			}
 		}
 
-		Store store = storeRepository.findById(storeId).orElseThrow(
-			() -> new BusinessLogicException("존재하지 않는 Store Id 입니다.", HttpStatus.BAD_REQUEST.value()));
+		Store store = storeRepository.findById(storeId)
+			.orElseThrow(() -> new BusinessLogicException("존재하지 않는 Store Id 입니다.", HttpStatus.BAD_REQUEST.value()));
 
-		return new TableOrderMenuHistoryListDto(store.getTables().size(), tableOrderList.stream()
-			.map(TableOrderMenuHistoryDto::from).toList());
+		return new TableOrderMenuHistoryListDto(store.getTables().size(),
+												tableOrderList.stream().map(TableOrderMenuHistoryDto::from).toList());
 	}
 
 	public TableOrderMenuHistoryDto findByTableOrderHistoryByTableOrderId(Long tableOrderId) {
@@ -153,27 +156,27 @@ public class TableOrderService {
 	}
 
 	public void callStaff(Long storeId, CallStaffRequestDto callStaffRequestDto) throws FirebaseMessagingException {
-		Store store = storeRepository.findById(storeId).orElseThrow(
-			() -> new BusinessLogicException("존재하지 않는 Store Id 입니다.", HttpStatus.BAD_REQUEST.value()));
+		Store store = storeRepository.findById(storeId)
+			.orElseThrow(() -> new BusinessLogicException("존재하지 않는 Store Id 입니다.", HttpStatus.BAD_REQUEST.value()));
 
 		String storeFcmToken = store.getPosDeviceFcmToken();
 
 		PosCallFcmResponse posFCMResponse = new PosCallFcmResponse(callStaffRequestDto.getTableNumber(),
-			callStaffRequestDto.getCallMessage());
+																   callStaffRequestDto.getCallMessage());
 
 		fcmUtil.sendMessage(storeFcmToken, posFCMResponse, "call");
 
 	}
 
 	@Transactional
-	public void cancelTableOrderList(Long storeId, int storeTableNumber,
-		TableOrderManageDto tableOrderManageDto) {
+	public void cancelTableOrderList(Long storeId, int storeTableNumber, TableOrderManageDto tableOrderManageDto) {
 
 		StoreTable storeTable = storeTableRepository.findByStoreIdAndTableNumber(storeId, storeTableNumber)
 			.orElseThrow(
 				() -> new BusinessLogicException("존재하지 않는 store table id 입니다.", HttpStatus.BAD_REQUEST.value()));
 
-		TableOrder currentTableOrder = storeTable.getTableOrderList().stream()
+		TableOrder currentTableOrder = storeTable.getTableOrderList()
+			.stream()
 			.filter(order -> order.getPaymentStatus() == PaymentStatus.PENDING)
 			.findFirst()
 			.orElseThrow(() -> new BusinessLogicException("현재 대기 중인 주문이 없습니다.", HttpStatus.BAD_REQUEST.value()));
@@ -183,14 +186,15 @@ public class TableOrderService {
 		for (TableOrderMenuforManage cancelMenuDto : cancelMenus) {
 			Menu menu = menuRepository.findByCategory_Store_IdAndMenuName(storeId, cancelMenuDto.getMenuName())
 				.orElseThrow(() -> new BusinessLogicException("존재하지 않는 메뉴입니다: " + cancelMenuDto.getMenuName(),
-					HttpStatus.BAD_REQUEST.value()));
+															  HttpStatus.BAD_REQUEST.value()));
 
-			TableOrderMenu existingTableOrderMenu = currentTableOrder.getTableOrderMenuList().stream()
+			TableOrderMenu existingTableOrderMenu = currentTableOrder.getTableOrderMenuList()
+				.stream()
 				.filter(orderMenu -> orderMenu.getMenu().equals(menu))
 				.findFirst()
 				.orElseThrow(
 					() -> new BusinessLogicException("취소하려는 메뉴가 현재 주문에 포함되어 있지 않습니다: " + cancelMenuDto.getMenuName(),
-						HttpStatus.BAD_REQUEST.value()));
+													 HttpStatus.BAD_REQUEST.value()));
 
 			int updatedCount = existingTableOrderMenu.getMenuCount() - cancelMenuDto.getMenuCount();
 

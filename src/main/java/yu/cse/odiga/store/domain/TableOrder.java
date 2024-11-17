@@ -18,6 +18,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import yu.cse.odiga.global.type.BaseEntity;
 import yu.cse.odiga.store.type.PaymentStatus;
 
 @Entity
@@ -26,7 +27,7 @@ import yu.cse.odiga.store.type.PaymentStatus;
 @Getter
 @Setter
 @NoArgsConstructor
-public class TableOrder {
+public class TableOrder extends BaseEntity {
 	// 손님이있는 테이블의 주문내역
 	// 주문하기 주문내역 , wating메뉴 리스트 참고
 	@Id
